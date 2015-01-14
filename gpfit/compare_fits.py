@@ -1,53 +1,85 @@
 from max_affine_init import max_affine_init
+from max_affine import max_affine
+from softmax_affine import softmax_affine
+from implicit_softmax_affine import implicit_softmax_affine
+from time import time
+from LM import LM
+from generic_resid_fun import generic_resid_fun
+from numpy import append, ones
 
 def compare_fits(xdata, ydata, Ks, ntry):
-# INPUTS
-#	xdata:	list containing x data for fitting
-#	ydata: 	list containing y data for fitting
-#	Ks: 	list containing values of k????
-#	ntry:	???
+	'''
+	INPUTS
+		xdata:	multi-dimensional x data (independent variable) of function being approximated
+				[# data points, # dimensions]
+				e.g. [[1,2],[8,7],[34,6]] for three 2-dimensional data points
 
-	#size(xdata) not included
+		ydata: 	one-dimensional y data (dependent variabe) for function being approximated
+				[# data points, 1]
+				e.g. [5,77,-4] for three data points
 
+		Ks: 	list containing values of k, where k is the number of monomials in posynomial approx.
+				[# values of k, 1]
+				e.g. [1, 3] for a monomial and a 3-monomial posynomial expression
+
+		ntry:	Number of tries (related to number of starts). Higher is better but more expensive.
+				e.g. 10, for 10 tries
+
+	OUTPUTS
+		s:		Dictionary containing the results of the 4 different methods
+	'''
+	
 	def store_results(fieldname):
-		s[fieldname]['resid'][ik,t] = min(RMStraj)
-		s[fieldname]['iter'][ik,t] = len(RMStraj) 
-		s[fieldname]['params'][ik,t] = params #check {ik,t}
-		s[fieldname]['time'][ik,t] = time.time() - t
+		s[fieldname]['resid'][ik][tt] = min(RMStraj)
+		s[fieldname]['iter'][ik][tt] = len(RMStraj) 
+		s[fieldname]['params'][ik][tt] = params
+		s[fieldname]['time'][ik][tt] = time() - t
 
-	s = {}
-	s['Ks'] = Ks;
+	s = AutoVivification() # Clean and easy way to initiate nested-dictionaries
+	s['Ks'] = Ks
 
-	s[]
-
+	# for fn in ['max_affine','softmax_optMAinit','softmax_originit','implicit_originit']:
+	# 	for cat in ['resid','iter','params','time']:
+	# 			s[fn][cat] = [[0]*ntry for x in xrange(Ks)]
+	
 	alphainit = 10
 
-	for ik in len(Ks):
-		for t in len(ntry):
+	for ik in range(len(Ks)):
+		for tt in range(len(ntry)):
 		
 			k = Ks[ik]
 
 			bainit = max_affine_init(xdata, ydata, k)
-			bainit = sum(bainit,[]) # sum(bainit,[]) flattens bainit row-by-row
 
 			def rfun (p): return generic_resid_fun(max_affine, xdata, ydata, p)
-			t = time.time()
-			[params, RMStraj] = LM(rfun, bainit) 
+			t = time()
+			[params, RMStraj] = LM(rfun, bainit.flatten('F')) # 'F' flattens in 'fortran' order i.e. column-major
 			store_results('max_affine')
 
 			def rfun (p): return generic_resid_fun(softmax_affine, xdata, ydata, p)
-			t = time.time()
-			[params, RMStraj] = LM(rfun, [params(:); alphainit])
+			t = time()
+			[params, RMStraj] = LM(rfun, append(params.flatten('F'), alphainit))
 			store_results('softmax_optMAinit')
 
 			def rfun (p): return generic_resid_fun(softmax_affine, xdata, ydata, p)
-			t = time.time()
-			[params, RMStraj] = LM(rfun, bainit.append(alphainit))
+			t = time()
+			[params, RMStraj] = LM(rfun, append(bainit.flatten('F'), alphainit))
 			store_results('softmax_originit')
 
 			def rfun (p): return generic_resid_fun(implicit_softmax_affine, xdata, ydata, p)
-			t = time.time()
-			[params, RMStraj] = LM(rfun, bainit.append([alphainit]*k))		
+			t = time()
+			[params, RMStraj] = LM(rfun, append(bainit.flatten('F'), alphainit*ones((k,1))))		
 			store_results('implicit_originit')
 
 	return s
+
+
+# Autovivification allows for easy and clean initiation of nested dictionaries
+class AutoVivification(dict):
+    """Implementation of perl's autovivification feature."""
+    def __getitem__(self, item):
+        try:
+            return dict.__getitem__(self, item)
+        except KeyError:
+            value = self[item] = type(self)()
+            return value
