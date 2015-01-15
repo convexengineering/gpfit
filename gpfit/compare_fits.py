@@ -37,10 +37,6 @@ def compare_fits(xdata, ydata, Ks, ntry):
 
 	s = AutoVivification() # Clean and easy way to initiate nested-dictionaries
 	s['Ks'] = Ks
-
-	# for fn in ['max_affine','softmax_optMAinit','softmax_originit','implicit_originit']:
-	# 	for cat in ['resid','iter','params','time']:
-	# 			s[fn][cat] = [[0]*ntry for x in xrange(Ks)]
 	
 	alphainit = 10
 
