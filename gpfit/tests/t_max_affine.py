@@ -5,7 +5,7 @@ from numpy import arange, newaxis
 class t_max_affine(unittest.TestCase):
 
 	x = arange(0.,16.)[:,newaxis]
-	ba = arange(1.,5.).reshape(2,2)
+	ba = arange(1.,7.).reshape(2,3)
 
 	y, dydba = max_affine(x,ba) 
 

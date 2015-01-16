@@ -33,7 +33,7 @@ def LM(residfun,initparams):
 	
 	#Set defaults; incorporate incoming options
 	defaults = {}
-	defaults['bverbose'] = True
+	defaults['bverbose'] = False
 	#defaults['bplot'] = True
 	defaults['lambdainit'] = 0.02
 	defaults['maxiter'] = 200

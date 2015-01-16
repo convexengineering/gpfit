@@ -10,7 +10,6 @@ class t_generic_resid_fun(unittest.TestCase):
 	ydata = arange(1.,11.)[:,newaxis]
 	params = arange(1.,5.)
 	r, drdp = generic_resid_fun(yfun, xdata, ydata, params)
-	print r
 
 	def test_size_of_r(self):
 		self.assertTrue(self.r.size == self.xdata.size)
