@@ -1,5 +1,5 @@
 from numpy import arange, array, vstack, newaxis
-from gpfit import compare_fits
+from gpfit.compare_fits import compare_fits
 
 x = arange(0.,16.)[:,newaxis]
 y1 = arange(0.,11.)[:,newaxis]
