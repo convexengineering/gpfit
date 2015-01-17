@@ -8,7 +8,23 @@ def implicit_softmax_affine(x, params):
     after reshaping (column-major), ba is dimx+1 by K
     first row is b
     rest is a
+
+    INPUTS:
+            x:      Independent variable data
+                    [nx1 2D array]
+
+            params: Fit parameters (Alpha is last element)
+                    [2k+2? -element 1D array] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+    OUTPUTS:
+            y:
+                    [n-element 1D array], n is number of data points
+
+            dydp:
+                    [n x 2k+2? 2D array]
+
     '''
+
     npt, dimx = x.shape
 
     K = params.size/(dimx+2)

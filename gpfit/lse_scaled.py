@@ -2,15 +2,29 @@ from numpy import array, tile, exp, log
 
 def lse_scaled(x,alpha):
 	'''
-	log sum exp function with derivatives
-	sums across the second dimension of x; 
-	returns one y for every row of x
-	dydx gives the deriv of each y wrt each x 
-	alpha is softness parameter \in R
+	Log-sum-exponential function with derivatives
+	- sums across the second dimension of x
+	- note that lse_scaled is a mapping R^n --> R, where n==size(x,2)
 
-	note that lse_scaled is a mapping R^n --> R, where n==size(x,2)
+	INPUTS:
+			x:		independent variable data?
+					[n x ? 2D array], n is number of data points
+
+			alpha:	softness parameter \in R
+					Double
+
+	OUTPUTS:
+			y: 		dependent variable fit. Returns one y for every row of x.
+					[n-element 1D array], n is number of data points
+
+			dydx:	dydx gives the deriv of each y wrt each x 
+					[n x ? 2D array]
+
+			dydalpha:
+					[n-element 1D array], n is number of data points
+
 	'''
-	
+
 	_, n = x.shape
 
 	m = x.max(axis=1)  #maximal x values

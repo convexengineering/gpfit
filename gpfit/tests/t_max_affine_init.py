@@ -18,6 +18,8 @@ class t_max_affine_init_K_equals_2(unittest.TestCase):
 
 		self.assertEqual(self.ba.shape, (dimx+1 ,self.K))
 
+class t_max_affine_init_other_K(unittest.TestCase):
+
 	def test_K_as_an_array_of_ks(self):
 		pass
 

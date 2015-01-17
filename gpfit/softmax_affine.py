@@ -4,17 +4,29 @@ from repcols import repcols
 
 def softmax_affine(x, params, softness_param_is_alpha=False):
 	'''
-	params may come in as
-	  1) a cell {ba, alpha}, or 
-	  2) a vector (with alpha last)
 	after reshaping (column-major), ba is dimx+1 by K
 	first row is b
 	rest is a
 
+	INPUTS:
+			x:		Independent variable data
+					[nx1 2D array]
 
-	if softness_param_is_alpha = false, then it's gamma (gamma = 1/alpha)
+			params:	Fit parameters (Alpha is last element)
+					[2k+1? -element 1D array] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+			softness_param_is_alpha:
+					if softness_param_is_alpha = false, then it's gamma (gamma = 1/alpha)
+
+	OUTPUTS:
+			y:
+					[n-element 1D array], n is number of data points
+
+			dydp:
+					[n x 2k+1? 2D array]
+
 	'''
-	
+
 	ba = params[0:-1]
 	softness = params[-1] #equivalent of end
 
