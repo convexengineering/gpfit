@@ -9,7 +9,7 @@ class t_max_affine(unittest.TestCase):
 	y2 = arange(12.,21.,2.)[:,newaxis]
 	y = vstack((y1,y2))
 	Ks = array([2])
-	ntry = array([1])
+	ntry = 1
 	s = compare_fits(x,y,Ks,ntry)
 
 	def test_max_affine_1(self):
@@ -29,7 +29,7 @@ class t_softmax_optMAinit(unittest.TestCase):
 	y2 = arange(12.,21.,2.)[:,newaxis]
 	y = vstack((y1,y2))
 	Ks = array([2])
-	ntry = array([1])
+	ntry = 1
 	s = compare_fits(x,y,Ks,ntry)
 
 	def test_softmax_optMAinit_1(self):
@@ -86,10 +86,32 @@ class t_softmax_optMAinit(unittest.TestCase):
 # 						allclose(implicit_orig_params, array([-10,2,0,1]))
 # 						)
 
+class t_k_tests(unittest.TestCase):
+
+	x = arange(0.,16.)[:,newaxis]
+	y1 = arange(0.,11.)[:,newaxis]
+	y2 = arange(12.,21.,2.)[:,newaxis]
+	y = vstack((y1,y2))
+	ntry = 1
+
+	def test_k_3(self):
+		Ks = array([3])
+		s = compare_fits(self.x, self.y, Ks, self.ntry)
+
+	def test_k_multi_element_array(self):
+		Ks = array([1,3])
+		s = compare_fits(self.x, self.y, Ks, self.ntry)
+
+	def test_k_is_not_array(self):
+		k = 2
+		s = compare_fits(self.x, self.y, k, self.ntry)
+
+
 tests = [t_max_affine,
-		 t_softmax_optMAinit]
+		 t_softmax_optMAinit,
 		 # t_softmax_originit,
-		 # t_implicit_originit]
+		 # t_implicit_originit,
+		 t_k_tests]
 
 if __name__ == '__main__':
 	suite = unittest.TestSuite()
