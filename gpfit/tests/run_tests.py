@@ -1,14 +1,38 @@
 import unittest
 tests = []
 
-import t_repcols
-tests += t_repcols.tests
+import t_compare_fits
+tests += t_compare_fits.tests
+
+import t_LM
+tests += t_LM.tests
 
 import t_generic_resid_fun
 tests += t_generic_resid_fun.tests
 
-import t_compare_fits
-tests +=t_compare_fits.tests
+import t_lse_implicit
+tests += t_lse_implicit.tests
+
+import t_lse_scaled
+tests += t_lse_scaled.tests
+
+import t_max_affine_init
+tests += t_max_affine_init.tests
+
+import t_max_affine
+tests += t_max_affine.tests
+
+import t_softmax_affine
+tests += t_softmax_affine.tests
+
+import t_implicit_softmax_affine
+tests += t_implicit_softmax_affine.tests
+
+import t_repcols
+tests += t_repcols.tests
+
+
+
 
 def run():
     suite = unittest.TestSuite()
