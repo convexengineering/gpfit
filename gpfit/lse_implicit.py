@@ -26,6 +26,7 @@ def lse_implicit(x,alpha):
                     [n x ? 2D array], n is number of data points
 
     '''
+    bverbose = False
 
     tol = 10*spacing(1) 
     npt,nx = x.shape
@@ -74,7 +75,8 @@ def lse_implicit(x,alpha):
         i[i] = abs(f[i]) > tol
         #disp(['max newton-raphson residual: ', num2str(max(abs(f)))]);
 
-    print('lse_implicit converged in ' + repr(neval) + ' newton-raphson steps')
+    if bverbose:
+        print('lse_implicit converged in ' + repr(neval) + ' newton-raphson steps')
 
     y = m + L
 
