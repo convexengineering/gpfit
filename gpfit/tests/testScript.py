@@ -6,7 +6,7 @@ y1 = arange(0.,11.)[:,newaxis]
 y2 = arange(12.,21.,2.)[:,newaxis]
 y = vstack((y1,y2))
 Ks = array([2])
-ntry = array([1.])
+ntry = 1
 s = compare_fits(x,y,Ks,ntry)
 
 print s['max_affine']['params']
