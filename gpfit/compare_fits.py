@@ -5,7 +5,7 @@ from implicit_softmax_affine import implicit_softmax_affine
 from time import time
 from LM import LM
 from generic_resid_fun import generic_resid_fun
-from numpy import append, ones
+from numpy import append, ones, size
 
 def compare_fits(xdata, ydata, Ks, ntry):
 	'''
@@ -18,12 +18,15 @@ def compare_fits(xdata, ydata, Ks, ntry):
 				[# data points, 1]
 				e.g. [5,77,-4] for three data points
 
-		Ks: 	list containing values of k, where k is the number of monomials in posynomial approx.
+		Ks: 	1D array containing values of k, where k is the number of monomials in posynomial approx.
 				[# values of k, 1]
+				Can be either numpy array of integers or an integer
 				e.g. [1, 3] for a monomial and a 3-monomial posynomial expression
+				Values of k must be integers
 
 		ntry:	Number of tries (related to number of starts). Higher is better but more expensive.
 				e.g. 10, for 10 tries
+				Value must be integer
 
 	OUTPUTS
 		s:		Dictionary containing the results of the 4 different methods
@@ -40,10 +43,13 @@ def compare_fits(xdata, ydata, Ks, ntry):
 	
 	alphainit = 10
 
-	for ik in range(len(Ks)):
-		for tt in range(len(ntry)):
+	for ik in range(size(Ks)):
+		for tt in range(ntry):
 		
-			k = Ks[ik]
+			if size(Ks) > 1:
+				k = Ks[ik]
+			else:
+				k = Ks
 
 			bainit = max_affine_init(xdata, ydata, k)
 

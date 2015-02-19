@@ -7,13 +7,24 @@ def max_affine_init(x, y, K):
 	initializes max-affine fit to data (y, x)
 	ensures that initialization has at least K+1 points per partition (i.e.
 	per affine function)
+
+	INPUTS:
+		x: 		Independent variable data
+				[n x 1 2D column vector]
+
+		y:		Dependent variable data
+				[n x 1 2D column vector]
+
+	OUTPUTS:
+		ba:		[dimx+1 x k 2D array]
+
 	'''
-	
 	defaults = {}
-	defaults['bverbose'] = True
+	defaults['bverbose'] = False
 	options = defaults
 
 	npt,dimx = x.shape
+
 	X = hstack((ones((npt, 1)), x))
 	ba = zeros((dimx+1,K))
 

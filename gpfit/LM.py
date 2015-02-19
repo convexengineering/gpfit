@@ -33,10 +33,10 @@ def LM(residfun,initparams):
 	
 	#Set defaults; incorporate incoming options
 	defaults = {}
-	defaults['bverbose'] = True
+	defaults['bverbose'] = False
 	#defaults['bplot'] = True
 	defaults['lambdainit'] = 0.02
-	defaults['maxiter'] = 200
+	defaults['maxiter'] = 199
 	defaults['maxtime'] = 5
 	defaults['tolgrad'] = sqrt(float_info.epsilon)
 	defaults['tolrms'] = 1E-7
@@ -67,7 +67,7 @@ def LM(residfun,initparams):
 	diagJJ = sum(J*J,0).T #      <<<<<<<<<<<<<why not use diag()?, what does ( ,1) do?
 	zeropad = zeros((nparam,1))
 	lamb = options['lambdainit']
-	RMStraj = zeros((options['maxiter'],1))
+	RMStraj = zeros((options['maxiter'] + 1,1))
 	RMStraj[0] = rms
 	gradcutoff = options['tolgrad']
 
@@ -89,7 +89,7 @@ def LM(residfun,initparams):
 			if options['bverbose']:
 				print('Reached maxtime (' + repr(options['maxtime']) + ' seconds)')
 			break
-		elif itr > 2 and abs(RMStraj[itr] - RMStraj[itr-2]) < RMStraj[itr]*options['tolrms']:
+		elif itr >= 2 and abs(RMStraj[itr] - RMStraj[itr-2]) < RMStraj[itr]*options['tolrms']:
 			#Should really only allow this exit case if trust region constraint is slack
 			if options['bverbose']:
 				print('RMS changed less than tolrms')
@@ -101,6 +101,7 @@ def LM(residfun,initparams):
 		# Note this matrix changes every iteration, since either lambda or J (or both) change every iteration
 		if Jissparse:
 			D = spdiags(sqrt(lamb*diagJJ), 0, nparam, nparam) # spdiags takes the transpose of the matrix in matlab <<<<<<<<<<<<<<
+			print 'is it? is it??'
 		else:
 			D = diag(sqrt(lamb*diagJJ))
 
@@ -152,7 +153,8 @@ def LM(residfun,initparams):
 			params_updated = False
 
 	RMStraj = RMStraj[1:itr+1]
-	print('Final RMS: ' + repr(rms))
+	if options['bverbose']:
+		print('Final RMS: ' + repr(rms))
 
 	return params, RMStraj
 

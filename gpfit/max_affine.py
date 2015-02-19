@@ -5,7 +5,18 @@ def max_affine(x,ba,flag=False):
 	ba may come in as a matrix or as a vector
 	after reshaping (column-major), ba is dimx+1 by K
 	first row is b
-	rest is a	
+	rest is a
+
+	INPUTS:
+			x: 		[n x 1 2D column vector]
+
+			ba: 	[2? x k 2D array]
+
+	OUTPUTS:
+			y: 		[n-element 1D array]
+
+			dydba: 	[n x ba.size 2D array]
+
 	'''	
 	npt, dimx = x.shape
 	K = ba.size/(dimx+1)
