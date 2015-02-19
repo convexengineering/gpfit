@@ -3,16 +3,13 @@ import unittest
 class t_testFamily1(unittest.TestCase):
 
 	def testname1(self):
-		self.assertEqual()
-		self.assertFalse()
-		self.assertNotEqual()
-		self.assertTrue()
+		self.assertEqual(1, 1)
+		self.assertFalse(False)
+		self.assertNotEqual(1, 2)
+		self.assertTrue(True)
 
 	def testname2(self):
-		self.assertEqual()
-		self.assertFalse()
-		self.assertNotEqual()
-		self.assertTrue()
+            pass
 
 class t_testFamily2(unittest.TestCase):
 
