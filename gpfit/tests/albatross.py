@@ -37,3 +37,14 @@ w_SMA = (exp(alpha*B[0]) * u1**(alpha*A[0]) * u2**(alpha*A[1]) +
         )**(1/alpha)
 
 print amax(w_SMA - Z)
+
+# Implicit Softmax Affine Fitting
+PAR_ISMA = s['implicit_originit']['params'][0][0]
+A = PAR_ISMA[[1,2,4,5]]
+B = PAR_ISMA[[0,3]]
+alpha = 1/PAR_ISMA[[-2,-1]]
+
+def implicit_function(x,y,z):
+	return (exp(alpha[0]*B[0])/(z**(alpha[0])) * x**(alpha[0]*A[0]) * y**(alpha[0]*A[1]) +
+    		exp(alpha[1]*B[1])/(z**(alpha[1])) * x**(alpha[1]*A[2]) * y**(alpha[1]*A[3])) - 1
+

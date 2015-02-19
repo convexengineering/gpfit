@@ -82,5 +82,5 @@ def lse_implicit(x,alpha):
 
     dydx = alphaexpo/(tile(sumalphaexpo, (nx,1))).T
     dydalpha = (h - Lmat)*expo/(tile(sumalphaexpo, (nx,1))).T
-
+    
     return y, dydx, dydalpha

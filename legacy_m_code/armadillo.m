@@ -17,13 +17,13 @@ s = compare_fits(x,y, 3,1);
 [u1, u2] = meshgrid(1:0.1:2,0.2:0.02:0.4);
 
 % Max Affine Fitting
-% PAR_MA = s.maxaffine.params{1};
-% A = PAR_MA([2,3,5,6]);
-% B = PAR_MA([1,4]);
-% w_MA = exp(B(1)) .* u1.^A(1) .* u2.^A(2);
+PAR_MA = s.maxaffine.params{1}
+A = PAR_MA([2,3,5,6])
+B = PAR_MA([1,4])
+w_MA_1 = exp(B(1)) .* u1.^A(1) .* u2.^A(2);
 % surf(u1,u2,w_MA);
 % hold all;
-% w_MA = exp(B(2)) .* u1.^A(3) .* u2.^A(4);
+w_MA_2 = exp(B(2)) .* u1.^A(3) .* u2.^A(4);
 % surf(u1,u2,w_MA);
 % hold all;
 
