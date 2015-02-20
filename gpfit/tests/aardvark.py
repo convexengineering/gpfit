@@ -2,6 +2,49 @@ from numpy import arange, meshgrid, hstack, linspace, log, exp, maximum, sqrt, m
 from gpfit.compare_fits import compare_fits
 from gpfit.implicit_softmax_affine import implicit_softmax_affine
 
+def albatross():
+	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
+	Z = X**2+Y**2
+	K = 2
+	compute_fit(X,Y,Z,K)
+
+def alligator():
+	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
+	Z = (X**2+Y**2)**0.5
+	K = 2
+	compute_fit(X,Y,Z,K)
+
+def angelfish():
+	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
+	Z = X/Y + Y/X
+	K = 2
+	compute_fit(X,Y,Z,K)
+
+def anteater():
+	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
+	Z = (X/Y + Y/X)**0.5
+	K = 2
+	compute_fit(X,Y,Z,K)
+
+def antelope():
+	[X, Y] = meshgrid(linspace(1.,2.,30),linspace(0.2,0.4,30))
+	Z = (1.09*X**4.27*Y**0.112 + (7.79e-5)*X**4.75/Y**6.44 + (1.36e-7)*X**8.94/Y**8.89)**(1/2.14)
+	K = 2
+	compute_fit(X,Y,Z,K)
+
+def appenzeller():
+	[X, Y] = meshgrid(linspace(1.,2.,30),linspace(0.2,0.4,30))
+	Z = X**2 + 30*X*exp(-(Y-0.06*X)/0.039)
+	K = 2
+	compute_fit(X,Y,Z,K)
+
+def armadillo():
+	[X, Y] = meshgrid(linspace(1.,2.,30),linspace(0.2,0.4,30))
+	Z = X**2 + 30*X*exp(-(Y-0.06*X)/0.039)
+	K = 3
+	compute_fit(X,Y,Z,K)
+
+
 def compute_fit(X,Y,Z,K):
 	u1, u2 = X, Y
 
@@ -61,46 +104,4 @@ def compute_fit(X,Y,Z,K):
 	w_ISMA = exp(w_ISMA)
 	ISMA_rms_pct_error = sqrt(mean(square((w_ISMA - w.T[0])/w.T[0])))
 	print ISMA_rms_pct_error
-
-def albatross():
-	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
-	Z = X**2+Y**2
-	K = 2
-	compute_fit(X,Y,Z,K)
-
-def alligator():
-	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
-	Z = (X**2+Y**2)**0.5
-	K = 2
-	compute_fit(X,Y,Z,K)
-
-def angelfish():
-	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
-	Z = X/Y + Y/X
-	K = 2
-	compute_fit(X,Y,Z,K)
-
-def anteater():
-	[X, Y] = meshgrid(arange(1.,6.),arange(1.,6.))
-	Z = (X/Y + Y/X)**0.5
-	K = 2
-	compute_fit(X,Y,Z,K)
-
-def antelope():
-	[X, Y] = meshgrid(linspace(1.,2.,30),linspace(0.2,0.4,30))
-	Z = (1.09*X**4.27*Y**0.112 + (7.79e-5)*X**4.75/Y**6.44 + (1.36e-7)*X**8.94/Y**8.89)**(1/2.14)
-	K = 2
-	compute_fit(X,Y,Z,K)
-
-def appenzeller():
-	[X, Y] = meshgrid(linspace(1.,2.,30),linspace(0.2,0.4,30))
-	Z = X**2 + 30*X*exp(-(Y-0.06*X)/0.039)
-	K = 2
-	compute_fit(X,Y,Z,K)
-
-def armadillo():
-	[X, Y] = meshgrid(linspace(1.,2.,30),linspace(0.2,0.4,30))
-	Z = X**2 + 30*X*exp(-(Y-0.06*X)/0.039)
-	K = 3
-	compute_fit(X,Y,Z,K)
 

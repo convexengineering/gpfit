@@ -1,6 +1,6 @@
 [X, Y] = meshgrid(1:5,1:5);
 Z = X.^2+Y.^2;
-surf(X,Y,Z);
+% surf(X,Y,Z);
 % hold all;
 w = Z(:);
 X = X(:);
@@ -37,21 +37,11 @@ w_SMA = (exp(alpha.*B(1)) .* u1.^(alpha*A(1)) .* u2.^(alpha*A(2)) +...
 
 % Implicit Softmax Affine Fitting
 PAR_ISMA = s.implicit_originit.params{1};
-alpha = PAR_SMA(end-1:end);
-A = PAR_SMA([2,3,5,6]);
-B = PAR_SMA([1,4]);
-f_ISMA = @(w_ISMA) exp(alpha(1).*B(1))/w_ISMA.^alpha(1) .* uu1.^(alpha(1)*A(1)) .* uu2.^(alpha(1)*A(2)) +...
-    exp(alpha(2).*B(2))/w_ISMA.^alpha(2) .* uu1.^(alpha(2)*A(3)) .* uu2.^(alpha(2)*A(4)) - 1;
-
-% w_ISMA = w_SMA;
-for i=1:size(u1,1)
-    for j=1:size(u1,2)
-        uu1 = u1(i,j);
-        uu2 = u2(i,j);
-        w_ISMA(i,j) = fzero(f_ISMA, w_SMA(i,j));
-    end
-end
-        
-
-% f_ISMA = @(w_ISMA) exp(alpha(1).*B(1))/w_ISMA.^alpha(1) .* u1.^(alpha(1)*A(1)) .* u2.^(alpha(1)*A(2)) +...
-%     exp(alpha(2).*B(2))/w_ISMA.^alpha(2) .* u1.^(alpha(2)*A(3)) .* u2.^(alpha(2)*A(4)) - 1;
+% alpha = PAR_SMA(end-1:end);
+% A = PAR_SMA([2,3,5,6]);
+% B = PAR_SMA([1,4]);
+% f_ISMA = @(w_ISMA) exp(alpha(1).*B(1))/w_ISMA.^alpha(1) .* uu1.^(alpha(1)*A(1)) .* uu2.^(alpha(1)*A(2)) +...
+%     exp(alpha(2).*B(2))/w_ISMA.^alpha(2) .* uu1.^(alpha(2)*A(3)) .* uu2.^(alpha(2)*A(4)) - 1;
+w_ISMA = implicit_softmax_affine(x,PAR_ISMA);
+w_ISMA = exp(reshape(w_ISMA,5,5))
+% surf(u1,u2,w_ISMA);
