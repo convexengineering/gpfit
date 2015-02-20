@@ -1,49 +1,44 @@
 import unittest
-from gpfit.printFits import print_max_affine, print_softmax_affine, print_implicit_softmax_affine
+from gpfit.printFits import print_MA, print_SMA, print_ISMA
 from numpy import array, arange
 
-class t_print_max_affine(unittest.TestCase):
+class t_print_MA(unittest.TestCase):
 
-	params = arange(1.,5.).reshape(1,4)
-	a, b = print_max_affine(params)
+	PAR_MA = arange(1,13)
+	K = 3
+	stringList = print_MA(PAR_MA, K)
 
-	def test_MA_a(self):
-		self.assertTrue((self.a == array([[2.,4.]])).all()) # <<<<<<<<<<<<<<<<<<<<<<<<<<<<need to figure out dimension issues
+	def test_MA(self):
+		self.assertEqual(self.stringList,
+			['w = 2.72 * (u_0)**2 * (u_1)**3 * (u_2)**4',
+ 			'w = 148 * (u_0)**6 * (u_1)**7 * (u_2)**8',
+ 			'w = 8.1e+03 * (u_0)**10 * (u_1)**11 * (u_2)**12'])
 
-	def test_MA_b(self):
-		self.assertTrue((self.b == array([[1.,3.]])).all())
+class t_print_SMA(unittest.TestCase):
 
-class t_print_softmax_affine(unittest.TestCase):
+	PAR_SMA = arange(1,14)
+	K = 3
+	stringList = print_SMA(PAR_SMA, K)
 
-	params = arange(1.,6.).reshape(1,5)
-	a, b, alpha = print_softmax_affine(params)
+	def test_SMA(self):
+		self.assertEqual(self.stringList,
+			['w**0.0769 = 1.08 * (u_0)**0.154 * (u_1)**0.231 * (u_2)**0.308',
+ 			 '    + 1.47 * (u_0)**0.462 * (u_1)**0.538 * (u_2)**0.615',
+			 '    + 2 * (u_0)**0.769 * (u_1)**0.846 * (u_2)**0.923'])
 
-	def test_SMA_a(self):
-		self.assertTrue(all(self.a == array([2.,4.])))
-
-	def test_SMA_b(self):
-		self.assertTrue(all(self.b == array([1.,3.])))
-
-	def test_SMA_alpha(self):
-		self.assertEqual(self.alpha, 5.)
-
-class t_print_implicit_softmax_affine(unittest.TestCase):
+class t_print_ISMA(unittest.TestCase):
 	
-	params = arange(1.,7.).reshape(1,6)
-	a, b, alpha = print_implicit_softmax_affine(params)
+	PAR_ISMA = arange(1,16)
+	K = 3
+	stringList = print_ISMA(PAR_ISMA, K)
 
-	def test_ISMA_a(self):
-		self.assertTrue(all(self.a == array([2.,4.])))
+	def test_ISMA(self):
+		self.assertEqual(self.stringList,
+			['1 = (1.08/w**0.0769) * (u_0)**0.154 * (u_1)**0.231 * (u_2)**0.308',
+ 			 '    + (1.43/w**0.0714) * (u_0)**0.429 * (u_1)**0.5 * (u_2)**0.571',
+ 			 '    + (1.82/w**0.0667) * (u_0)**0.667 * (u_1)**0.733 * (u_2)**0.8'])
 
-	def test_ISMA_b(self):
-		self.assertTrue(all(self.b == array([1.,3.])))
-
-	def test_ISMA_alpha(self):
-		self.assertTrue(all(self.alpha == array([5., 6.])))
-
-
-
-tests = [t_print_max_affine, t_print_softmax_affine, t_print_implicit_softmax_affine]
+tests = [t_print_MA, t_print_SMA, t_print_ISMA]
 
 if __name__ == '__main__':
 	suite = unittest.TestSuite()
