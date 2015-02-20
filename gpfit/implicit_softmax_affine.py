@@ -4,7 +4,7 @@ from repcols import repcols
 
 def implicit_softmax_affine(x, params):
     '''
-    Params come in as a vector (with alpha last)
+    Params come in as a vector (with alphas last)
     after reshaping (column-major), ba is dimx+1 by K
     first row is b
     rest is a
@@ -13,7 +13,7 @@ def implicit_softmax_affine(x, params):
             x:      Independent variable data
                     [nx1 2D array]
 
-            params: Fit parameters (Alpha is last element)
+            params: Fit parameters
                     [2k+2? -element 1D array] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     OUTPUTS:

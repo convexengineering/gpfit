@@ -10,7 +10,9 @@ def lse_implicit(x,alpha):
 
     INPUTS:
             x:      independent variable data?
-                    [n x ? 2D array], n is number of data points
+                    [(n x d) 2D array],
+                    n is number of data points
+                    d is number of dimensions
 
             alpha:  local softness parameter for each column of x
                     [1D array with size(alpha)==size(x,2)]
@@ -20,10 +22,10 @@ def lse_implicit(x,alpha):
                     [n-element 1D array], n is number of data points
 
             dydx:   dydx gives the deriv of each y wrt each x 
-                    [n x ? 2D array]
+                    [(n x d) 2D array]
 
             dydalpha:
-                    [n x ? 2D array], n is number of data points
+                    [(n x d) 2D array], n is number of data points
 
     '''
     bverbose = False
@@ -55,7 +57,6 @@ def lse_implicit(x,alpha):
     dfdL = -alphaexpo.sum(axis=1)/sumexpo
     neval = 1
     i = abs(f) > tol #inds to update
-    #disp(['max newton-raphson residual: ', num2str(max(abs(f)))]);
 
     while any(i):
         L[i] = L[i] - f[i]/dfdL[i]    #newton step
@@ -68,12 +69,9 @@ def lse_implicit(x,alpha):
         f[i] = log(sumexpo[i])
         dfdL[i] = -sumalphaexpo[i,]/sumexpo[i]
         neval = neval + 1
-        if neval > 40:
-            print('') #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ask woody
 
         #update inds that need to be evaluated
         i[i] = abs(f[i]) > tol
-        #disp(['max newton-raphson residual: ', num2str(max(abs(f)))]);
 
     if bverbose:
         print('lse_implicit converged in ' + repr(neval) + ' newton-raphson steps')
