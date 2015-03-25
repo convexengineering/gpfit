@@ -31,6 +31,9 @@ tests += t_implicit_softmax_affine.tests
 import t_repcols
 tests += t_repcols.tests
 
+import t_print_fit
+tests += t_print_fit.tests
+
 
 def run():
     suite = unittest.TestSuite()
