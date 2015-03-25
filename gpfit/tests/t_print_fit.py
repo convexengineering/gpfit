@@ -1,12 +1,14 @@
 import unittest
-from gpfit.printFits import print_MA, print_SMA, print_ISMA
+from gpfit.print_fit import print_MA, print_SMA, print_ISMA
 from numpy import array, arange
 
 class t_print_MA(unittest.TestCase):
 
-	PAR_MA = arange(1,13)
+	A = array([ 2,  3,  4,  6,  7,  8, 10, 11, 12])
+	B = array([1, 5, 9])
+	d = 3
 	K = 3
-	stringList = print_MA(PAR_MA, K)
+	stringList = print_MA(A, B, d, K)
 
 	def test_MA(self):
 		self.assertEqual(self.stringList,
@@ -16,9 +18,12 @@ class t_print_MA(unittest.TestCase):
 
 class t_print_SMA(unittest.TestCase):
 
-	PAR_SMA = arange(1,14)
+	A = array([ 2,  3,  4,  6,  7,  8, 10, 11, 12])
+	B = array([1, 5, 9])
+	alpha = 1/13.0
+	d = 3
 	K = 3
-	stringList = print_SMA(PAR_SMA, K)
+	stringList = print_SMA(A, B, alpha, d, K)
 
 	def test_SMA(self):
 		self.assertEqual(self.stringList,
@@ -28,9 +33,12 @@ class t_print_SMA(unittest.TestCase):
 
 class t_print_ISMA(unittest.TestCase):
 	
-	PAR_ISMA = arange(1,16)
+	A = array([ 2,  3,  4,  6,  7,  8, 10, 11, 12])
+	B = array([1, 5, 9])
+	alpha = array([ 1./13.,  1./14.,  1./15.])
+	d = 3
 	K = 3
-	stringList = print_ISMA(PAR_ISMA, K)
+	stringList = print_ISMA(A, B, alpha, d, K)
 
 	def test_ISMA(self):
 		self.assertEqual(self.stringList,
