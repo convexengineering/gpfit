@@ -1,6 +1,6 @@
 from gpfit.compare_fits import compare_fits
 from gpfit.implicit_softmax_affine import implicit_softmax_affine
-from numpy import linspace, logspace, log, exp, log10, sqrt
+from numpy import linspace, logspace, log, exp, log10, sqrt, square, mean
 import matplotlib.pyplot as plt
 
 m = 501
@@ -28,7 +28,7 @@ w_SMA = (exp(alpha*B[0]) * u**(alpha*A[0]) +
         )**(1.0/alpha)
 plt.plot(u,w_SMA)
 
-SMArms = sqrt((1.0/m)*sum((w_SMA-w)**2.0))
+SMArms = sqrt(mean(square(w_SMA-w)))
 print SMArms
 
 
@@ -42,7 +42,7 @@ plt.figure()
 plt.plot(u,w_ISMA)
 
 w_ISMA = w_ISMA.reshape(w_ISMA.size,1)
-ISMArms = sqrt((1.0/m)*sum((w_ISMA-w)**2.0))
+ISMArms = sqrt(mean(square(w_ISMA-w)))
 print ISMArms
 
 plt.show()
