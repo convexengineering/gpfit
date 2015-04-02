@@ -24,7 +24,7 @@ end
 defaults.bverbose = true;
 %defaults.bplot = true;
 defaults.lambdainit = 0.02;
-defaults.maxiter = 200;
+defaults.maxiter = 5000;
 defaults.maxtime = 5;
 defaults.tolgrad = sqrt(eps);
 defaults.tolrms = 1e-7;

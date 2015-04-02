@@ -36,7 +36,7 @@ def LM(residfun,initparams):
 	defaults['bverbose'] = False
 	#defaults['bplot'] = True
 	defaults['lambdainit'] = 0.02
-	defaults['maxiter'] = 199
+	defaults['maxiter'] = 5000
 	defaults['maxtime'] = 5
 	defaults['tolgrad'] = sqrt(float_info.epsilon)
 	defaults['tolrms'] = 1E-7
@@ -71,7 +71,7 @@ def LM(residfun,initparams):
 	RMStraj[0] = rms
 	gradcutoff = options['tolgrad']
 
-	#Display infor for 1st iter
+	#Display info for 1st iter
 	if options['bverbose']:
 		print('\n					First-Order						Norm of \n')
 		print('Iter		Residual		optimality			Lambda			step		Jwarp \n')
@@ -82,7 +82,7 @@ def LM(residfun,initparams):
 
 		if itr == options['maxiter']:
 			if options['bverbose']:
-				print 'Reached maxiter'
+				print 'Reached maximum number of iterations'
 			break
 
 		elif time() - t > options['maxtime']:
