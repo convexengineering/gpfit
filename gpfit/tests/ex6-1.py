@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 
 m = 501
 
-u = linspace(1,3,m)
-#u = logspace(0,log10(3),501)
+u = logspace(0,log10(3),501)
 u = u.reshape(u.size,1)
 w = (u**2 + 3)/(u+1)**2
 w = w.reshape(w.size,1)
