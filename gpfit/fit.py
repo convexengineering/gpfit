@@ -8,12 +8,16 @@ from numpy import append, ones, exp, sqrt, mean, square
 
 def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 	'''
+	Fits a log-convex function to multivariate data and returns a GP-compatible constraint
+
 	INPUTS
 		xdata:		Independent variable data 
 					2D numpy array [nDim, nPoints]
 
 		ydata:		Dependent variable data
 					1D numpy array [nPoints,]
+
+		K:			Number of terms in the fit
 
 		ftype:		Fit type
 					"ISMA" (default) or "SMA" or "MA"
@@ -23,7 +27,10 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 					Default: [u1, u2, ...., uN, w]
 
 	OUTPUTS
+		cstrt:		GPkit constraint object
+					If K = 1, this is automatically made into an equality constraint
 
+		rmsErr:		RMS Error
 	'''
 
 	# Check data is in correct form
@@ -57,13 +64,23 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 		def rfun (p): return generic_resid_fun(implicit_softmax_affine, xdata, ydata, p)
 		[params, RMStraj] = LM(rfun, append(bainit.flatten('F'), alphainit*ones((K,1))))
 
+		# Approximated data
+		y_ISMA, _ = implicit_softmax_affine(xdata, params)
+		w_ISMA = exp(y_ISMA)
+
+		# RMS error
+		w = (exp(ydata)).T[0]
+		rmsErr = sqrt(mean(square(w_ISMA-w)))
+
 		alpha = 1./params[range(-K,0)]
 
+		# A: exponent parameters, B: coefficient parameters
 		A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
 		B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
 
 		print_str = print_ISMA(A, B, alpha, d, K)
 
+		# Calculate c's and exp's for creating GPkit objects
 		cs = []
 		exps = []
 		for k in range(K):
@@ -73,7 +90,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 				expdict[varNames[i]] = alpha[k] * A[k*d + i]
 			expdict[varNames[-1]] = -alpha[k]
 			exps.append(expdict)
-
+			
 		cs = tuple(cs)
 		exps = tuple(exps)
 
@@ -84,14 +101,6 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 		# # If only one term, automatically make an equality constraint
 		if K == 1:
 			cstrt = MonoEQConstraint(cstrt,1)
-
-		# Output data over specified range? something like:
-		w_ISMA, _ = implicit_softmax_affine(xdata, params)
-		w_ISMA = exp(w_ISMA)
-
-		# RMS error
-		w = (exp(ydata)).T[0]
-		rmsErr = sqrt(mean(square(w_ISMA-w)))
 
 	elif ftype == "SMA":
 
