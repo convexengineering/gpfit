@@ -29,6 +29,6 @@ def generic_resid_fun(yfun, xdata, ydata, params):
     '''
 
     [yhat, drdp] = yfun(xdata, params)
-    r = yhat - ydata.T[0] # Hacky way to perform elementwise subtraction between a row vector and a column vector
+    r = yhat - ydata.T[0]
     
     return r, drdp
