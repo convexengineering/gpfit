@@ -44,7 +44,6 @@ def armadillo():
 	K = 3
 	compute_fit(X,Y,Z,K)
 
-
 def compute_fit(X,Y,Z,K):
 	u1, u2 = X, Y
 

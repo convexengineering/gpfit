@@ -1,6 +1,6 @@
 from gpfit.compare_fits import compare_fits
 from gpfit.implicit_softmax_affine import implicit_softmax_affine
-from numpy import linspace, logspace, log, exp, log10, sqrt, square, mean
+from numpy import logspace, log, exp, log10, sqrt, square, mean
 import matplotlib.pyplot as plt
 
 m = 501
@@ -9,7 +9,6 @@ u = logspace(0,log10(3),501)
 u = u.reshape(u.size,1)
 w = (u**2 + 3)/(u+1)**2
 w = w.reshape(w.size,1)
-
 
 x = log(u)
 y = log(w)
