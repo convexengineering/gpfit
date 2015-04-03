@@ -8,8 +8,8 @@ def plot_MA_fit(PAR_MA, K):
 
 # SMA
 def plot_SMA_fit(PAR_SMA, K):
-	A = PAR_MA[[i for i in range(K) if i % 3 != 0]]
-	B = PAR_MA[[i for i in range(K) if i % 3 == 0]]
+    A = PAR_MA[[i for i in range(K) if i % 3 != 0]]
+    B = PAR_MA[[i for i in range(K) if i % 3 == 0]]
 
 
 
