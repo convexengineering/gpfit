@@ -1,9 +1,10 @@
 from implicit_softmax_affine import implicit_softmax_affine
+from softmax_affine import softmax_affine
 from LM import LM
 from generic_resid_fun import generic_resid_fun
 from max_affine_init import max_affine_init
 from print_fit import print_ISMA, print_SMA, print_MA
-from gpkit.nomials import Posynomial, Constraint, MonoEQConstraint
+from gpkit.nomials import Posynomial, Monomial, Constraint, MonoEQConstraint
 from numpy import append, ones, exp, sqrt, mean, square
 
 def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
@@ -95,6 +96,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
         exps = tuple(exps)
 
         # Create gpkit objects
+        # ISMA returns a constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
         posy  = Posynomial(exps, cs)
         cstrt = Constraint(posy,1)
 
@@ -107,12 +109,48 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
         def rfun (p): return generic_resid_fun(softmax_affine, xdata, ydata, p)
         [params, RMStraj] = LM(rfun, append(bainit.flatten('F'), alphainit))
 
+        # Approximated data
+        y_SMA, _ = softmax_affine(xdata, params)
+        w_SMA = exp(y_SMA)
+
+        # RMS error
+        w = (exp(ydata)).T[0]
+        rmsErr = sqrt(mean(square(w_SMA-w)))
+
         alpha = 1./params[-1]
 
         A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
         B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
+        print A
+        print B
 
         print_str = print_SMA(A, B, alpha, d, K)
+
+        # Calculate c's and exp's for creating GPkit objects
+        cs = []
+        exps = []
+        for k in range(K):
+            cs.append(exp(alpha * B[k]))
+            expdict = {}
+            for i in range(d):
+                expdict[varNames[i]] = alpha * A[k*d + i]
+            exps.append(expdict)
+            
+        cs = tuple(cs)
+        exps = tuple(exps)
+
+        # Creates dictionary for the monomial side of the constraint
+        w_exp = {varNames[-1]: alpha}
+
+        # Create gpkit objects
+        # SMA returns a constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
+        posy  = Posynomial(exps, cs)
+        mono = Monomial(w_exp,1)
+        cstrt = Constraint(posy,mono)
+
+        # # If only one term, automatically make an equality constraint
+        if K == 1:
+            cstrt = MonoEQConstraint(cstrt,1)
 
 
     elif ftype == "MA":
