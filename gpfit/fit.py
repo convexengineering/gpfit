@@ -1,5 +1,6 @@
 from implicit_softmax_affine import implicit_softmax_affine
 from softmax_affine import softmax_affine
+from max_affine import max_affine
 from LM import LM
 from generic_resid_fun import generic_resid_fun
 from max_affine_init import max_affine_init
@@ -62,7 +63,8 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
     if ftype == "ISMA":
 
-        def rfun (p): return generic_resid_fun(implicit_softmax_affine, xdata, ydata, p)
+        def rfun (p):
+            return generic_resid_fun(implicit_softmax_affine, xdata, ydata, p)
         [params, RMStraj] = LM(rfun, append(bainit.flatten('F'), alphainit*ones((K,1))))
 
         # Approximated data
@@ -106,7 +108,8 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
     elif ftype == "SMA":
 
-        def rfun (p): return generic_resid_fun(softmax_affine, xdata, ydata, p)
+        def rfun (p):
+            return generic_resid_fun(softmax_affine, xdata, ydata, p)
         [params, RMStraj] = LM(rfun, append(bainit.flatten('F'), alphainit))
 
         # Approximated data
@@ -155,11 +158,36 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
     elif ftype == "MA":
 
+        def rfun(p):
+            return generic_resid_fun(max_affine, xdata, ydata, p)
+        [params, RMStraj] = LM(rfun, bainit.flatten('F'))
+
+        # Approximated data
+        y_MA, _ = max_affine(xdata, params)
+        w_MA = exp(y_MA)
+
+        # RMS error
+        w = (exp(ydata)).T[0]
+        rmsErr = sqrt(mean(square(w_MA-w)))
+
         A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
         B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
 
         print_str = print_MA(A, B, d, K)
 
+        w_exp = {varNames[-1]: 1}
+        mono1 = Monomial(w_exp,1)
+
+        cstrt = []
+        for k in range(K):
+            cs = exp(B[k])
+            
+            exps = {}
+            for i in range(d):
+                exps[varNames[i]] = A[k*d + i]
+            mono2 = Monomial(exps,cs)
+            cstrt1 = Constraint(mono2, mono1)
+            cstrt.append(cstrt1)
 
     return cstrt, rmsErr
 
