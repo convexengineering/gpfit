@@ -13,26 +13,31 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
     Fits a log-convex function to multivariate data and returns a GP-compatible constraint
 
     INPUTS
-        xdata:        Independent variable data 
-                    2D numpy array [nDim, nPoints]
+        xdata:      Independent variable data 
+                        2D numpy array [nDim, nPoints]
 
-        ydata:        Dependent variable data
-                    1D numpy array [nPoints,]
+        ydata:      Dependent variable data
+                        1D numpy array [nPoints,]
 
-        K:            Number of terms in the fit
+        K:          Number of terms in the fit
+                        integer > 0
 
-        ftype:        Fit type
-                    "ISMA" (default) or "SMA" or "MA"
+        ftype:      Fit type
+                        string: can be one of the following: "ISMA" (default), "SMA" or "MA"
 
-        varNames:    Variable names (list)
-                    independent variables first, with dependent variable at the end
-                    Default: [u1, u2, ...., uN, w]
+        varNames:   List of variable names strings
+                        Independent variables first, with dependent variable at the end
+                        Default value: ['u_1', 'u_2', ...., 'u_d', w]
 
     OUTPUTS
-        cstrt:        GPkit constraint object
-                    If K = 1, this is automatically made into an equality constraint
+        cstrt:      GPkit Constraint object
+                        For K > 1, this will be a posynomial inequality constraint
+                        If K = 1, this is automatically made into an equality constraint
+                        If MA fit and K > 1, this is a list of constraint objects
 
-        rmsErr:        RMS Error
+        rmsErr:     RMS error
+                        Root mean square error between original (not log transformed)
+                        data and function fit.
     '''
 
     # Check data is in correct form
@@ -124,8 +129,6 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
         A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
         B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
-        print A
-        print B
 
         print_str = print_SMA(A, B, alpha, d, K)
 
