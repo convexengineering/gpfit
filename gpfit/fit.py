@@ -189,5 +189,8 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
             cstrt1 = Constraint(mono2, mono1)
             cstrt.append(cstrt1)
 
+        if K == 1:
+            cstrt = MonoEQConstraint(mono2, mono1)
+
     return cstrt, rmsErr
 
