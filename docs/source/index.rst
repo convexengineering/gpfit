@@ -15,3 +15,4 @@ Table of Contents
        gettingstarted
        examples
        citinggpfit
+       glossary.rst
