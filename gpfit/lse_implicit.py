@@ -20,11 +20,12 @@ def lse_implicit(x, alpha):
                         1D numpy array [nPoints]
 
             dydx:   Deriv of y wrt each x
-                        2D numpy array[nPoints x nDim]
+                        2D numpy array[nPoints x K]
 
             dydalpha:
                         2D array [nPoints x nDim]
     '''
+
     bverbose = False
 
     tol = 10*spacing(1)
@@ -79,5 +80,6 @@ def lse_implicit(x, alpha):
 
     dydx = alphaexpo/(tile(sumalphaexpo, (nx, 1))).T
     dydalpha = (h - Lmat)*expo/(tile(sumalphaexpo, (nx, 1))).T
+
 
     return y, dydx, dydalpha
