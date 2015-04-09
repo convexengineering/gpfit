@@ -8,10 +8,10 @@ def max_affine(x, ba, flag=False):
 
     INPUTS:
             x:      Independent variable data
-                        2D array [n x 1]
+                        2D array [nPoints x nDim]
 
             ba:     max affine fit parameters
-                        2D array [dimx+1]
+                        2D array [b1, a11,..a1k,.... bk,ak1,..akk]
 
     OUTPUTS:
             y:      MA approximation to log transformed data
