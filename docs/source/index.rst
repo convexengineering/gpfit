@@ -1,22 +1,19 @@
-.. GPfit documentation master file, created by
-   sphinx-quickstart on Wed Apr  8 20:01:29 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to GPfit's documentation!
-=================================
-
-Contents:
-
-.. toctree::
-   :maxdepth: 2
+.. figure::  GPfit_logo.eps
+   :width: 250 px
 
 
+GPkit is a Python package for fitting GP-compatible constraints to data.
+It requires installation of [GPkit](http://gpkit.readthedocs.org/en/latest/).
+This [paper](http://web.mit.edu/~whoburg/www/papers/gp_fitting.pdf) describes the approach.
 
-Indices and tables
+Table of Contents
 ==================
+    .. toctree::
+       :maxdepth: 2
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+       installation
+       gettingstarted
+       examples
+       glossary
+       citinggpfit
+       releasenotes
