@@ -28,6 +28,11 @@ tests += t_implicit_softmax_affine.tests
 import t_print_fit
 tests += t_print_fit.tests
 
+import t_ex6_1
+tests += t_ex6_1.tests
+
+import t_ex6_3
+tests += t_ex6_3.tests
 
 def run():
     suite = unittest.TestSuite()
