@@ -6,7 +6,7 @@ from generic_resid_fun import generic_resid_fun
 from max_affine_init import max_affine_init
 from print_fit import print_ISMA, print_SMA, print_MA
 from gpkit.nomials import Posynomial, Monomial, Constraint, MonoEQConstraint
-from numpy import append, ones, exp, sqrt, mean, square, hstack
+from numpy import append, ones, exp, sqrt, mean, square
 
 def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
     '''
@@ -26,11 +26,11 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
                         integer > 0
 
         ftype:      Fit type
-                        string: can be one of the following: "ISMA" (default), "SMA" or "MA"
+                        one of the following strings: "ISMA" (default), "SMA" or "MA"
 
         varNames:   List of variable names strings
                         Independent variables first, with dependent variable at the end
-                        Default value: ['u_1', 'u_2', ...., 'u_d', w]
+                        Default value: ['u_1', 'u_2', ...., 'u_d', 'w']
 
     OUTPUTS
         cstrt:      GPkit Constraint object
