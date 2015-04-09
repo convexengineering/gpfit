@@ -22,7 +22,7 @@ GPfit approximates a set of multivariate data points
 
 with a GP-compatible function, where :math:`\mathbf{u}_i` are independent variable data, :math:`w_i` are dependent variable data, and :math:`m` is the number of data points.
 
-More specifically, GPfit takes logarithmically transformed data as an input and returns a `GPkit <http://gpkit.readthedocs.org>`_ constraint object as an output. This can then be used as part of a `GPkit <http://gpkit.readthedocs.org>`_ model to solve a geometric program. Additional functionality of GPfit includes printing the resulting function fit, calculating the RMS error between the original data and the fitted function, and (if :math:`d \leq 2`) plotthing the fitted function over the original data. 
+More specifically, GPfit takes logarithmically transformed data as an input and returns a `GPkit <http://gpkit.readthedocs.org>`_ constraint object as an output. This can then be used as part of a `GPkit <http://gpkit.readthedocs.org>`_ model to solve a geometric program. Additional functionality of GPfit includes printing the resulting function fit, calculating the RMS error, and (if :math:`d \leq 2`) plotting the fitted function over the original data. 
 
 GPfit is intended for use with data that can be well approximated by a log-convex function. A function is *log-convex* if it is convex after both the independent and dependent variables are transformed into logarithmic space.
 
