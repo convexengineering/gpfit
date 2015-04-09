@@ -1,5 +1,5 @@
 from numpy import linspace, logspace, log, exp, log10
-from fit import fit
+from gpfit.fit import fit
 
 m = 501
 
