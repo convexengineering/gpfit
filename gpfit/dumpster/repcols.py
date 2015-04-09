@@ -6,7 +6,7 @@ def repcols(matin, n):
     returns a matrix with n times as many columns as matin
     example: if matin is [a b c], repcols(matin, 2) returns [a a b b c c].
     
-    *Does not yet work for 1D arrays*
+    *Does not work for 1D arrays*
     '''
     nrow, ncol = matin.shape
 
