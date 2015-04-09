@@ -9,7 +9,7 @@ For an introduction to GP, please take a look at the `GPkit documentation <http:
 What is GP-compatible fitting?
 ==============================
 
-GP-compatible fitting is the process of fitting GP-compatible functions to data. The expression GP-compatible is used to describe constraints that can be written in the form of either a posynomial inequality or a monomial equality. It can also be used to describe a posynomial objective function. 
+GP-compatible fitting is the process of fitting GP-compatible functions to data. The expression *GP-compatible* is used to describe constraints that can be written in the form of either a posynomial inequality or a monomial equality. It can also be used to describe a posynomial objective function. 
 
 What does GPfit do?
 ===================
@@ -24,7 +24,7 @@ with a GP-compatible function, where :math:`\mathbf{u}_i` are independent variab
 
 More specifically, GPfit takes logarithmically transformed data as an input and returns a `GPkit <http://gpkit.readthedocs.org>`_ constraint object as an output. This can then be used as part of a `GPkit <http://gpkit.readthedocs.org>`_ model to solve a geometric program. Additional functionality of GPfit includes printing the resulting function fit, calculating the RMS error between the original data and the fitted function, and (if :math:`d \leq 2`) plotthing the fitted function over the original data. 
 
-GPfit is intended for use with data that can be well approximated by a log-convex function. A function is log-convex if it is convex after both the independent and dependent variables are transformed into logarithmic space.
+GPfit is intended for use with data that can be well approximated by a log-convex function. A function is *log-convex* if it is convex after both the independent and dependent variables are transformed into logarithmic space.
 
 GPfit can fit three different types of GP-compatible functions to data: Implicit Softmax Affine (ISMA) functions, Softmax Affine (SMA) functions, and Max Affine (MA) functions.
 
@@ -52,7 +52,7 @@ If a user specifies K = 1, GPfit will automatically return an equality constrain
 
 because this form of constraint is still GP-compatible and it is assumed that fits with one term will only be requested when an equality constraint is desired.
 
-The ISMA function is the most general and expressive of the three function classes that GPfit uses. For a given fitting problem and number of terms, there always exists an ISMA function with at least as small a residual as the best fit in both the corresponding softmax affine and max affine function classes. It is therefore the default choice of function for GPfit.
+The ISMA function is the most general and expressive of the three function classes that GPfit uses. For a given fitting problem and number of terms, there always exists an ISMA function with at least as small a residual as the best correpsonding fit from both the softmax affine and max affine function classes. It is therefore the default choice of function for GPfit.
 
 Softmax affine (SMA) functions
 ++++++++++++++++++++++++++++++
@@ -93,9 +93,13 @@ GPfit calculates a function fit of the form above and then translates this to a 
 
 .. math::
 
-   w \geq \max_{k=1..K} \left[ e^{b_k} \prod_{i=1}^d u_i^{a_{ik}} \right] , \hspace{1cm} k = 1 ... K.
+   w \geq  e^{b_k} \prod_{i=1}^d u_i^{a_{ik}}, \hspace{1cm} k = 1 ... K.
 
+If a user specifies K = 1, GPfit will automatically return an equality constraint of the form:
 
+.. math::
+
+    w =  e^{b} \prod_{i=1}^d u_i^{a_{i}}
 Where can I learn more?
 =======================
 
