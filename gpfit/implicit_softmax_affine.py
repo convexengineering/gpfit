@@ -1,27 +1,25 @@
 from numpy import ones, reshape, nan, inf, hstack, dot, tile
 from lse_implicit import lse_implicit
-from repcols import repcols
 
 def implicit_softmax_affine(x, params):
     '''
-    Params come in as a vector (with alphas last)
-    after reshaping (column-major), ba is dimx+1 by K
-    first row is b
-    rest is a
+    Evaluates implicit softmax affine function at values of x, given a set of
+    ISMA fit parameters.
 
     INPUTS:
             x:      Independent variable data
-                    [nx1 2D array]
+                        2D numpy array [nPoints x nDimensions]
 
             params: Fit parameters
-                    [2k+2? -element 1D array] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                        1D numpy array [(nDim + 2)*K,]
+                        [b1, a11, .. a1d, b2, a21, .. a2d, ...
+                         bK, aK1, aK2, .. aKd, alpha1, alpha2, ... alphaK]
 
     OUTPUTS:
-            y:
-                    [n-element 1D array], n is number of data points
+            y:      ISMA approximation to log transformed data
+                        1D numpy array [nPoints]
 
-            dydp:
-                    [n x 2k+2? 2D array]
+            dydp:   Jacobian matrix
 
     '''
 
@@ -32,7 +30,7 @@ def implicit_softmax_affine(x, params):
     alpha = params[-K:]
 
     #reshape ba to matrix
-    ba = ba.reshape(dimx+1, K, order='F') ######################################<<<<<<<
+    ba = ba.reshape(dimx+1, K, order='F')
 
     if any(alpha <= 0):
         y = inf*ones((npt,1))
@@ -47,7 +45,10 @@ def implicit_softmax_affine(x, params):
 
 
     y, dydz, dydalpha = lse_implicit(z, alpha)
-    dydba = repcols(dydz, dimx+1) * tile(X, (1, K)) #<<<<<<<<<<<<<<<<<<
+
+    nrow, ncol = dydz.shape
+    repmat = tile(dydz, (dimx+1, 1)).reshape(nrow, ncol*(dimx+1), order='F')
+    dydba = repmat * tile(X, (1, K))
     dydp = hstack((dydba, dydalpha))
 
     return y, dydp

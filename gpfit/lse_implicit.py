@@ -1,33 +1,29 @@
 from numpy import zeros, ones, spacing, exp, log, tile
 
-
 def lse_implicit(x, alpha):
     '''
     Implicit Log-sum-exponential function with derivatives
     - sums across the second dimension of x
     - returns one y for every row of x
-    - lse_implicit is a mapping R^n --> R, where n==size(x,2)
+    - lse_implicit is a mapping R^n --> R, where n number of dimensions
     - implementation: newton raphson steps to find f(x,y) = 0
 
     INPUTS:
-            x:      independent variable data?
-                    [(n x d) 2D array],
-                    n is number of data points
-                    d is number of dimensions
+            x:      independent variable data
+                        2D numpy array [nPoints x nDim]
 
-            alpha:  local softness parameter for each column of x
-                    [1D array with size(alpha)==size(x,2)]
+            alpha:  local softness parameter
+                        1D array [K] (K=number of terms)
 
     OUTPUTS:
-            y:      dependent variable fit. Returns one y for every row of x.
-                    [n-element 1D array], n is number of data points
+            y:      ISMA approximation to log transformed data
+                        1D numpy array [nPoints]
 
-            dydx:   dydx gives the deriv of each y wrt each x
-                    [(n x d) 2D array]
+            dydx:   Deriv of y wrt each x
+                        2D numpy array[nPoints x nDim]
 
             dydalpha:
-                    [(n x d) 2D array], n is number of data points
-
+                        2D array [nPoints x nDim]
     '''
     bverbose = False
 
@@ -35,7 +31,7 @@ def lse_implicit(x, alpha):
     npt, nx = x.shape
 
     if not alpha.size == nx:
-        raise Exception('alpha size mismatch')
+        raise ValueError('alpha size mismatch')
 
     alphamat = tile(alpha, (npt, 1))
 
@@ -53,7 +49,7 @@ def lse_implicit(x, alpha):
     # initial eval
     expo = exp(alphamat*(h-Lmat))
     alphaexpo = alphamat*expo
-    sumexpo = expo.sum(axis=1)  # todo: check that lack of transpose isnt issue
+    sumexpo = expo.sum(axis=1) 
     sumalphaexpo = alphaexpo.sum(axis=1)
     f = log(sumexpo)
     dfdL = -alphaexpo.sum(axis=1)/sumexpo
@@ -67,7 +63,7 @@ def lse_implicit(x, alpha):
         expo[i, :] = exp(alphamat[i, :] * (h[i, :] - Lmat[i, :]))
         alphaexpo[i, :] = alphamat[i, :] * expo[i, :]
         sumexpo[i] = expo[i, :].sum(axis=1)
-        sumalphaexpo[i, ] = alphaexpo[i, :].sum(axis=1)  # sumalphaexpo[i,:]
+        sumalphaexpo[i, ] = alphaexpo[i, :].sum(axis=1)
         f[i] = log(sumexpo[i])
         dfdL[i] = -sumalphaexpo[i, ]/sumexpo[i]
         neval = neval + 1

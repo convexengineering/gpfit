@@ -1,29 +1,27 @@
 from numpy import array, tile, exp, log
 
-
 def lse_scaled(x, alpha):
     '''
     Log-sum-exponential function with derivatives
     - sums across the second dimension of x
-    - note that lse_scaled is a mapping R^n --> R, where n==size(x,2)
+    - note that lse_scaled is a mapping R^n --> R
 
     INPUTS:
-            x:        independent variable data?
-                    [n x ? 2D array], n is number of data points
+            x:      independent variable data
+                        2D numpy array [nPoints x nDim]
 
-            alpha:    softness parameter \in R
-                    Double
+            alpha:  local softness parameter
+                        1D array [K] (K=number of terms)
 
     OUTPUTS:
-            y: dependent variable fit. Returns one y for every row of x.
-                    [n-element 1D array], n is number of data points
+            y:      ISMA approximation to log transformed data
+                        1D numpy array [nPoints]
 
-            dydx: dydx gives the deriv of each y wrt each x
-                    [n x ? 2D array]
+            dydx:   Deriv of y wrt each x
+                        2D numpy array[nPoints x nDim]
 
             dydalpha:
                     [n-element 1D array], n is number of data points
-
     '''
 
     _, n = x.shape

@@ -3,20 +3,22 @@ from numpy import zeros, hstack, reshape, ones, dot, arange, equal, ix_
 
 def max_affine(x, ba, flag=False):
     '''
-    ba may come in as a matrix or as a vector
-    after reshaping (column-major), ba is dimx+1 by K
-    first row is b
-    rest is a
+    Evaluates max affine function at values of x, given a set of
+    max affine fit parameters. 
 
     INPUTS:
-            x:         [n x 1 2D column vector]
+            x:      Independent variable data
+                        2D array [n x 1]
 
-            ba:     [2? x k 2D array]
+            ba:     max affine fit parameters
+                        2D array [dimx+1]
 
     OUTPUTS:
-            y:         [n-element 1D array]
+            y:      MA approximation to log transformed data
+                        1D array [nPoints]
 
-            dydba:     [n x ba.size 2D array]
+            dydba:  dydba
+                        2D array [nPoints x (nDim + 1)*K]
 
     '''
     npt, dimx = x.shape

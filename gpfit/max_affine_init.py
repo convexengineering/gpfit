@@ -9,14 +9,15 @@ def max_affine_init(x, y, K):
     per affine function)
 
     INPUTS:
-        x:         Independent variable data
-                [n x 1 2D column vector]
+        x:      Independent variable data
+                    2D column vector [n x 1]
 
-        y:        Dependent variable data
-                [n x 1 2D column vector]
+        y:      Dependent variable data
+                    2D column vector [n x 1]
 
     OUTPUTS:
-        ba:        [dimx+1 x k 2D array]
+        ba:     Initial b and a parameters
+                    2D array [(dimx+1) x k]
 
     '''
     defaults = {}
@@ -48,7 +49,7 @@ def max_affine_init(x, y, K):
     why this way? some points will be shared by multiple partitions, but
     resulting max-affine fit will tend to be good. (as opposed to solving least-norm version)
     '''
-    for k in range(K): #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ask woody about this
+    for k in range(K):
 
         inds = mindistind == k
 
@@ -63,8 +64,8 @@ def max_affine_init(x, y, K):
             if i < dimx+1:
                 #obviously, at least need dimx+1 points. fill these in before
                 #checking any ranks
-                inds[sortdistind[i+1:dimx+1]] = 1 #<<<<<<<<<<<check index
-                i = dimx+1 #<<<<<<<<<<<<<<<<<<<check index
+                inds[sortdistind[i+1:dimx+1]] = 1 #todo: check index
+                i = dimx+1 #todo: check index
 
             #now add points until rank condition satisfied
             while matrix_rank(X[inds, :]) < dimx+1:

@@ -4,23 +4,34 @@ from scipy.sparse import spdiags, issparse
 from time import time
 from sys import float_info
 
-
 def LM(residfun, initparams):
     '''
     Levenber-Marquardt alogrithm
-    Minimizes sum of squared error of residfun(params)
+    Minimizes sum of squared error of residual function
 
     INPUTS:
-        residfun:     [r, drpdp] = residfun(params)
-                        if residfun is (ydata - y(params)), drdp = - dydp
-                        if residfun is (y(params) - ydata), drdp = dydp
+        residfun:   Handle to residual function (generic_resid_fun())    
+                        [r, drpdp] = residfun(params)
+                            if residfun is (ydata - y(params)), drdp = - dydp
+                            if residfun is (y(params) - ydata), drdp = dydp
 
-        params:     column vector of initial param guesses
+        initparams: Initial fit parameter guesses
+                        1D array
 
     OUTPUTS:
-        params:     best params found
+        params:     Fit parameters (a's, b', alpha's)
+                        1D array, size depends on fit type
+                        ISMA:
+                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
+                             bK, aK1, aK2, .. aKd, alpha1, ... alphaK]
+                        SMA:
+                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
+                             bK, aK1, aK2, .. aKd, alpha]
+                        MA:
+                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
+                             bK, aK1, aK2, .. aKd]
 
-        RMStraj:     history of RMS errors after each step
+        RMStraj:    History of RMS errors after each step
                         first point is initialization
     '''
 
@@ -30,7 +41,7 @@ def LM(residfun, initparams):
     nparam = initparams.size
 
     if initparams.ndim > 1:
-        raise Exception('params should be a vector')
+        raise ValueError('params should be a vector')
 
     # Set defaults; incorporate incoming options
     defaults = {}
@@ -66,7 +77,7 @@ def LM(residfun, initparams):
     # Initializations
     itr = 0
     Jissparse = issparse(J)
-    diagJJ = sum(J*J, 0).T  # <<< why not use diag()?, what does ( ,1) do?
+    diagJJ = sum(J*J, 0).T
     zeropad = zeros((nparam, 1))
     lamb = options['lambdainit']
     RMStraj = zeros((options['maxiter'] + 1, 1))

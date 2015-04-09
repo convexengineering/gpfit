@@ -25,7 +25,6 @@ def generic_resid_fun(yfun, xdata, ydata, params):
         r:      residual [n-element 1D array] n = number of data points
 
         drdp:   Jacobian [n x m matrix]
-
     '''
 
     [yhat, drdp] = yfun(xdata, params)
