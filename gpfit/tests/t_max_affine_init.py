@@ -1,34 +1,48 @@
 import unittest
 from gpfit.max_affine_init import max_affine_init
-from numpy import arange, newaxis
+from numpy import arange, newaxis, vstack, log, exp
+from numpy.random import random_sample
 
-class t_max_affine_init_K_equals_2(unittest.TestCase):
+class t_max_affine_init_K2(unittest.TestCase):
 
     x = arange(0.,16.)[:,newaxis]
     y = arange(0.,16.)[:,newaxis]
     K = 2
     ba = max_affine_init(x, y, K)
 
-    def test_ba_ndim(self):
+    def test_ba_ndim_K2(self):
         self.assertEqual(self.ba.ndim, 2)
 
-    def test_ba_shape(self):
+    def test_ba_shape_K2(self):
         
         npt,dimx = self.x.shape
 
         self.assertEqual(self.ba.shape, (dimx+1 ,self.K))
 
-class t_max_affine_init_other_K(unittest.TestCase):
+class t_max_affine_init_K4(unittest.TestCase):
+    '''
+    This unit test ensures that max affine init produces an array 
+    of the expected shape and size
+    '''
+    Vdd = random_sample(1000,) + 1
+    Vth = 0.2*random_sample(1000,) + 0.2
+    P = Vdd**2 + 30*Vdd*exp(-(Vth-0.06*Vdd)/0.039)
+    u = vstack((Vdd,Vth))
+    x = log(u)
+    y = log(P)
+    x = x.T
+    y = y.reshape(y.size,1)
+    K = 4
 
-    def test_K_as_an_array_of_ks(self):
-        pass
+    ba = max_affine_init(x,y,K)
 
-    def test_K_greater_than_2(self):
-        pass
-
+    def test_ba_shape_K4(self):
+        self.assertEqual(self.ba.shape, (3,4))
 
 
-tests = [t_max_affine_init_K_equals_2]
+
+tests = [t_max_affine_init_K2,
+         t_max_affine_init_K4]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()

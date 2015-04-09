@@ -10,10 +10,10 @@ def max_affine_init(x, y, K):
 
     INPUTS:
         x:      Independent variable data
-                    2D column vector [n x 1]
+                    2D column vector [nPoints x nDims]
 
         y:      Dependent variable data
-                    2D column vector [n x 1]
+                    2D column vector [nPoints x 1]
 
     OUTPUTS:
         ba:     Initial b and a parameters
@@ -30,7 +30,7 @@ def max_affine_init(x, y, K):
     ba = zeros((dimx+1,K))
 
     if K*(dimx+1) > npt:
-        raise Exception('Not enough data points')
+        raise ValueError('Not enough data points')
 
     # Choose K unique indices
     randinds = randperm(npt)[0:K]
