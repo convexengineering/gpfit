@@ -7,7 +7,6 @@ from max_affine_init import max_affine_init
 from print_fit import print_ISMA, print_SMA, print_MA
 from gpkit.nomials import Posynomial, Monomial, Constraint, MonoEQConstraint
 from numpy import append, ones, exp, sqrt, mean, square, hstack
-from plot_fit import plot_fit
 
 def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
     '''
@@ -82,7 +81,8 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
         # RMS error
         w = (exp(ydata)).T[0]
-        rmsErr = sqrt(mean(square(w_ISMA-w)))
+        #rmsErr = sqrt(mean(square(w_ISMA-w)))
+        rmsErr = sqrt(mean(square(y_ISMA-ydata.T[0])))
 
         alpha = 1./params[range(-K,0)]
 
@@ -127,7 +127,8 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
         # RMS error
         w = (exp(ydata)).T[0]
-        rmsErr = sqrt(mean(square(w_SMA-w)))
+        #rmsErr = sqrt(mean(square(w_SMA-w)))
+        rmsErr = sqrt(mean(square(y_SMA-ydata.T[0])))
 
         alpha = 1./params[-1]
 
@@ -175,7 +176,8 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
         # RMS error
         w = (exp(ydata)).T[0]
-        rmsErr = sqrt(mean(square(w_MA-w)))
+        #rmsErr = sqrt(mean(square(w_MA-w)))
+        rmsErr = sqrt(mean(square(y_MA-ydata.T[0])))
 
         A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
         B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
