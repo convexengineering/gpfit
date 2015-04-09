@@ -13,5 +13,4 @@ fit.py
 
 .. automodule:: gpfit.fit
     :members:
-    :undoc-members:
     :show-inheritance:
