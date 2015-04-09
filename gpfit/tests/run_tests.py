@@ -1,9 +1,6 @@
 import unittest
 tests = []
 
-import t_compare_fits
-tests += t_compare_fits.tests
-
 import t_LM
 tests += t_LM.tests
 
@@ -27,9 +24,6 @@ tests += t_softmax_affine.tests
 
 import t_implicit_softmax_affine
 tests += t_implicit_softmax_affine.tests
-
-import t_repcols
-tests += t_repcols.tests
 
 import t_print_fit
 tests += t_print_fit.tests
