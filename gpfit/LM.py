@@ -5,7 +5,13 @@ from time import time
 from sys import float_info
 
 
-def LM(residfun, initparams):
+def LM(residfun, initparams,
+       verbose=False,
+       lambdainit=0.02,
+       maxiter=5000,
+       maxtime=5.,
+       tolgrad=np.sqrt(float_info.epsilon),
+       tolrms=1e-7):
     """
     Levenberg-Marquardt alogrithm
     Minimizes sum of squared error of residual function
@@ -20,6 +26,18 @@ def LM(residfun, initparams):
             if residfun is (y(params) - ydata), drdp = dydp
     initparams: np.array (1D)
         Initial fit parameter guesses
+    verbose: bool
+        If true, print verbose output
+    lambdainit: float
+        Initial value for step size penalty lambda
+    maxiter: int
+        Maximum number of iterations before terminating
+    maxtime: float
+        Maximum total time (seconds) before terminating
+    tolgrad: float
+        First-order optimality tolerance
+    tolrms: float
+        Tolerance on change in rms error per iteration
 
     OUTPUTS
     -------
@@ -36,17 +54,6 @@ def LM(residfun, initparams):
 
     if initparams.ndim > 1:
         raise ValueError('params should be a vector')
-
-    # Set defaults; incorporate incoming options
-    defaults = {}
-    defaults['bverbose'] = False
-    # defaults['bplot'] = True
-    defaults['lambdainit'] = 0.02
-    defaults['maxiter'] = 5000
-    defaults['maxtime'] = 5
-    defaults['tolgrad'] = np.sqrt(float_info.epsilon)
-    defaults['tolrms'] = 1E-7
-    options = defaults
 
     # Define display formatting if required
     formatstr1 = '%5.0f        %9.6g        %9.3g\n'
@@ -73,13 +80,12 @@ def LM(residfun, initparams):
     Jissparse = issparse(J)
     diagJJ = sum(J*J, 0).T
     zeropad = np.zeros((nparam, 1))
-    lamb = options['lambdainit']
-    RMStraj = np.zeros((options['maxiter'] + 1, 1))
+    lamb = lambdainit
+    RMStraj = np.zeros((maxiter + 1, 1))
     RMStraj[0] = rms
-    gradcutoff = options['tolgrad']
 
     # Display info for 1st iter
-    if options['bverbose']:
+    if verbose:
         print('\n                    First-Order                        '
               'Norm of \n')
         print('Iter        Residual        optimality            Lambda'
@@ -89,23 +95,21 @@ def LM(residfun, initparams):
     # Main Loop
     while True:
 
-        if itr == options['maxiter']:
-            if options['bverbose']:
+        if itr == maxiter:
+            if verbose:
                 print 'Reached maximum number of iterations'
             break
 
-        elif time() - t > options['maxtime']:
-            if options['bverbose']:
-                print('Reached maxtime (' +
-                      repr(options['maxtime']) +
-                      ' seconds)')
+        elif time() - t > maxtime:
+            if verbose:
+                print 'Reached maxtime (%s seconds)' % maxtime
             break
         elif (itr >= 2 and
               abs(RMStraj[itr] - RMStraj[itr-2]) <
-              RMStraj[itr]*options['tolrms']):
+              RMStraj[itr]*tolrms):
             # Should really only allow this exit case
             # if trust region constraint is slack
-            if options['bverbose']:
+            if verbose:
                 print('RMS changed less than tolrms')
             break
 
@@ -148,12 +152,12 @@ def LM(residfun, initparams):
             maxgrad = norm(np.dot(r.T, J), np.inf)
             # dsp here so that all grad info is for updated point,
             # but lambda not yet updated
-            if options['bverbose']:
+            if verbose:
                 print formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
                                    max(diagJJ)/min(diagJJ))
 
-            if maxgrad < gradcutoff:
-                if options['bverbose']:
+            if maxgrad < tolgrad:
+                if verbose:
                     print('1st order optimality attained')
                 break
 
@@ -163,7 +167,7 @@ def LM(residfun, initparams):
             prev_trial_accepted = True
             params_updated = True
         else:
-            if options['bverbose']:
+            if verbose:
                 print formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
                                    max(diagJJ)/min(diagJJ))
             lamb = lamb*10
@@ -171,7 +175,7 @@ def LM(residfun, initparams):
             params_updated = False
 
     RMStraj = RMStraj[1:itr+1]
-    if options['bverbose']:
+    if verbose:
         print('Final RMS: ' + repr(rms))
 
     return params, RMStraj
