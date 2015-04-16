@@ -68,7 +68,8 @@ def LM(residfun, initparams,
     r.shape = (npt, 1)  # Make r into column vector
 
     if J.shape != (npt, nparam):
-        raise Exception('Jacobian size inconsistent')
+        raise ValueError('Jacobian size %s inconsistent with (%s, %s)' %
+                         (J.shape, npt, nparam))
 
     # "Accept" initial point
     rms = norm(r)/np.sqrt(npt)  # 2-norm
@@ -81,8 +82,7 @@ def LM(residfun, initparams,
     diagJJ = sum(J*J, 0).T
     zeropad = np.zeros((nparam, 1))
     lamb = lambdainit
-    RMStraj = np.zeros((maxiter + 1, 1))
-    RMStraj[0] = rms
+    RMStraj = [rms]
 
     # Display info for 1st iter
     if verbose:
@@ -121,7 +121,6 @@ def LM(residfun, initparams,
         if Jissparse:
             # spdiags takes the transpose of the matrix in matlab
             D = spdiags(np.sqrt(lamb*diagJJ), 0, nparam, nparam)
-            print 'is it? is it??'
         else:
             D = np.diag(np.sqrt(lamb*diagJJ))
 
@@ -141,7 +140,7 @@ def LM(residfun, initparams,
         # Check function value at trialp
         trialr, trialJ = residfun(trialp)
         trialrms = norm(trialr)/np.sqrt(npt)
-        RMStraj[itr] = trialrms
+        RMStraj.append(trialrms)
 
         # Accept or reject trial params
         if trialrms < rms:
@@ -174,7 +173,8 @@ def LM(residfun, initparams,
             prev_trial_accepted = False
             params_updated = False
 
-    RMStraj = RMStraj[1:itr+1]
+    assert len(RMStraj) == itr + 1
+    RMStraj = np.array(RMStraj)
     if verbose:
         print('Final RMS: ' + repr(rms))
 

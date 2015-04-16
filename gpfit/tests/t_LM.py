@@ -26,7 +26,7 @@ class t_LM(unittest.TestCase):
         pass
 
     def test_RMStraj_ndim(self):
-        self.assertEqual(self.RMStraj.ndim, 2)
+        self.assertEqual(self.RMStraj.ndim, 1)
 
 tests = [t_LM]
 
