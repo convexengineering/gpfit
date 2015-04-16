@@ -4,36 +4,30 @@ from scipy.sparse import spdiags, issparse
 from time import time
 from sys import float_info
 
+
 def LM(residfun, initparams):
-    '''
-    Levenber-Marquardt alogrithm
+    """
+    Levenberg-Marquardt alogrithm
     Minimizes sum of squared error of residual function
 
-    INPUTS:
-        residfun:   Handle to residual function (generic_resid_fun())    
-                        [r, drpdp] = residfun(params)
-                            if residfun is (ydata - y(params)), drdp = - dydp
-                            if residfun is (y(params) - ydata), drdp = dydp
+    INPUTS
+    ------
+    residfun: function
+        Mapping from parameters to residuals, of the form
+        (r, drdp) = residfun(params)
+        Examples:
+            if residfun is (ydata - y(params)), drdp = - dydp
+            if residfun is (y(params) - ydata), drdp = dydp
+    initparams: np.array (1D)
+        Initial fit parameter guesses
 
-        initparams: Initial fit parameter guesses
-                        1D array
-
-    OUTPUTS:
-        params:     Fit parameters (a's, b', alpha's)
-                        1D array, size depends on fit type
-                        ISMA:
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd, alpha1, ... alphaK]
-                        SMA:
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd, alpha]
-                        MA:
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd]
-
-        RMStraj:    History of RMS errors after each step
-                        first point is initialization
-    '''
+    OUTPUTS
+    -------
+    params: np.array (1D)
+        Parameter vector that locally minimizes norm(residfun, 2)
+    RMStraj: np.array
+        History of RMS errors after each step (first point is initialization)
+    """
 
     t = time()
 
