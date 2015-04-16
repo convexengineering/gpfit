@@ -1,5 +1,5 @@
-from numpy import sqrt, shape, zeros, vstack, dot, ndim, inf, diag
-from numpy.linalg import inv, norm, lstsq
+import numpy as np
+from numpy.linalg import norm
 from scipy.sparse import spdiags, issparse
 from time import time
 from sys import float_info
@@ -44,7 +44,7 @@ def LM(residfun, initparams):
     defaults['lambdainit'] = 0.02
     defaults['maxiter'] = 5000
     defaults['maxtime'] = 5
-    defaults['tolgrad'] = sqrt(float_info.epsilon)
+    defaults['tolgrad'] = np.sqrt(float_info.epsilon)
     defaults['tolrms'] = 1E-7
     options = defaults
 
@@ -64,17 +64,17 @@ def LM(residfun, initparams):
         raise Exception('Jacobian size inconsistent')
 
     # "Accept" initial point
-    rms = norm(r)/sqrt(npt)  # 2-norm
-    maxgrad = norm(dot(r.T, J), ord=inf)  # Inf-norm
+    rms = norm(r)/np.sqrt(npt)  # 2-norm
+    maxgrad = norm(np.dot(r.T, J), ord=np.inf)  # Inf-norm
     prev_trial_accepted = False
 
     # Initializations
     itr = 0
     Jissparse = issparse(J)
     diagJJ = sum(J*J, 0).T
-    zeropad = zeros((nparam, 1))
+    zeropad = np.zeros((nparam, 1))
     lamb = options['lambdainit']
-    RMStraj = zeros((options['maxiter'] + 1, 1))
+    RMStraj = np.zeros((options['maxiter'] + 1, 1))
     RMStraj[0] = rms
     gradcutoff = options['tolgrad']
 
@@ -116,27 +116,27 @@ def LM(residfun, initparams):
         # since either lambda or J (or both) change every iteration
         if Jissparse:
             # spdiags takes the transpose of the matrix in matlab
-            D = spdiags(sqrt(lamb*diagJJ), 0, nparam, nparam)
+            D = spdiags(np.sqrt(lamb*diagJJ), 0, nparam, nparam)
             print 'is it? is it??'
         else:
-            D = diag(sqrt(lamb*diagJJ))
+            D = np.diag(np.sqrt(lamb*diagJJ))
 
         # Update augmented least squares system
         if params_updated:
             diagJJ = sum(J*J, 0).T
-            augJ = vstack((J, D))
+            augJ = np.vstack((J, D))
             r.shape = (npt, 1)
-            augr = vstack((-r, zeropad))
+            augr = np.vstack((-r, zeropad))
         else:
             augJ[npt:, :] = D  # modified from npt+1 ??
 
         # Compute step for this lambda
-        step = lstsq(augJ, augr)[0]
+        step = np.linalg.lstsq(augJ, augr)[0]
         trialp = (params + step.T)[0]
 
         # Check function value at trialp
         trialr, trialJ = residfun(trialp)
-        trialrms = norm(trialr)/sqrt(npt)
+        trialrms = norm(trialr)/np.sqrt(npt)
         RMStraj[itr] = trialrms
 
         # Accept or reject trial params
@@ -145,7 +145,7 @@ def LM(residfun, initparams):
             J = trialJ
             r = trialr
             rms = trialrms
-            maxgrad = norm(dot(r.T, J), inf)
+            maxgrad = norm(np.dot(r.T, J), np.inf)
             # dsp here so that all grad info is for updated point,
             # but lambda not yet updated
             if options['bverbose']:
