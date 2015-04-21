@@ -1,39 +1,51 @@
-from numpy import sqrt, shape, zeros, vstack, dot, ndim, inf, diag
-from numpy.linalg import inv, norm, lstsq
+import numpy as np
+from numpy.linalg import norm
 from scipy.sparse import spdiags, issparse
 from time import time
 from sys import float_info
 
-def LM(residfun, initparams):
-    '''
-    Levenber-Marquardt alogrithm
+
+def LM(residfun, initparams,
+       verbose=False,
+       lambdainit=0.02,
+       maxiter=5000,
+       maxtime=5.,
+       tolgrad=np.sqrt(float_info.epsilon),
+       tolrms=1e-7):
+    """
+    Levenberg-Marquardt alogrithm
     Minimizes sum of squared error of residual function
 
-    INPUTS:
-        residfun:   Handle to residual function (generic_resid_fun())    
-                        [r, drpdp] = residfun(params)
-                            if residfun is (ydata - y(params)), drdp = - dydp
-                            if residfun is (y(params) - ydata), drdp = dydp
+    INPUTS
+    ------
+    residfun: function
+        Mapping from parameters to residuals, of the form
+        (r, drdp) = residfun(params)
+        Examples:
+            if residfun is (ydata - y(params)), drdp = - dydp
+            if residfun is (y(params) - ydata), drdp = dydp
+    initparams: np.array (1D)
+        Initial fit parameter guesses
+    verbose: bool
+        If true, print verbose output
+    lambdainit: float
+        Initial value for step size penalty lambda
+    maxiter: int
+        Maximum number of iterations before terminating
+    maxtime: float
+        Maximum total time (seconds) before terminating
+    tolgrad: float
+        First-order optimality tolerance
+    tolrms: float
+        Tolerance on change in rms error per iteration
 
-        initparams: Initial fit parameter guesses
-                        1D array
-
-    OUTPUTS:
-        params:     Fit parameters (a's, b', alpha's)
-                        1D array, size depends on fit type
-                        ISMA:
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd, alpha1, ... alphaK]
-                        SMA:
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd, alpha]
-                        MA:
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd]
-
-        RMStraj:    History of RMS errors after each step
-                        first point is initialization
-    '''
+    OUTPUTS
+    -------
+    params: np.array (1D)
+        Parameter vector that locally minimizes norm(residfun, 2)
+    RMStraj: np.array
+        History of RMS errors after each step (first point is initialization)
+    """
 
     t = time()
 
@@ -42,17 +54,6 @@ def LM(residfun, initparams):
 
     if initparams.ndim > 1:
         raise ValueError('params should be a vector')
-
-    # Set defaults; incorporate incoming options
-    defaults = {}
-    defaults['bverbose'] = False
-    # defaults['bplot'] = True
-    defaults['lambdainit'] = 0.02
-    defaults['maxiter'] = 5000
-    defaults['maxtime'] = 5
-    defaults['tolgrad'] = sqrt(float_info.epsilon)
-    defaults['tolrms'] = 1E-7
-    options = defaults
 
     # Define display formatting if required
     formatstr1 = '%5.0f        %9.6g        %9.3g\n'
@@ -67,25 +68,24 @@ def LM(residfun, initparams):
     r.shape = (npt, 1)  # Make r into column vector
 
     if J.shape != (npt, nparam):
-        raise Exception('Jacobian size inconsistent')
+        raise ValueError('Jacobian size %s inconsistent with (%s, %s)' %
+                         (J.shape, npt, nparam))
 
     # "Accept" initial point
-    rms = norm(r)/sqrt(npt)  # 2-norm
-    maxgrad = norm(dot(r.T, J), ord=inf)  # Inf-norm
+    rms = norm(r)/np.sqrt(npt)  # 2-norm
+    maxgrad = norm(np.dot(r.T, J), ord=np.inf)  # Inf-norm
     prev_trial_accepted = False
 
     # Initializations
     itr = 0
     Jissparse = issparse(J)
     diagJJ = sum(J*J, 0).T
-    zeropad = zeros((nparam, 1))
-    lamb = options['lambdainit']
-    RMStraj = zeros((options['maxiter'] + 1, 1))
-    RMStraj[0] = rms
-    gradcutoff = options['tolgrad']
+    zeropad = np.zeros((nparam, 1))
+    lamb = lambdainit
+    RMStraj = [rms]
 
     # Display info for 1st iter
-    if options['bverbose']:
+    if verbose:
         print('\n                    First-Order                        '
               'Norm of \n')
         print('Iter        Residual        optimality            Lambda'
@@ -95,23 +95,21 @@ def LM(residfun, initparams):
     # Main Loop
     while True:
 
-        if itr == options['maxiter']:
-            if options['bverbose']:
+        if itr == maxiter:
+            if verbose:
                 print 'Reached maximum number of iterations'
             break
 
-        elif time() - t > options['maxtime']:
-            if options['bverbose']:
-                print('Reached maxtime (' +
-                      repr(options['maxtime']) +
-                      ' seconds)')
+        elif time() - t > maxtime:
+            if verbose:
+                print 'Reached maxtime (%s seconds)' % maxtime
             break
         elif (itr >= 2 and
               abs(RMStraj[itr] - RMStraj[itr-2]) <
-              RMStraj[itr]*options['tolrms']):
+              RMStraj[itr]*tolrms):
             # Should really only allow this exit case
             # if trust region constraint is slack
-            if options['bverbose']:
+            if verbose:
                 print('RMS changed less than tolrms')
             break
 
@@ -122,28 +120,27 @@ def LM(residfun, initparams):
         # since either lambda or J (or both) change every iteration
         if Jissparse:
             # spdiags takes the transpose of the matrix in matlab
-            D = spdiags(sqrt(lamb*diagJJ), 0, nparam, nparam)
-            print 'is it? is it??'
+            D = spdiags(np.sqrt(lamb*diagJJ), 0, nparam, nparam)
         else:
-            D = diag(sqrt(lamb*diagJJ))
+            D = np.diag(np.sqrt(lamb*diagJJ))
 
         # Update augmented least squares system
         if params_updated:
             diagJJ = sum(J*J, 0).T
-            augJ = vstack((J, D))
+            augJ = np.vstack((J, D))
             r.shape = (npt, 1)
-            augr = vstack((-r, zeropad))
+            augr = np.vstack((-r, zeropad))
         else:
             augJ[npt:, :] = D  # modified from npt+1 ??
 
         # Compute step for this lambda
-        step = lstsq(augJ, augr)[0]
+        step = np.linalg.lstsq(augJ, augr)[0]
         trialp = (params + step.T)[0]
 
         # Check function value at trialp
         trialr, trialJ = residfun(trialp)
-        trialrms = norm(trialr)/sqrt(npt)
-        RMStraj[itr] = trialrms
+        trialrms = norm(trialr)/np.sqrt(npt)
+        RMStraj.append(trialrms)
 
         # Accept or reject trial params
         if trialrms < rms:
@@ -151,15 +148,15 @@ def LM(residfun, initparams):
             J = trialJ
             r = trialr
             rms = trialrms
-            maxgrad = norm(dot(r.T, J), inf)
+            maxgrad = norm(np.dot(r.T, J), np.inf)
             # dsp here so that all grad info is for updated point,
             # but lambda not yet updated
-            if options['bverbose']:
+            if verbose:
                 print formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
                                    max(diagJJ)/min(diagJJ))
 
-            if maxgrad < gradcutoff:
-                if options['bverbose']:
+            if maxgrad < tolgrad:
+                if verbose:
                     print('1st order optimality attained')
                 break
 
@@ -169,15 +166,16 @@ def LM(residfun, initparams):
             prev_trial_accepted = True
             params_updated = True
         else:
-            if options['bverbose']:
+            if verbose:
                 print formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
                                    max(diagJJ)/min(diagJJ))
             lamb = lamb*10
             prev_trial_accepted = False
             params_updated = False
 
-    RMStraj = RMStraj[1:itr+1]
-    if options['bverbose']:
+    assert len(RMStraj) == itr + 1
+    RMStraj = np.array(RMStraj)
+    if verbose:
         print('Final RMS: ' + repr(rms))
 
     return params, RMStraj
