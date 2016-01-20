@@ -109,7 +109,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
         # Create gpkit objects
         # ISMA returns a constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
         posy  = Posynomial(exps, cs)
-        cstrt = Constraint(1,posy)
+        cstrt = (1 >= posy)
 
         # # If only one term, automatically make an equality constraint
         if K == 1:
@@ -157,7 +157,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
         # SMA returns a constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
         posy  = Posynomial(exps, cs)
         mono = Monomial(w_exp,1)
-        cstrt = Constraint(mono,posy)
+        cstrt = (mono >= posy)
 
         # # If only one term, automatically make an equality constraint
         if K == 1:
