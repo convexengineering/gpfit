@@ -34,6 +34,9 @@ tests += t_ex6_1.tests
 import t_ex6_3
 tests += t_ex6_3.tests
 
+from gpfit.tests import t_examples
+tests += t_examples.TESTS
+
 def run():
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
