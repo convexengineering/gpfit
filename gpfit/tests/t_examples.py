@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 import importlib
-
+from gpkit.tests.t_examples import StdoutCaptured, new_test 
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 EXAMPLE_DIR = os.path.abspath(FILE_DIR+'../../../docs/source/examples')
@@ -36,34 +36,6 @@ class TestExamples(unittest.TestCase):
     def test_t_ex6_1(self, example):
         pass
 
-class StdoutCaptured(object):
-    def __init__(self, logfilename=None):
-        self.logfilename = logfilename
-
-    def __enter__(self):
-        self.original_stdout = sys.stdout
-        if self.logfilename:
-            filepath = EXAMPLE_DIR+os.sep+"%s_output.txt" % self.logfilename
-            logfile = open(filepath, "w")
-        else:
-            logfile = NullFile()
-        sys.stdout = logfile
-
-    def __exit__(self, *args):
-        sys.stdout.close()
-        sys.stdout = self.original_stdout
-    
-def new_test(name):
-    def test(self):
-        logfilename = name if name not in IMPORTED_EXAMPLES else None
-        with StdoutCaptured(logfilename):
-            if name not in IMPORTED_EXAMPLES:
-                IMPORTED_EXAMPLES[name] = importlib.import_module(name)
-            else:
-                reload(IMPORTED_EXAMPLES[name])
-        getattr(self, name)(IMPORTED_EXAMPLES[name])
-    return test
-
 TESTS = []
 if os.path.isdir(EXAMPLE_DIR):
     sys.path.insert(0, EXAMPLE_DIR)
@@ -74,9 +46,9 @@ if os.path.isdir(EXAMPLE_DIR):
             setattr(TestExamples, name, old_test)  # move to a non-test fn
             delattr(TestExamples, fn)  # delete the old old_test
             new_name = "test_%s" % (name)
-            setattr(TestExamples, new_name, new_test(name))
+            setattr(TestExamples, new_name, new_test(name,None))
     TESTS.append(TestExamples)
 
 if __name__ == "__main__":
-    from gpfit.tests.helpers import run_tests
+    from gpkit.tests.helpers import run_tests
     run_tests(TESTS)
