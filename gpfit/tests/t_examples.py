@@ -33,7 +33,7 @@ class TestExamples(unittest.TestCase):
     #           self.assertAlmostEqual(example.sol["cost"], 3.121)
     #
 
-    def test_t_ex6_1(self, example):
+    def test_hoburgabbeel_ex6_1(self, example):
         pass
 
 TESTS = []
