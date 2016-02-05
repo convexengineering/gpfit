@@ -34,7 +34,9 @@ class TestExamples(unittest.TestCase):
     #
 
     def test_hoburgabbeel_ex6_1(self, example):
-        pass
+        assert example.errorMA < 1e-2
+        assert example.errorSMA < 1e-4
+        assert example.errorISMA < 1e-5
 
 TESTS = []
 if os.path.isdir(EXAMPLE_DIR):
@@ -46,7 +48,7 @@ if os.path.isdir(EXAMPLE_DIR):
             setattr(TestExamples, name, old_test)  # move to a non-test fn
             delattr(TestExamples, fn)  # delete the old old_test
             new_name = "test_%s" % (name)
-            setattr(TestExamples, new_name, new_test(name,None))
+            setattr(TestExamples, new_name, new_test(name, None))
     TESTS.append(TestExamples)
 
 if __name__ == "__main__":
