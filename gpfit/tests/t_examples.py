@@ -1,12 +1,10 @@
 import unittest
-import numpy as np
 import sys
 import os
-import importlib
-from gpkit.tests.t_examples import StdoutCaptured, new_test 
+from gpkit.tests.t_examples import new_test
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-EXAMPLE_DIR = os.path.abspath(FILE_DIR+'../../../docs/source/examples')
+EXAMPLE_DIR = os.path.abspath(FILE_DIR + '../../../docs/source/examples')
 IMPORTED_EXAMPLES = {}
 
 
@@ -48,7 +46,9 @@ if os.path.isdir(EXAMPLE_DIR):
             setattr(TestExamples, name, old_test)  # move to a non-test fn
             delattr(TestExamples, fn)  # delete the old old_test
             new_name = "test_%s" % (name)
-            setattr(TestExamples, new_name, new_test(name, None))
+            setattr(TestExamples,
+                    new_name,
+                    new_test(name=name, solver=None, exampledir=EXAMPLE_DIR))
     TESTS.append(TestExamples)
 
 if __name__ == "__main__":
