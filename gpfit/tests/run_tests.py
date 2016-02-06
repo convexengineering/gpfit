@@ -1,4 +1,5 @@
 import unittest
+from gpkit.tests.helpers import run_tests
 TESTS = []
 
 import t_LM
@@ -37,14 +38,20 @@ TESTS += t_ex6_3.tests
 import t_examples
 TESTS += t_examples.TESTS
 
-def run():
-    suite = unittest.TestSuite()
-    loader = unittest.TestLoader()
 
-    for t in TESTS:
-        suite.addTests(loader.loadTestsFromTestCase(t))
+def run(xmloutput=False):
+    """Run all gpfit unit tests.
 
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    Arguments
+    ---------
+    xmloutput: bool
+        If true, generate xml output files for continuous integration
+    """
+    if xmloutput:
+        run_tests(TESTS, xmloutput='test_reports')
+    else:
+        run_tests(TESTS)
+
 
 if __name__ == '__main__':
     run()
