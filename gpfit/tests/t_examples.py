@@ -1,7 +1,7 @@
 import unittest
 import sys
 import os
-from gpkit.tests.t_examples import new_test
+from gpkit.tests.t_examples import logged_example_testcase
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 EXAMPLE_DIR = os.path.abspath(FILE_DIR + '../../../docs/source/examples')
@@ -48,8 +48,11 @@ if os.path.isdir(EXAMPLE_DIR):
             new_name = "test_%s" % (name)
             setattr(TestExamples,
                     new_name,
-                    new_test(name=name, solver=None, exampledir=EXAMPLE_DIR))
+                    logged_example_testcase(name=name,
+                                            imported=IMPORTED_EXAMPLES,
+                                            exampledir=EXAMPLE_DIR))
     TESTS.append(TestExamples)
+
 
 if __name__ == "__main__":
     from gpkit.tests.helpers import run_tests
