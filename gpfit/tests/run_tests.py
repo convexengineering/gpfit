@@ -28,9 +28,6 @@ TESTS += t_implicit_softmax_affine.tests
 from gpfit.tests import t_print_fit
 TESTS += t_print_fit.tests
 
-from gpfit.tests import t_ex6_1
-TESTS += t_ex6_1.tests
-
 from gpfit.tests import t_ex6_3
 TESTS += t_ex6_3.tests
 
