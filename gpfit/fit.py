@@ -5,7 +5,8 @@ from LM import LM
 from generic_resid_fun import generic_resid_fun
 from max_affine_init import max_affine_init
 from print_fit import print_ISMA, print_SMA, print_MA
-from gpkit.nomials import Posynomial, Monomial, Constraint, MonoEQConstraint
+from gpkit.nomials import (Posynomial, Monomial, PosynomialInequality,
+                           MonomialEquality)
 from numpy import append, ones, exp, sqrt, mean, square
 
 def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
@@ -33,7 +34,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
                         Default value: ['u_1', 'u_2', ...., 'u_d', 'w']
 
     OUTPUTS
-        cstrt:      GPkit Constraint object
+        cstrt:      GPkit PosynomialInequality object
                         For K > 1, this will be a posynomial inequality constraint
                         If K = 1, this is automatically made into an equality constraint
                         If MA fit and K > 1, this is a list of constraint objects
@@ -113,7 +114,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
         # # If only one term, automatically make an equality constraint
         if K == 1:
-            cstrt = MonoEQConstraint(cstrt,1)
+            cstrt = MonomialEquality(cstrt, "=", 1)
 
     elif ftype == "SMA":
 
@@ -161,7 +162,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
         # # If only one term, automatically make an equality constraint
         if K == 1:
-            cstrt = MonoEQConstraint(cstrt,1)
+            cstrt = MonomialEquality(cstrt, "=", 1)
 
 
     elif ftype == "MA":
@@ -195,11 +196,11 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
             for i in range(d):
                 exps[varNames[i]] = A[k*d + i]
             mono2 = Monomial(exps,cs)
-            cstrt1 = Constraint(mono2, mono1)
+            cstrt1 = PosynomialInequality(mono2, "<=", mono1)
             cstrt.append(cstrt1)
 
         if K == 1:
-            cstrt = MonoEQConstraint(mono2, mono1)
+            cstrt = MonomialEquality(mono2, "=", mono1)
 
     return cstrt, rmsErr
 
