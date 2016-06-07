@@ -1,5 +1,7 @@
 import unittest
 from gpfit.max_affine_init import max_affine_init
+from .seed import SEED
+import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
 
@@ -24,6 +26,7 @@ class t_max_affine_init_K4(unittest.TestCase):
     This unit test ensures that max affine init produces an array 
     of the expected shape and size
     '''
+    np.random.seed(SEED)
     Vdd = random_sample(1000,) + 1
     Vth = 0.2*random_sample(1000,) + 0.2
     P = Vdd**2 + 30*Vdd*exp(-(Vth-0.06*Vdd)/0.039)

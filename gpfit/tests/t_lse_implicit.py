@@ -1,8 +1,9 @@
 import unittest
 from gpfit.lse_implicit import lse_implicit
+from .seed import SEED
+import numpy as np
 from numpy import arange, newaxis
 from numpy import log, exp, log10, vstack, array
-from numpy.random import rand
 
 class t_lse_implicit_1D(unittest.TestCase):
 
@@ -30,8 +31,10 @@ class t_lse_implicit_1D(unittest.TestCase):
 
 class t_lse_implicit_2D(unittest.TestCase):
 
+    np.random.seed(SEED)
+
     K = 4
-    x = rand(1000,K)
+    x = np.random.rand(1000,K)
     alpha = array([1.499, 13.703, 3.219, 4.148])
 
     y, dydx, dydalpha = lse_implicit(x,alpha)
