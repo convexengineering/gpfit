@@ -1,51 +1,51 @@
+"unit tests for max_affine_init function"
 import unittest
-from gpfit.max_affine_init import max_affine_init
-from .seed import SEED
 import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
+from gpfit.max_affine_init import max_affine_init
+from .seed import SEED
 
-class t_max_affine_init_K2(unittest.TestCase):
+class TestMaxAffineInitK2(unittest.TestCase):
 
-    x = arange(0.,16.)[:,newaxis]
-    y = arange(0.,16.)[:,newaxis]
+    x = arange(0., 16.)[:, newaxis]
+    y = arange(0., 16.)[:, newaxis]
     K = 2
     ba = max_affine_init(x, y, K)
 
-    def test_ba_ndim_K2(self):
+    def test_ba_ndim_k2(self):
         self.assertEqual(self.ba.ndim, 2)
 
-    def test_ba_shape_K2(self):
-        
-        npt,dimx = self.x.shape
+    def test_ba_shape_k2(self):
 
-        self.assertEqual(self.ba.shape, (dimx+1 ,self.K))
+        _, dimx = self.x.shape
+        self.assertEqual(self.ba.shape, (dimx+1, self.K))
 
-class t_max_affine_init_K4(unittest.TestCase):
+class TestMaxAffineInitK4(unittest.TestCase):
     '''
-    This unit test ensures that max affine init produces an array 
+    This unit test ensures that max affine init produces an array
     of the expected shape and size
     '''
     np.random.seed(SEED)
     Vdd = random_sample(1000,) + 1
     Vth = 0.2*random_sample(1000,) + 0.2
     P = Vdd**2 + 30*Vdd*exp(-(Vth-0.06*Vdd)/0.039)
-    u = vstack((Vdd,Vth))
+    u = vstack((Vdd, Vth))
     x = log(u)
     y = log(P)
     x = x.T
-    y = y.reshape(y.size,1)
+    y = y.reshape(y.size, 1)
     K = 4
 
     ba = max_affine_init(x,y,K)
 
-    def test_ba_shape_K4(self):
-        self.assertEqual(self.ba.shape, (3,4))
+    def test_ba_shape_k4(self):
+        self.assertEqual(self.ba.shape, (3, 4))
 
 
 
-tests = [t_max_affine_init_K2,
-         t_max_affine_init_K4]
+tests = [TestMaxAffineInitK2,
+         TestMaxAffineInitK4]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()

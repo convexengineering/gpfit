@@ -1,14 +1,15 @@
+"unit tests for implicit log-sum-exp implementation"
 import unittest
+import numpy as np
+from numpy import array, arange
 from gpfit.lse_implicit import lse_implicit
 from .seed import SEED
-import numpy as np
-from numpy import arange, newaxis
-from numpy import log, exp, log10, vstack, array
 
-class t_lse_implicit_1D(unittest.TestCase):
+class TestLSEimplicit1D(unittest.TestCase):
+    "tests with one-dimensional input"
 
-    x = arange(1.,31.).reshape(15,2)
-    alpha = arange(1.,3.)
+    x = arange(1., 31.).reshape(15, 2)
+    alpha = arange(1., 3.)
     y, dydx, dydalpha = lse_implicit(x,alpha)
 
     def test_y_ndim(self):
@@ -29,7 +30,8 @@ class t_lse_implicit_1D(unittest.TestCase):
     def test_dydalpha_size(self):
         self.assertEqual(self.dydalpha.shape[0], self.x.shape[0])
 
-class t_lse_implicit_2D(unittest.TestCase):
+class TestLSEimplicit2D(unittest.TestCase):
+    "tests with 2D input"
 
     np.random.seed(SEED)
 
@@ -37,7 +39,7 @@ class t_lse_implicit_2D(unittest.TestCase):
     x = np.random.rand(1000,K)
     alpha = array([1.499, 13.703, 3.219, 4.148])
 
-    y, dydx, dydalpha = lse_implicit(x,alpha)
+    y, dydx, dydalpha = lse_implicit(x, alpha)
 
     def test_dydx_shape(self):
         self.assertEqual(self.dydx.shape, self.x.shape)
@@ -45,8 +47,8 @@ class t_lse_implicit_2D(unittest.TestCase):
     def test_dydalpha_shape(self):
         self.assertEqual(self.dydalpha.shape, self.x.shape)
 
-tests = [t_lse_implicit_1D,
-         t_lse_implicit_2D]
+tests = [TestLSEimplicit1D,
+         TestLSEimplicit2D]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()

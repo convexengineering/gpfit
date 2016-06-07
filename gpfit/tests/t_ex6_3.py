@@ -1,11 +1,12 @@
+"unit tests based on example 6.3 from Hoburg/Abbeel GPfit paper"
 import unittest
 import numpy as np
-from numpy import log, exp, log10, vstack
+from numpy import log, exp, vstack
+from numpy.random import random_sample
 from .seed import SEED
 from gpfit.fit import fit
-from numpy.random import random_sample
 
-class t_ex6_3_ISMA(unittest.TestCase):
+class TestEx63ISMA(unittest.TestCase):
     '''
     ISMA unit tests based on example 6.3 from GPfit paper
     '''
@@ -23,7 +24,7 @@ class t_ex6_3_ISMA(unittest.TestCase):
     def test_rms_error(self):
         self.assertTrue(self.rms_error < 5e-4)
 
-class t_ex6_3_SMA(unittest.TestCase):
+class TestEx63SMA(unittest.TestCase):
     '''
     SMA unit tests based on example 6.3 from GPfit paper
     '''
@@ -41,7 +42,7 @@ class t_ex6_3_SMA(unittest.TestCase):
     def test_rms_error(self):
         self.assertTrue(self.rms_error < 5e-4)
 
-class t_ex6_3_MA(unittest.TestCase):
+class TestEx63MA(unittest.TestCase):
     '''
     MA unit tests based on example 6.3 from GPfit paper
     '''
@@ -60,9 +61,9 @@ class t_ex6_3_MA(unittest.TestCase):
         self.assertTrue(self.rms_error < 1e-2)
 
 
-tests = [t_ex6_3_ISMA,
-         t_ex6_3_SMA,
-         t_ex6_3_MA]
+tests = [TestEx63ISMA,
+         TestEx63SMA,
+         TestEx63MA]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
