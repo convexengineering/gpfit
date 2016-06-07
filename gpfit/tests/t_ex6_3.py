@@ -1,5 +1,7 @@
 import unittest
+import numpy as np
 from numpy import log, exp, log10, vstack
+from .seed import SEED
 from gpfit.fit import fit
 from numpy.random import random_sample
 
@@ -7,6 +9,7 @@ class t_ex6_3_ISMA(unittest.TestCase):
     '''
     ISMA unit tests based on example 6.3 from GPfit paper
     '''
+    np.random.seed(SEED)
     Vdd = random_sample(1000,) + 1
     Vth = 0.2*random_sample(1000,) + 0.2
     P = Vdd**2 + 30*Vdd*exp(-(Vth-0.06*Vdd)/0.039)
@@ -24,6 +27,7 @@ class t_ex6_3_SMA(unittest.TestCase):
     '''
     SMA unit tests based on example 6.3 from GPfit paper
     '''
+    np.random.seed(SEED)
     Vdd = random_sample(1000,) + 1
     Vth = 0.2*random_sample(1000,) + 0.2
     P = Vdd**2 + 30*Vdd*exp(-(Vth-0.06*Vdd)/0.039)
@@ -41,6 +45,7 @@ class t_ex6_3_MA(unittest.TestCase):
     '''
     MA unit tests based on example 6.3 from GPfit paper
     '''
+    np.random.seed(SEED)
     Vdd = random_sample(1000,) + 1
     Vth = 0.2*random_sample(1000,) + 0.2
     P = Vdd**2 + 30*Vdd*exp(-(Vth-0.06*Vdd)/0.039)
