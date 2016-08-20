@@ -29,7 +29,7 @@ setup(
     author_email="gpkit@mit.edu",
     url="https://github.com/hoburg/gpfit",
     install_requires=["numpy", "scipy", "gpkit"],
-    version="0.0",
+    version="0.1",
     packages=["gpfit"],
     license=LICENSE,
 )
