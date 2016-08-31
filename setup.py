@@ -1,3 +1,4 @@
+"""Standard Python setup script for gpfit"""
 from distutils.core import setup
 
 LICENSE = """The MIT License (MIT)
@@ -30,6 +31,6 @@ setup(
     url="https://github.com/hoburg/gpfit",
     install_requires=["numpy", "scipy", "gpkit"],
     version="0.1",
-    packages=["gpfit"],
+    packages=["gpfit", "gpfit.tests"],
     license=LICENSE,
 )
