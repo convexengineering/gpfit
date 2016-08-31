@@ -1,5 +1,8 @@
 from gpfit.fit import fit
-from numpy import logspace, log, log10
+from numpy import logspace, log, log10, random
+
+# fixed initial guess for fitting
+random.seed(33404)
 
 u = logspace(0, log10(3), 101)
 w = (u**2 + 3) / (u + 1)**2
