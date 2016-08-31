@@ -1,7 +1,9 @@
 """Unit testing of tests in docs/source/examples"""
 import unittest
 import os
+import numpy as np
 from gpkit.tests.helpers import generate_example_tests
+from .seed import SEED
 
 
 class TestExamples(unittest.TestCase):
@@ -26,6 +28,10 @@ class TestExamples(unittest.TestCase):
           def test_dummy_example(self, example):
               self.assertAlmostEqual(example.sol["cost"], 3.121)
     """
+
+    def setUp(self):
+        np.random.seed(SEED)
+
     def test_hoburgabbeel_ex6_1(self, example):
         """test_hoburgabbeel_ex6_1"""
         self.assertTrue(example.errorMA < 1e-2)
