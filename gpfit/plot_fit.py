@@ -20,6 +20,20 @@ def plot_fit_1d(x, y, K=1, fitclass='MA'):
             YY += [np.exp(B[k])*xx**A[k]]
         stringlist = print_MA(A, B, 1, K)
 
+
+    if fitclass == 'SMA':
+        alpha = 1./params[-1]
+        A = params[[i for i in range(K*2) if i % 2 != 0]]
+        B = params[[i for i in range(K*2) if i % 2 == 0]]
+
+        yy = 0
+        for k in range(K):
+            yy += (np.exp(alpha*B[k])*xx**(alpha*A[k]))
+        YY = [yy**(1./alpha)]
+
+        print_str = print_SMA(A, B, alpha, 1, K)
+        stringlist = [''.join(print_str)]
+
     f, ax = plt.subplots()
     ax.plot(x, y, '+r')
     for yy in YY:
