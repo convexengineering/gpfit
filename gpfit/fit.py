@@ -202,5 +202,5 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
         if K == 1:
             cstrt = MonomialEquality(mono2, "=", mono1)
 
-    return cstrt, rmsErr
+    return params, rmsErr
 
