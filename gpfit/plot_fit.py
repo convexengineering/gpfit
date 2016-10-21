@@ -11,7 +11,7 @@ def plot_fit_1d(x, y, K=1, fitclass='MA'):
 
     params, _ = fit(u, w, K, fitclass)
 
-    xx = np.linspace(min(x), max(x), 100)
+    xx = np.linspace(min(x), max(x), 1000)
     if fitclass == 'MA':
         A = params[[i for i in range(K*2) if i % 2 != 0]]
         B = params[[i for i in range(K*2) if i % 2 == 0]]
@@ -41,6 +41,5 @@ def plot_fit_1d(x, y, K=1, fitclass='MA'):
     ax.set_xlabel('x')
     ax.legend(['Data'] + stringlist, 
                loc='best')
-    plt.show() 
 
-    return f
+    return f, ax
