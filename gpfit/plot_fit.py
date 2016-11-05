@@ -3,21 +3,21 @@ from gpfit.print_fit import print_MA, print_SMA
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_fit_1d(x, y, K=1, fitclass='MA'):
+def plot_fit_1d(u, w, K=1, fitclass='MA', plotspace='log'):
     "Finds and plots a fit (MA or SMA) for 1D data"
 
-    u = np.log(x)
-    w = np.log(y)
+    x = np.log(u)
+    y = np.log(w)
 
-    params, _ = fit(u, w, K, fitclass)
+    params, _ = fit(x, y, K, fitclass)
 
-    xx = np.linspace(min(x), max(x), 100)
+    uu = np.linspace(min(u), max(u), 100)
     if fitclass == 'MA':
         A = params[[i for i in range(K*2) if i % 2 != 0]]
         B = params[[i for i in range(K*2) if i % 2 == 0]]
-        YY = []
+        WW = []
         for k in range(K):
-            YY += [np.exp(B[k])*xx**A[k]]
+            WW += [np.exp(B[k])*uu**A[k]]
         stringlist = print_MA(A, B, 1, K)
 
 
@@ -26,21 +26,32 @@ def plot_fit_1d(x, y, K=1, fitclass='MA'):
         A = params[[i for i in range(K*2) if i % 2 != 0]]
         B = params[[i for i in range(K*2) if i % 2 == 0]]
 
-        yy = 0
+        ww = 0
         for k in range(K):
-            yy += (np.exp(alpha*B[k])*xx**(alpha*A[k]))
-        YY = [yy**(1./alpha)]
+            ww += (np.exp(alpha*B[k])*uu**(alpha*A[k]))
+        WW = [ww**(1./alpha)]
 
         print_str = print_SMA(A, B, alpha, 1, K)
         stringlist = [''.join(print_str)]
 
     f, ax = plt.subplots()
-    ax.plot(x, y, '+r')
-    for yy in YY:
-        ax.plot(xx, yy)
-    ax.set_xlabel('x')
+    if plotspace == 'log':
+        ax.loglog(u, w, '+r')
+        for ww in WW:
+            ax.loglog(uu, ww)
+    elif plotspace == 'linear':
+        ax.plot(u, w, '+r')
+        for ww in WW:
+            ax.plot(uu, ww)
+    ax.set_xlabel('u')
     ax.legend(['Data'] + stringlist, 
                loc='best')
     plt.show() 
 
     return f
+
+if __name__ == "__main__":
+    n = 51
+    u = np.logspace(0, np.log10(3), n)
+    w = (u**2+3) / (u+1)**2
+    f = plot_fit_1d(u, w, K=2, fitclass='SMA', plotspace='linear')
