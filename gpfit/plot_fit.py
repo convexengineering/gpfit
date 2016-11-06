@@ -1,7 +1,8 @@
-from gpfit.fit import fit
-from gpfit.print_fit import print_MA, print_SMA
+"Fit plotting"
 import numpy as np
 import matplotlib.pyplot as plt
+from gpfit.fit import fit
+from gpfit.print_fit import print_MA, print_SMA
 
 def plot_fit_1d(u, w, K=1, fitclass='MA', plotspace='log'):
     "Finds and plots a fit (MA or SMA) for 1D data"
@@ -44,7 +45,7 @@ def plot_fit_1d(u, w, K=1, fitclass='MA', plotspace='log'):
         for ww in WW:
             ax.plot(uu, ww)
     ax.set_xlabel('u')
-    ax.legend(['Data'] + stringlist, 
+    ax.legend(['Data'] + stringlist,
                loc='best')
 
     plt.show()
