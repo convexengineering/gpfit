@@ -4,15 +4,14 @@ import matplotlib.pyplot as plt
 from gpfit.fit import fit
 from gpfit.print_fit import print_MA, print_SMA
 
-def plot_fit_1d(u, w, K=1, fitclass='MA', plotspace='log'):
+# pylint: disable=invalid-name
+# pylint: disable=too-many-locals
+def plot_fit_1d(udata, wdata, K=1, fitclass='MA', plotspace='log'):
     "Finds and plots a fit (MA or SMA) for 1D data"
 
-    x = np.log(u)
-    y = np.log(w)
+    cstrt, _ = fit(np.log(udata), np.log(wdata), K, fitclass)
+    uu = np.linspace(min(udata), max(udata), 1000)
 
-    cstrt, _ = fit(x, y, K, fitclass)
-
-    uu = np.linspace(min(u), max(u), 1000)
     if fitclass == 'MA':
         uvarkey, = cstrt[0].left.varkeys
         A = [c.left.exps[0][uvarkey] for c in cstrt]
@@ -40,22 +39,21 @@ def plot_fit_1d(u, w, K=1, fitclass='MA', plotspace='log'):
 
     f, ax = plt.subplots()
     if plotspace == 'log':
-        ax.loglog(u, w, '+r')
+        ax.loglog(udata, wdata, '+r')
         for ww in WW:
             ax.loglog(uu, ww)
     elif plotspace == 'linear':
-        ax.plot(u, w, '+r')
+        ax.plot(udata, wdata, '+r')
         for ww in WW:
             ax.plot(uu, ww)
     ax.set_xlabel('u')
-    ax.legend(['Data'] + stringlist,
-               loc='best')
+    ax.legend(['Data'] + stringlist, loc='best')
 
     plt.show()
     return f, ax
 
 if __name__ == "__main__":
-    n = 51
-    u = np.logspace(0, np.log10(3), n)
-    w = (u**2+3) / (u+1)**2
-    f = plot_fit_1d(u, w, K=2, fitclass='MA', plotspace="linear")
+    N = 51
+    U = np.logspace(0, np.log10(3), N)
+    W = (U**2+3) / (U+1)**2
+    plot_fit_1d(U, W, K=2, fitclass='MA', plotspace="linear")
