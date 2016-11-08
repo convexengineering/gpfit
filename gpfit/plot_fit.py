@@ -10,12 +10,13 @@ def plot_fit_1d(u, w, K=1, fitclass='MA', plotspace='log'):
     x = np.log(u)
     y = np.log(w)
 
-    params, _ = fit(x, y, K, fitclass)
+    cstrt, _ = fit(x, y, K, fitclass)
 
     uu = np.linspace(min(u), max(u), 1000)
     if fitclass == 'MA':
-        A = params[[i for i in range(K*2) if i % 2 != 0]]
-        B = params[[i for i in range(K*2) if i % 2 == 0]]
+        uvarkey, = cstrt[0].left.varkeys
+        A = [c.left.exps[0][uvarkey] for c in cstrt]
+        B = np.log([c.left.cs[0] for c in cstrt])
         WW = []
         for k in range(K):
             WW += [np.exp(B[k])*uu**A[k]]
@@ -23,9 +24,11 @@ def plot_fit_1d(u, w, K=1, fitclass='MA', plotspace='log'):
 
 
     if fitclass == 'SMA':
-        alpha = 1./params[-1]
-        A = params[[i for i in range(K*2) if i % 2 != 0]]
-        B = params[[i for i in range(K*2) if i % 2 == 0]]
+        wexps, = cstrt.left.exps
+        alpha, = wexps.values()
+        uvarkey, = cstrt.right.varkeys
+        A = [d[uvarkey]/alpha for d in cstrt.right.exps]
+        B = np.log(cstrt.right.cs) / alpha
 
         ww = 0
         for k in range(K):
@@ -55,4 +58,4 @@ if __name__ == "__main__":
     n = 51
     u = np.logspace(0, np.log10(3), n)
     w = (u**2+3) / (u+1)**2
-    f = plot_fit_1d(u, w, K=2, fitclass='SMA', plotspace='linear')
+    f = plot_fit_1d(u, w, K=2, fitclass='MA', plotspace="linear")
