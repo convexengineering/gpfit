@@ -14,7 +14,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
     Fits a log-convex function to multivariate data and returns a GP-compatible constraint
 
     INPUTS
-        xdata:      Independent variable data 
+        xdata:      Independent variable data
                         2D numpy array [nDim, nPoints]
                         [[<--------- x1 ------------->]
                          [<--------- x2 ------------->]]
@@ -103,7 +103,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
                 expdict[varNames[i]] = alpha[k] * A[k*d + i]
             expdict[varNames[-1]] = -alpha[k]
             exps.append(expdict)
-            
+
         cs = tuple(cs)
         exps = tuple(exps)
 
@@ -147,7 +147,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
             for i in range(d):
                 expdict[varNames[i]] = alpha * A[k*d + i]
             exps.append(expdict)
-            
+
         cs = tuple(cs)
         exps = tuple(exps)
 
