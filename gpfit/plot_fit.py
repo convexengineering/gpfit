@@ -1,6 +1,6 @@
 "Fit plotting"
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from gpfit.fit import fit
 from gpfit.print_fit import print_MA, print_SMA
 
