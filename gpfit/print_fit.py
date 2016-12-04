@@ -10,10 +10,10 @@ def print_ISMA(A, B, alpha, d, K):
             print printString
             printString = '    + '
 
-        printString += '({0:.3g}/w**{1:.3g})'.format(exp(alpha[k] * B[k]), alpha[k])
-        
+        printString += '({0:.6g}/w**{1:.6g})'.format(exp(alpha[k] * B[k]), alpha[k])
+
         for i in range(d):
-            printString += ' * (u_{0:d})**{1:.3g}'.format(i+1, alpha[k] * A[d*k + i])
+            printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, alpha[k] * A[d*k + i])
 
         stringList[k] = printString
 
@@ -25,16 +25,16 @@ def print_SMA(A, B, alpha, d, K):
 
     stringList = [None]*K
 
-    printString = 'w**{0:.3g} = '.format(alpha)
+    printString = 'w**{0:.6g} = '.format(alpha)
     for k in range(K):
         if k > 0:
             print printString
             printString = '    + '
 
-        printString += '{0:.3g}'.format(exp(alpha * B[k]))
-        
+        printString += '{0:.6g}'.format(exp(alpha * B[k]))
+
         for i in range(d):
-            printString += ' * (u_{0:d})**{1:.3g}'.format(i+1, alpha * A[d*k + i])
+            printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, alpha * A[d*k + i])
 
         stringList[k] = printString
 
@@ -50,12 +50,12 @@ def print_MA(A, B, d, K):
     stringList = [None]*K
 
     for k in range(K):
-        printString = 'w = {0:.3g}'.format(exp(B[k]))
-        
+        printString = 'w = {0:.6g}'.format(exp(B[k]))
+
         for i in range(d):
-            printString += ' * (u_{0:d})**{1:.3g}'.format(i+1, A[d*k + i])
+            printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, A[d*k + i])
 
         stringList[k] = printString
         print printString
-        
+
     return stringList
