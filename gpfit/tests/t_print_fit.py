@@ -48,6 +48,6 @@ if __name__ == '__main__':
     LOADER = unittest.TestLoader()
 
     for t in TESTS:
-        SUITE.addtests(LOADER.loadtestsfromtestcase(t))
+        SUITE.addTests(LOADER.loadTestsFromTestCase(t))
 
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(verbosity=2).run(SUITE)
