@@ -41,13 +41,13 @@ class TestPrintFit(unittest.TestCase):
              '    + (1.82212/w**0.0666667) * (u_1)**0.666667 * '
              '(u_2)**0.733333 * (u_3)**0.8'])
 
-tests = [TestPrintFit]
+TESTS = [TestPrintFit]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
 
-    for t in tests:
+    for t in TESTS:
         suite.addTests(loader.loadTestsFromTestCase(t))
 
     unittest.TextTestRunner(verbosity=2).run(suite)
