@@ -44,10 +44,10 @@ class TestPrintFit(unittest.TestCase):
 TESTS = [TestPrintFit]
 
 if __name__ == '__main__':
-    suite = unittest.TestSuite()
-    loader = unittest.TestLoader()
+    SUITE = unittest.TestSuite()
+    LOADER = unittest.TestLoader()
 
     for t in TESTS:
-        suite.addTests(loader.loadTestsFromTestCase(t))
+        SUITE.addtests(LOADER.loadtestsfromtestcase(t))
 
     unittest.TextTestRunner(verbosity=2).run(suite)
