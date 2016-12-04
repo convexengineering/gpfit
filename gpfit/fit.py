@@ -203,4 +203,3 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
             cstrt = MonomialEquality(mono2, "=", mono1)
 
     return cstrt, rmsErr
-
