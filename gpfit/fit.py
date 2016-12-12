@@ -162,7 +162,7 @@ def fit(xdata, ydata, K, ftype="ISMA", varNames=None):
 
         # # If only one term, automatically make an equality constraint
         if K == 1:
-            cstrt = MonomialEquality(cstrt, "=", 1)
+            cstrt = MonomialEquality(mono, "=", posy)
 
 
     elif ftype == "MA":
