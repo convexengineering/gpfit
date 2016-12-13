@@ -37,7 +37,10 @@ def evaluate_fit(cnstr, x, fittype):
              for n in vkn]).reshape(len(cnstr), len(vkn))
         params = np.hstack([np.hstack([np.log(cn.left.c), ex])
                             for cn, ex in zip(cnstr, expos)])
-        y, _ = max_affine(x, params)
+        if np.inf in params or 0.0 in params or -np.inf in params:
+            pass
+        else:
+            y, _ = max_affine(x, params)
 
     elif fittype == "SMA":
         wvk = [vk for vk in cnstr.varkeys if vk.name == "w"][0]
@@ -49,7 +52,10 @@ def evaluate_fit(cnstr, x, fittype):
         params = np.hstack([np.hstack([np.log(c**(alpha))] + [ex*alpha])
                             for c, ex in zip(cnstr.right.cs, expos)])
         params = np.append(params, alpha)
-        y, _ = softmax_affine(x, params)
+        if np.inf in params or 0.0 in params or -np.inf in params:
+            pass
+        else:
+            y, _ = softmax_affine(x, params)
 
     elif fittype == "ISMA":
         wvk = [vk for vk in cnstr.varkeys if vk.name == "w"][0]
@@ -59,8 +65,11 @@ def evaluate_fit(cnstr, x, fittype):
             [e[list(cnstr.varkeys["u_%d" % n])[0]] for e in cnstr.left.exps
              for n in vkn]).reshape(len(cnstr.left.cs), len(vkn))
         params = np.hstack([np.hstack([np.log(c**a)] + [e*a]) for c, e, a in
-                            zip(cns.left.cs, expos, alphas)])
+                            zip(cnstr.left.cs, expos, alphas)])
         params = np.append(params, alphas)
-        y, _ = implicit_softmax_affine(x, params)
+        if np.inf in params or 0.0 in params or -np.inf in params:
+            pass
+        else:
+            y, _ = implicit_softmax_affine(x, params)
 
     return y
