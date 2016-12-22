@@ -31,7 +31,7 @@ def evaluate_fit(cnstr, x, fittype):
     if fittype == "MA":
         if not hasattr(cnstr, "__len__"):
             cnstr = [cnstr]
-        vkn = range(1, len(cnstr[0].varkeys))
+        vkn = range(len(cnstr[0].varkeys))
         expos = np.array(
             [cn.left.exp[list(cn.varkeys["u_%d" % n])[0]] for cn in cnstr
              for n in vkn]).reshape(len(cnstr), len(vkn))
@@ -45,9 +45,9 @@ def evaluate_fit(cnstr, x, fittype):
     elif fittype == "SMA":
         wvk = [vk for vk in cnstr.varkeys if vk.name == "w"][0]
         alpha = [1/ex[wvk] for ex in cnstr.left.exps][0]
-        vkn = range(1, len(cnstr.varkeys))
+        vkn = range(len(cnstr.right.varkeys))
         expos = np.array(
-            [e[list(cnstr.varkeys["u_%d" % n])[0]] for e in cnstr.right.exps
+            [e[list(cnstr.varkeys["u_fit_(%d,)" % n])[0]] for e in cnstr.right.exps
              for n in vkn]).reshape(len(cnstr.right.cs), len(vkn))
         params = np.hstack([np.hstack([np.log(c**(alpha))] + [ex*alpha])
                             for c, ex in zip(cnstr.right.cs, expos)])
