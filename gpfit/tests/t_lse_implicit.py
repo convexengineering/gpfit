@@ -3,7 +3,8 @@ import unittest
 import numpy as np
 from numpy import array, arange
 from gpfit.lse_implicit import lse_implicit
-from .seed import SEED
+
+SEED = 33404
 
 class TestLSEimplicit1D(unittest.TestCase):
     "tests with one-dimensional input"

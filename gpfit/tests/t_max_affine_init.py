@@ -4,7 +4,8 @@ import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
 from gpfit.max_affine_init import max_affine_init
-from .seed import SEED
+
+SEED = 33404
 
 class TestMaxAffineInitK2(unittest.TestCase):
 
