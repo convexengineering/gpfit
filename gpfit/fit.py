@@ -76,7 +76,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
 
     # Dimension of function (number of independent variables)
-    _, d = xdata.shape
+    d = int(xdata.shape[1])
 
     with NamedVariables("fit"):
         u = VectorVariable(d, "u")
