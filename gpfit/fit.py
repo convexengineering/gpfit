@@ -1,14 +1,13 @@
+"Implements the all-important 'fit' function."
 from numpy import append, ones, exp, sqrt, mean, square
-from gpkit.nomials import Posynomial, Monomial, VectorVariable, Variable, NomialArray
-from gpkit.constraints.set import ConstraintSet
-from gpkit import NamedVariables
-from implicit_softmax_affine import implicit_softmax_affine
-from softmax_affine import softmax_affine
-from max_affine import max_affine
-from LM import LM
-from generic_resid_fun import generic_resid_fun
-from max_affine_init import max_affine_init
-from print_fit import print_ISMA, print_SMA, print_MA
+from gpkit import NamedVariables, VectorVariable, Variable, NomialArray
+from .implicit_softmax_affine import implicit_softmax_affine
+from .softmax_affine import softmax_affine
+from .max_affine import max_affine
+from .LM import LM
+from .generic_resid_fun import generic_resid_fun
+from .max_affine_init import max_affine_init
+from .print_fit import print_ISMA, print_SMA, print_MA
 
 
 RFUN = {"ISMA": implicit_softmax_affine,
@@ -19,6 +18,7 @@ RFUN = {"ISMA": implicit_softmax_affine,
 def _fit(ftype, K, xdata, ydata):
     "Perform least-squares fitting optimization."
     def rfun(p):
+        "A specific residual function."
         return generic_resid_fun(RFUN[ftype], xdata, ydata, p)
 
     alphainit = 10
@@ -32,9 +32,9 @@ def _fit(ftype, K, xdata, ydata):
         params, _ = LM(rfun, bainit)
 
     y_fit, _ = RFUN[ftype](xdata, params)
-    rmsErr = sqrt(mean(square(y_fit-ydata.T[0])))
+    rms_error = sqrt(mean(square(y_fit-ydata.T[0])))
 
-    return params, rmsErr
+    return params, rms_error
 
 
 def fit(xdata, ydata, K, ftype="ISMA"):
@@ -58,12 +58,11 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             one of the following strings: "ISMA" (default), "SMA" or "MA"
 
     OUTPUTS
-        cstrt:      GPkit PosynomialInequality object
-            For K > 1, this will be a posynomial inequality constraint
+        cstrt:      GPkit constraint
+            For K > 1, this will be a posynomial inequality or set thereof
             If K = 1, this is automatically made into an equality constraint
-            If MA fit and K > 1, this is a list of constraint objects
 
-        rmsErr:     RMS error
+        rms_error:  float
             Root mean square error between original (not log transformed)
             data and function fit.
     """
@@ -83,7 +82,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         u = VectorVariable(d, "u")
         w = Variable("w")
 
-    params, rmsErr = _fit(ftype, K, xdata, ydata)
+    params, rms_error = _fit(ftype, K, xdata, ydata)
 
     # A: exponent parameters, B: coefficient parameters
     A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
@@ -100,17 +99,17 @@ def fit(xdata, ydata, K, ftype="ISMA"):
                          for k, b in enumerate(B)])**alpha
 
     if ftype == "ISMA":
-        print_str = print_ISMA(A, B, alpha, d, K)
         # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
         lhs, rhs = 1, (monos/w**alpha).sum()
+        print_ISMA(A, B, alpha, d, K)
     elif ftype == "SMA":
-        print_str = print_SMA(A, B, alpha, d, K)
         # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
         lhs, rhs = w**alpha, monos.sum()
+        print_SMA(A, B, alpha, d, K)
     elif ftype == "MA":
-        print_str = print_MA(A, B, d, K)
         # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
         lhs, rhs = w, monos
+        print_MA(A, B, d, K)
 
     if K == 1:
         # when possible, return an equality constraint
@@ -118,4 +117,4 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     else:
         cstrt = (lhs >= rhs)
 
-    return cstrt, rmsErr
+    return cstrt, rms_error
