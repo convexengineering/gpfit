@@ -29,13 +29,11 @@ def evaluate_fit(cnstr, x, fittype):
         x = x.T
 
     if fittype == "MA":
-        if not hasattr(cnstr, "__len__"):
-            cnstr = [cnstr]
-        vkn = range(len(cnstr[0].varkeys))
+        vkn = range(len(cnstr[0].left.varkeys))
         expos = np.array(
-            [cn.left.exp[list(cn.varkeys["u_%d" % n])[0]] for cn in cnstr
-             for n in vkn]).reshape(len(cnstr), len(vkn))
-        params = np.hstack([np.hstack([np.log(cn.left.c), ex])
+            [cn.right.exp[list(cn.varkeys["u_fit_(%d,)" % n])[0]] for cn in
+             cnstr for n in vkn]).reshape(len(cnstr), len(vkn))
+        params = np.hstack([np.hstack([np.log(cn.right.c), ex])
                             for cn, ex in zip(cnstr, expos)])
         if np.inf in params or 0.0 in params or -np.inf in params:
             pass
@@ -47,8 +45,9 @@ def evaluate_fit(cnstr, x, fittype):
         alpha = [1/ex[wvk] for ex in cnstr.left.exps][0]
         vkn = range(len(cnstr.right.varkeys))
         expos = np.array(
-            [e[list(cnstr.varkeys["u_fit_(%d,)" % n])[0]] for e in cnstr.right.exps
-             for n in vkn]).reshape(len(cnstr.right.cs), len(vkn))
+            [e[list(cnstr.varkeys["u_fit_(%d,)" % n])[0]] for e in
+             cnstr.right.exps for n in vkn]).reshape(len(cnstr.right.cs),
+                                                     len(vkn))
         params = np.hstack([np.hstack([np.log(c**(alpha))] + [ex*alpha])
                             for c, ex in zip(cnstr.right.cs, expos)])
         params = np.append(params, alpha)
@@ -62,8 +61,9 @@ def evaluate_fit(cnstr, x, fittype):
         alphas = [-1/ex[wvk] for ex in cnstr.left.exps]
         vkn = range(1, len(cnstr.varkeys))
         expos = np.array(
-            [e[list(cnstr.varkeys["u_%d" % n])[0]] for e in cnstr.left.exps
-             for n in vkn]).reshape(len(cnstr.left.cs), len(vkn))
+            [e[list(cnstr.varkeys["u_fit_(%d,)" % n])[0]] for e in
+             cnstr.left.exps for n in vkn]).reshape(len(cnstr.left.cs),
+                                                    len(vkn))
         params = np.hstack([np.hstack([np.log(c**a)] + [e*a]) for c, e, a in
                             zip(cnstr.left.cs, expos, alphas)])
         params = np.append(params, alphas)
