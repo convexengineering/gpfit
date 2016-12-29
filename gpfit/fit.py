@@ -4,7 +4,7 @@ from gpkit import NamedVariables, VectorVariable, Variable, NomialArray
 from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine
 from .max_affine import max_affine
-from .LM import LM
+from .levenberg_marquardt import levenberg_marquardt
 from .ba_init import ba_init
 from .print_fit import print_ISMA, print_SMA, print_MA
 
@@ -26,11 +26,11 @@ def get_params(ftype, K, xdata, ydata):
     ba = ba_init(xdata, ydata.reshape(ydata.size, 1), K).flatten('F')
 
     if ftype == "ISMA":
-        params, _ = LM(rfun, hstack((ba, ALPHA_INIT*ones(K))))
+        params, _ = levenberg_marquardt(rfun, hstack((ba, ALPHA_INIT*ones(K))))
     elif ftype == "SMA":
-        params, _ = LM(rfun, hstack((ba, ALPHA_INIT)))
+        params, _ = levenberg_marquardt(rfun, hstack((ba, ALPHA_INIT)))
     else:
-        params, _ = LM(rfun, ba)
+        params, _ = levenberg_marquardt(rfun, ba)
 
     return params
 

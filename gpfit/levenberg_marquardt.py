@@ -7,13 +7,13 @@ from scipy.sparse import spdiags, issparse
 
 
 # pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements
-def LM(residfun, initparams,
-       verbose=False,
-       lambdainit=0.02,
-       maxiter=5000,
-       maxtime=5.,
-       tolgrad=np.sqrt(float_info.epsilon),
-       tolrms=1e-7):
+def levenberg_marquardt(residfun, initparams,
+                        verbose=False,
+                        lambdainit=0.02,
+                        maxiter=5000,
+                        maxtime=5.,
+                        tolgrad=np.sqrt(float_info.epsilon),
+                        tolrms=1e-7):
     """
     Levenberg-Marquardt alogrithm
     Minimizes sum of squared error of residual function

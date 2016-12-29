@@ -53,10 +53,10 @@ TESTS = [TestLSEimplicit1D,
          TestLSEimplicit2D]
 
 if __name__ == '__main__':
-    suite = unittest.TestSuite()
-    loader = unittest.TestLoader()
+    SUITE = unittest.TestSuite()
+    LOADER = unittest.TestLoader()
 
     for t in TESTS:
-        suite.addTests(loader.loadTestsFromTestCase(t))
+        SUITE.addTests(LOADER.loadTestsFromTestCase(t))
 
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    unittest.TextTestRunner(verbosity=2).run(SUITE)
