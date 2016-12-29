@@ -21,7 +21,6 @@ class t_levenberg_marquardt(unittest.TestCase):
         self.assertEqual(self.params.size, self.initparams.size)
 
     def test_params_ndim(self):
-        # pylint: disable=maybe-no-member
         self.assertEqual(self.params.ndim, 1)
 
     def test_rmstraj_shape(self):
