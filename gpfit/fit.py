@@ -48,7 +48,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
         ydata:      Dependent variable data
                         1D numpy array [nPoints,]
-                        [<---------- y ------------->]lity constraint
+                        [<---------- y ------------->]
 
         rms_error:  float
             Root mean square error between original (not log transformed)
