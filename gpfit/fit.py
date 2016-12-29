@@ -95,8 +95,8 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     elif ftype == "MA":
         alpha = 1
 
-    monos = NomialArray([e_b * (u**A[k*d:(k+1)*d]).prod()
-                         for k, e_b in enumerate(exp(B))])**alpha
+    monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
+                                        for k in range(K)])**alpha
 
     if ftype == "ISMA":
         # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
