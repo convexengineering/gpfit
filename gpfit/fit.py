@@ -5,8 +5,7 @@ from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine
 from .max_affine import max_affine
 from .LM import LM
-from .generic_resid_fun import generic_resid_fun
-from .max_affine_init import max_affine_init
+from .b_init import b_init
 from .print_fit import print_ISMA, print_SMA, print_MA
 
 
@@ -17,19 +16,21 @@ RFUN = {"ISMA": implicit_softmax_affine,
 
 def get_params(ftype, K, xdata, ydata):
     "Perform least-squares fitting optimization."
-    def rfun(p):
+    def rfun(params):
         "A specific residual function."
-        return generic_resid_fun(RFUN[ftype], xdata, ydata, p)
+        [yhat, drdp] = RFUN[ftype](xdata, params)
+        r = yhat - ydata.T[0]
+        return r, drdp
 
-    alphainit = 10
-    bainit = max_affine_init(xdata, ydata, K).flatten('F')
+    alpha = 10
+    b = b_init(xdata, ydata, K).flatten('F')
 
     if ftype == "ISMA":
-        params, _ = LM(rfun, append(bainit, alphainit*ones((K, 1))))
+        params, _ = LM(rfun, append(b, alpha*ones((K, 1))))
     elif ftype == "SMA":
-        params, _ = LM(rfun, append(bainit, alphainit))
+        params, _ = LM(rfun, append(b, alpha))
     else:
-        params, _ = LM(rfun, bainit)
+        params, _ = LM(rfun, b)
 
     return params
 

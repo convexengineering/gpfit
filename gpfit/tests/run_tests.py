@@ -5,17 +5,14 @@ TESTS = []
 from gpfit.tests import t_LM
 TESTS += t_LM.tests
 
-from gpfit.tests import t_generic_resid_fun
-TESTS += t_generic_resid_fun.tests
-
 from gpfit.tests import t_lse_implicit
 TESTS += t_lse_implicit.tests
 
 from gpfit.tests import t_lse_scaled
 TESTS += t_lse_scaled.tests
 
-from gpfit.tests import t_max_affine_init
-TESTS += t_max_affine_init.tests
+from gpfit.tests import t_b_init
+TESTS += t_b_init.tests
 
 from gpfit.tests import t_max_affine
 TESTS += t_max_affine.tests

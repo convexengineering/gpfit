@@ -1,19 +1,20 @@
 import unittest
 from gpfit.LM import LM
 from gpfit.max_affine import max_affine
-from gpfit.generic_resid_fun import generic_resid_fun
 from numpy import arange, newaxis
 
 class t_LM(unittest.TestCase):
-    
-    def rfun (p): return generic_resid_fun(max_affine,
-                                            arange(0.,16.)[:,newaxis],
-                                            arange(0.,16.)[:,newaxis],
-                                            p)
-    residfun = rfun
-    initparams = arange(1.,5.)
 
-    params, RMStraj = LM(residfun, initparams) 
+    def rfun(params):
+        "A specific residual function."
+        [yhat, drdp] = max_affine(arange(0., 16.)[:, newaxis], params)
+        r = yhat - arange(0., 16.)[:, newaxis].T[0]
+        return r, drdp
+
+    residfun = rfun
+    initparams = arange(1., 5.)
+
+    params, RMStraj = LM(residfun, initparams)
 
     def test_params_size(self):
         self.assertEqual(self.params.size, self.initparams.size)

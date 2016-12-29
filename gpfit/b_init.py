@@ -2,7 +2,7 @@ from numpy import array, ones, hstack, zeros, tile, argmin, nonzero
 from numpy.linalg import lstsq, matrix_rank
 from numpy.random import permutation as randperm
 
-def max_affine_init(x, y, K):
+def b_init(x, y, K):
     '''
     initializes max-affine fit to data (y, x)
     ensures that initialization has at least K+1 points per partition (i.e.
@@ -27,7 +27,7 @@ def max_affine_init(x, y, K):
     npt,dimx = x.shape
 
     X = hstack((ones((npt, 1)), x))
-    ba = zeros((dimx+1,K))
+    b = zeros((dimx+1,K))
 
     if K*(dimx+1) > npt:
         raise ValueError('Not enough data points')
@@ -38,9 +38,9 @@ def max_affine_init(x, y, K):
     # partition based on distances
     sqdists = zeros((npt, K))
     for k in range(K):
-        sqdists[:,k] = ((x - tile(x[randinds[k],:],(npt, 1))) ** 2).sum(1) 
+        sqdists[:,k] = ((x - tile(x[randinds[k],:],(npt, 1))) ** 2).sum(1)
 
-    #index to closest k for each data pt 
+    #index to closest k for each data pt
     mindistind = argmin(sqdists,axis=1)
 
     '''
@@ -71,11 +71,11 @@ def max_affine_init(x, y, K):
             while matrix_rank(X[inds, :]) < dimx+1:
                 i = i+1
                 inds[sortdistind[i]] = 1
-            
-            if options['bverbose']:
-                print('max_affine_init: Added ' + repr(i-iinit) + ' points to partition ' + repr(k) + ' to maintain full rank for local fitting.')
-        
-        #now create the local fit
-        ba[:,k] = lstsq(X[inds.nonzero()], y[inds.nonzero()])[0][:,0]
 
-    return ba
+            if options['bverbose']:
+                print('b_init: Added ' + repr(i-iinit) + ' points to partition ' + repr(k) + ' to maintain full rank for local fitting.')
+
+        #now create the local fit
+        b[:,k] = lstsq(X[inds.nonzero()], y[inds.nonzero()])[0][:,0]
+
+    return b
