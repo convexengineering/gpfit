@@ -21,7 +21,7 @@ class TestEx63ISMA(unittest.TestCase):
         y = log(P)
         K = 4
 
-        cstrt, rms_error = fit(x, y, K, "ISMA")
+        _, rms_error = fit(x, y, K, "ISMA")
 
         self.assertTrue(rms_error < 5e-4)
 
@@ -39,7 +39,7 @@ class TestEx63SMA(unittest.TestCase):
         y = log(P)
         K = 4
 
-        cstrt, rms_error = fit(x, y, K, "SMA")
+        _, rms_error = fit(x, y, K, "SMA")
 
         self.assertTrue(rms_error < 5e-4)
 
@@ -57,12 +57,12 @@ class TestEx63MA(unittest.TestCase):
         y = log(P)
         K = 4
 
-        cstrt, rms_error = fit(x, y, K, "MA")
+        _, rms_error = fit(x, y, K, "MA")
 
         self.assertTrue(rms_error < 1e-2)
 
 
-tests = [TestEx63ISMA,
+TESTS = [TestEx63ISMA,
          TestEx63SMA,
          TestEx63MA]
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
 
-    for t in tests:
+    for t in TESTS:
         suite.addTests(loader.loadTestsFromTestCase(t))
 
     unittest.TextTestRunner(verbosity=2).run(suite)

@@ -1,7 +1,9 @@
-from numpy import arange, exp, array
+"Implements functions for raw fit printing from params"
+from numpy import exp
+
 
 def print_ISMA(A, B, alpha, d, K):
-
+    "print ISMA fit from params"
     stringList = [None]*K
 
     printString = '1 = '
@@ -22,7 +24,7 @@ def print_ISMA(A, B, alpha, d, K):
 
 
 def print_SMA(A, B, alpha, d, K):
-
+    "print SMA fit from params"
     stringList = [None]*K
 
     printString = 'w**{0:.6g} = '.format(alpha)
@@ -43,10 +45,7 @@ def print_SMA(A, B, alpha, d, K):
 
 
 def print_MA(A, B, d, K):
-    '''
-    Print set of K monomial inequality constraints
-    '''
-
+    "print MA fit from params"
     stringList = [None]*K
 
     for k in range(K):

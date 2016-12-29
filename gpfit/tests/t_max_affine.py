@@ -1,13 +1,16 @@
+"Test max_affine"
 import unittest
-from gpfit.max_affine import max_affine
 from numpy import arange, newaxis
+from gpfit.max_affine import max_affine
+
 
 class t_max_affine(unittest.TestCase):
+    "Test max_affine"
 
-    x = arange(0.,16.)[:,newaxis]
-    ba = arange(1.,7.).reshape(2,3)
+    x = arange(0., 16.)[:, newaxis]
+    ba = arange(1., 7.).reshape(2, 3)
 
-    y, dydba = max_affine(x,ba) 
+    y, dydba = max_affine(x, ba)
 
     def test_y_size(self):
         self.assertEqual(self.y.size, self.x.size)
@@ -21,13 +24,13 @@ class t_max_affine(unittest.TestCase):
     def test_dydba_ndim(self):
         self.assertEqual(self.dydba.ndim, 2)
 
-tests = [t_max_affine]
+TESTS = [t_max_affine]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
 
-    for t in tests:
+    for t in TESTS:
         suite.addTests(loader.loadTestsFromTestCase(t))
 
     unittest.TextTestRunner(verbosity=2).run(suite)

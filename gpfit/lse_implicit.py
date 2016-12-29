@@ -1,7 +1,10 @@
-from numpy import zeros, ones, spacing, exp, log, tile
+"Implements lse_implicit"
+from numpy import zeros, spacing, exp, log, tile
 
+
+# pylint: disable=too-many-locals
 def lse_implicit(x, alpha):
-    '''
+    """
     Implicit Log-sum-exponential function with derivatives
     - sums across the second dimension of x
     - returns one y for every row of x
@@ -24,14 +27,14 @@ def lse_implicit(x, alpha):
 
             dydalpha:
                         2D array [nPoints x nDim]
-    '''
+    """
 
     bverbose = False
 
     tol = 10*spacing(1)
     npt, nx = x.shape
 
-    if not alpha.size == nx:
+    if nx != alpha.size:
         raise ValueError('alpha size mismatch')
 
     alphamat = tile(alpha, (npt, 1))
@@ -50,7 +53,7 @@ def lse_implicit(x, alpha):
     # initial eval
     expo = exp(alphamat*(h-Lmat))
     alphaexpo = alphamat*expo
-    sumexpo = expo.sum(axis=1) 
+    sumexpo = expo.sum(axis=1)
     sumalphaexpo = alphaexpo.sum(axis=1)
     f = log(sumexpo)
     dfdL = -alphaexpo.sum(axis=1)/sumexpo
@@ -80,6 +83,5 @@ def lse_implicit(x, alpha):
 
     dydx = alphaexpo/(tile(sumalphaexpo, (nx, 1))).T
     dydalpha = (h - Lmat)*expo/(tile(sumalphaexpo, (nx, 1))).T
-
 
     return y, dydx, dydalpha

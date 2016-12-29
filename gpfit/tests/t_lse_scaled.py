@@ -1,12 +1,15 @@
+"Test lse_scaled"
 import unittest
+from numpy import arange
 from gpfit.lse_scaled import lse_scaled
-from numpy import arange, newaxis
+
 
 class t_lse_scaled(unittest.TestCase):
+    "Test lse_implicit"
 
-    x = arange(1.,31.).reshape(15,2)
+    x = arange(1., 31.).reshape(15, 2)
     alpha = 1.
-    y, dydx, dydalpha = lse_scaled(x,alpha)
+    y, dydx, dydalpha = lse_scaled(x, alpha)
 
     def test_y_ndim(self):
         self.assertEqual(self.y.ndim, 1)
@@ -33,13 +36,13 @@ class t_lse_scaled(unittest.TestCase):
     # test alpha is integer? negative? 0? array?
 
 
-tests = [t_lse_scaled]
+TESTS = [t_lse_scaled]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
 
-    for t in tests:
+    for t in TESTS:
         suite.addTests(loader.loadTestsFromTestCase(t))
 
     unittest.TextTestRunner(verbosity=2).run(suite)

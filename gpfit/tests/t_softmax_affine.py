@@ -1,13 +1,16 @@
+"Tests softmax_affine"
 import unittest
-from gpfit.softmax_affine import softmax_affine
 from numpy import arange, newaxis
+from gpfit.softmax_affine import softmax_affine
+
 
 class t_softmax_affine(unittest.TestCase):
+    "Tests softmax_affine"
 
-    x = arange(0.,16.)[:,newaxis]
-    params = arange(1.,6.)
+    x = arange(0., 16.)[:, newaxis]
+    params = arange(1., 6.)
 
-    y, dydp = softmax_affine(x,params) 
+    y, dydp = softmax_affine(x, params)
 
     def test_y_size(self):
         self.assertEqual(self.y.size, self.x.size)
@@ -21,13 +24,13 @@ class t_softmax_affine(unittest.TestCase):
     def test_dydp_ndim(self):
         self.assertEqual(self.dydp.ndim, 2)
 
-tests = [t_softmax_affine]
+TESTS = [t_softmax_affine]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
 
-    for t in tests:
+    for t in TESTS:
         suite.addTests(loader.loadTestsFromTestCase(t))
 
     unittest.TextTestRunner(verbosity=2).run(suite)

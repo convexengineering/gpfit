@@ -1,10 +1,12 @@
+"Implements LM"
+from time import time
+from sys import float_info
 import numpy as np
 from numpy.linalg import norm
 from scipy.sparse import spdiags, issparse
-from time import time
-from sys import float_info
 
 
+# pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements
 def LM(residfun, initparams,
        verbose=False,
        lambdainit=0.02,

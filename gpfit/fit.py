@@ -1,14 +1,15 @@
 "Implements the all-important 'fit' function."
-from numpy import append, ones, exp, sqrt, mean, square
+from numpy import ones, exp, sqrt, mean, square, hstack
 from gpkit import NamedVariables, VectorVariable, Variable, NomialArray
 from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine
 from .max_affine import max_affine
 from .LM import LM
-from .b_init import b_init
+from .ba_init import ba_init
 from .print_fit import print_ISMA, print_SMA, print_MA
 
 
+ALPHA_INIT = 10
 RFUN = {"ISMA": implicit_softmax_affine,
         "SMA": softmax_affine,
         "MA": max_affine}
@@ -19,22 +20,22 @@ def get_params(ftype, K, xdata, ydata):
     def rfun(params):
         "A specific residual function."
         [yhat, drdp] = RFUN[ftype](xdata, params)
-        r = yhat - ydata.T[0]
+        r = yhat - ydata
         return r, drdp
 
-    alpha = 10
-    b = b_init(xdata, ydata, K).flatten('F')
+    ba = ba_init(xdata, ydata.reshape(ydata.size, 1), K).flatten('F')
 
     if ftype == "ISMA":
-        params, _ = LM(rfun, append(b, alpha*ones((K, 1))))
+        params, _ = LM(rfun, hstack((ba, ALPHA_INIT*ones(K))))
     elif ftype == "SMA":
-        params, _ = LM(rfun, append(b, alpha))
+        params, _ = LM(rfun, hstack((ba, ALPHA_INIT)))
     else:
-        params, _ = LM(rfun, b)
+        params, _ = LM(rfun, ba)
 
     return params
 
 
+# pylint: disable=too-many-locals
 def fit(xdata, ydata, K, ftype="ISMA"):
     """
     Fit a log-convex function to multivariate data, returning a GP constraint
@@ -47,18 +48,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
         ydata:      Dependent variable data
                         1D numpy array [nPoints,]
-                        [<---------- y ------------->]
-
-        K:          Number of terms in the fit
-                        integer > 0
-
-        ftype:      Fit type
-            one of the following strings: "ISMA" (default), "SMA" or "MA"
-
-    OUTPUTS
-        cstrt:      GPkit constraint
-            For K > 1, this will be a posynomial inequality or set thereof
-            If K = 1, this is automatically made into an equality constraint
+                        [<---------- y ------------->]lity constraint
 
         rms_error:  float
             Root mean square error between original (not log transformed)
@@ -70,7 +60,6 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         raise ValueError('Dependent data should be in the form of a 1D numpy array')
 
     # Transform to column vector
-    ydata = ydata.reshape(ydata.size, 1)
     xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
 
     # Dimension of function (number of independent variables)
@@ -116,11 +105,22 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         cstrt = (lhs >= rhs)
 
     def evaluate(xdata):
+        """
+        Evaluate the y of this fit over a range of xdata.
+
+        INPUTS
+            xdata:      Independent variable data
+                            2D numpy array [nDim, nPoints]
+                            [[<--------- x1 ------------->]
+                             [<--------- x2 ------------->]]
+
+        OUTPUT
+            ydata:      Dependent variable data in 1D numpy array
+        """
         xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
         return RFUN[ftype](xdata, params)[0]
 
     cstrt.evaluate = evaluate
-
-    rms_error = sqrt(mean(square(cstrt.evaluate(xdata.T)-ydata.T[0])))
+    rms_error = sqrt(mean(square(evaluate(xdata.T)-ydata)))
 
     return cstrt, rms_error

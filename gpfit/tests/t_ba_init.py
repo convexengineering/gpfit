@@ -1,18 +1,22 @@
-"unit tests for b_init function"
+"unit tests for ba_init function"
 import unittest
 import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
-from gpfit.b_init import b_init
+from gpfit.ba_init import ba_init
 
 SEED = 33404
 
-class TestMaxAffineInitK2(unittest.TestCase):
 
+class TestMaxAffineInitK2(unittest.TestCase):
+    """
+    This unit test ensures that max affine init produces an array
+    of the expected shape and size
+    """
     x = arange(0., 16.)[:, newaxis]
     y = arange(0., 16.)[:, newaxis]
     K = 2
-    ba = b_init(x, y, K)
+    ba = ba_init(x, y, K)
 
     def test_ba_ndim_k2(self):
         self.assertEqual(self.ba.ndim, 2)
@@ -22,11 +26,12 @@ class TestMaxAffineInitK2(unittest.TestCase):
         _, dimx = self.x.shape
         self.assertEqual(self.ba.shape, (dimx+1, self.K))
 
+
 class TestMaxAffineInitK4(unittest.TestCase):
-    '''
+    """
     This unit test ensures that max affine init produces an array
     of the expected shape and size
-    '''
+    """
     np.random.seed(SEED)
     Vdd = random_sample(1000,) + 1
     Vth = 0.2*random_sample(1000,) + 0.2
@@ -38,21 +43,19 @@ class TestMaxAffineInitK4(unittest.TestCase):
     y = y.reshape(y.size, 1)
     K = 4
 
-    ba = b_init(x,y,K)
+    ba = ba_init(x, y, K)
 
     def test_ba_shape_k4(self):
         self.assertEqual(self.ba.shape, (3, 4))
 
-
-
-tests = [TestMaxAffineInitK2,
+TESTS = [TestMaxAffineInitK2,
          TestMaxAffineInitK4]
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
 
-    for t in tests:
+    for t in TESTS:
         suite.addTests(loader.loadTestsFromTestCase(t))
 
     unittest.TextTestRunner(verbosity=2).run(suite)
