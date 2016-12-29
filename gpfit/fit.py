@@ -15,7 +15,7 @@ RFUN = {"ISMA": implicit_softmax_affine,
         "MA": max_affine}
 
 
-def _fit(ftype, K, xdata, ydata):
+def get_params(ftype, K, xdata, ydata):
     "Perform least-squares fitting optimization."
     def rfun(p):
         "A specific residual function."
@@ -31,10 +31,7 @@ def _fit(ftype, K, xdata, ydata):
     else:
         params, _ = LM(rfun, bainit)
 
-    y_fit, _ = RFUN[ftype](xdata, params)
-    rms_error = sqrt(mean(square(y_fit-ydata.T[0])))
-
-    return params, rms_error
+    return params
 
 
 def fit(xdata, ydata, K, ftype="ISMA"):
@@ -82,7 +79,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         u = VectorVariable(d, "u")
         w = Variable("w")
 
-    params, rms_error = _fit(ftype, K, xdata, ydata)
+    params = get_params(ftype, K, xdata, ydata)
 
     # A: exponent parameters, B: coefficient parameters
     A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
@@ -116,5 +113,13 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         cstrt = (lhs == rhs)
     else:
         cstrt = (lhs >= rhs)
+
+    def evaluate(xdata):
+        xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
+        return RFUN[ftype](xdata, params)[0]
+
+    cstrt.evaluate = evaluate
+
+    rms_error = sqrt(mean(square(cstrt.evaluate(xdata.T)-ydata.T[0])))
 
     return cstrt, rms_error
