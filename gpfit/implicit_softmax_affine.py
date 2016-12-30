@@ -1,8 +1,11 @@
-from numpy import ones, reshape, nan, inf, hstack, dot, tile
-from lse_implicit import lse_implicit
+"Implements ISMA residual function"
+from numpy import ones, nan, inf, hstack, dot, tile
+from .lse_implicit import lse_implicit
 
+
+# pylint: disable=too-many-locals
 def implicit_softmax_affine(x, params):
-    '''
+    """
     Evaluates implicit softmax affine function at values of x, given a set of
     ISMA fit parameters.
 
@@ -21,28 +24,18 @@ def implicit_softmax_affine(x, params):
 
             dydp:   Jacobian matrix
 
-    '''
+    """
 
     npt, dimx = x.shape
-
     K = params.size/(dimx+2)
     ba = params[0:-K]
     alpha = params[-K:]
-
-    #reshape ba to matrix
-    ba = ba.reshape(dimx+1, K, order='F')
-
     if any(alpha <= 0):
-        y = inf*ones((npt,1))
-        dydp = nan 
-        return y, dydp
+        return inf*ones((npt, 1)), nan
+    ba = ba.reshape(dimx+1, K, order='F')  # reshape ba to matrix
 
-    #augment data with column of ones
-    X = hstack((ones((npt,1)), x))
-
-    #compute affine functions
-    z = dot(X,ba)
-
+    X = hstack((ones((npt, 1)), x))  # augment data with column of ones
+    z = dot(X, ba)  # compute affine functions
 
     y, dydz, dydalpha = lse_implicit(z, alpha)
 
