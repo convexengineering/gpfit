@@ -1,8 +1,11 @@
-from numpy import size, inf, nan, ones, hstack, reshape, dot, tile
-from lse_scaled import lse_scaled
+"Implements SMA residual function"
+from numpy import size, inf, nan, ones, hstack, dot, tile
+from .lse_scaled import lse_scaled
 
+
+# pylint: disable=too-many-locals
 def softmax_affine(x, params):
-    '''
+    """
     Evaluates softmax affine function at values of x, given a set of
     SMA fit parameters.
 
@@ -20,37 +23,28 @@ def softmax_affine(x, params):
                         1D numpy array [nPoints]
 
             dydp:   Jacobian matrix
-    '''
-
-    ba = params[0:-1]
-    softness = params[-1] #equivalent of end
-
-    alpha = 1/softness
+    """
 
     npt, dimx = x.shape
+    ba = params[0:-1]
+    softness = params[-1]
+    alpha = 1/softness
+    if alpha <= 0:
+        return inf*ones((npt, 1)), nan
     K = size(ba)/(dimx+1)
     ba = ba.reshape(dimx+1, K, order='F')
 
-    if alpha <= 0:
-        y = inf*ones((npt,1))
-        dydp = nan
-        return y, dydp
-
-    #augment data with column of ones
-    X = hstack((ones((npt,1)), x))
-
-    #compute affine functions
-    z = dot(X,ba)
+    X = hstack((ones((npt, 1)), x))  # augment data with column of ones
+    z = dot(X, ba)  # compute affine functions
 
     y, dydz, dydsoftness = lse_scaled(z, alpha)
 
-    dydsoftness = - dydsoftness*(alpha**2)
+    dydsoftness = -dydsoftness*(alpha**2)
 
     nrow, ncol = dydz.shape
     repmat = tile(dydz, (dimx+1, 1)).reshape(nrow, ncol*(dimx+1), order='F')
     dydba = repmat * tile(X, (1, K))
-
-    dydsoftness.shape = (dydsoftness.size,1)
+    dydsoftness.shape = (dydsoftness.size, 1)
     dydp = hstack((dydba, dydsoftness))
 
     return y, dydp

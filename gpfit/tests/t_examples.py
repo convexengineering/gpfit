@@ -1,7 +1,6 @@
-"""Unit testing of tests in docs/source/examples"""
+"Unit testing of tests in docs/source/examples"
 import unittest
 import os
-import numpy as np
 from gpkit.tests.helpers import generate_example_tests
 
 

@@ -1,3 +1,4 @@
+"Implements MA residual function"
 import numpy as np
 
 
