@@ -1,4 +1,4 @@
-.. figure::  GPfit_logo.svg
+.. figure::  GPfit_logo.png
    :width: 250 px
 
 
