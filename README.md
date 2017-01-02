@@ -1,4 +1,4 @@
-<img src="https://github.com/hoburg/gpfit/raw/master/docs/source/GPfit_logo.png" width=110 alt="GPfit logo" />
+<img src="http://gpfit.readthedocs.io/en/latest/_images/GPfit_logo.png" width=110 alt="GPfit" />
 
 GPfit is a Python package for fitting geometric programming models to data.
 It requires installation of [GPkit](http://gpkit.readthedocs.org/en/latest/).
