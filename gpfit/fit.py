@@ -143,9 +143,13 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     def get_dataframe(xdata):
 
         bounds = []
-        for i in range(d):
-            bounds.append(min(xdata[i]))
-            bounds.append(max(xdata[i]))
+        if d == 1:
+            bounds.append(min(xdata))
+            bounds.append(max(xdata))
+        else:
+            for i in range(d):
+                bounds.append(min(xdata[i]))
+                bounds.append(max(xdata[i]))
 
         data = hstack([[ftype, K, d], cs, exs, alpha, exp(bounds),
                        [rms_error, max_error]])
