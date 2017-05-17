@@ -141,6 +141,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     max_error = sqrt(max(square(evaluate(xdata.T)-ydata)))
 
     def get_dataframe(xdata):
+        " return fit parameters as a dataframe "
 
         bounds = []
         if d == 1:
