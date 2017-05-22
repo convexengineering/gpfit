@@ -106,12 +106,10 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
         lhs, rhs = w**alpha, monos.sum()
         print_SMA(A, B, alpha, d, K)
-        alpha = [alpha]
     elif ftype == "MA":
         # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
         lhs, rhs = w, monos
         print_MA(A, B, d, K)
-        alpha = [alpha]
 
     if K == 1:
         # when possible, return an equality constraint
