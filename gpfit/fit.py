@@ -35,6 +35,7 @@ def get_params(ftype, K, xdata, ydata):
 
 
 # pylint: disable=too-many-locals
+# pylint: disable=too-many-branches
 def fit(xdata, ydata, K, ftype="ISMA"):
     """
     Fit a log-convex function to multivariate data, returning a GP constraint
@@ -56,7 +57,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
     # Check data is in correct form
     if ydata.ndim > 1:
-        raise ValueError('Dependent data should be in the form of a 1D numpy array')
+        raise ValueError('Dependent data should be a 1D numpy array')
 
     # Transform to column vector
     xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
