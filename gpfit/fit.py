@@ -76,25 +76,25 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
 
     cs = []
-    exs = []
+    exps = []
     if ftype == "ISMA":
         alpha = 1./params[range(-K, 0)]
         for k in range(K):
             cs.append(exp(alpha[k]*B[K]))
             for i in range(d):
-                exs.append(alpha[k]*A[d*k + i])
+                exps.append(alpha[k]*A[d*k + i])
     elif ftype == "SMA":
         alpha = 1./params[-1]
         for k in range(K):
             cs.append(exp(alpha*B[k]))
             for i in range(d):
-                exs.append(alpha*A[d*k + i])
+                exps.append(alpha*A[d*k + i])
     elif ftype == "MA":
         alpha = 1
         for k in range(K):
             cs.append(exp(B[k]))
             for i in range(d):
-                exs.append(A[d*k + i])
+                exps.append(A[d*k + i])
 
     monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
                                         for k in range(K)])**alpha
@@ -151,7 +151,12 @@ def fit(xdata, ydata, K, ftype="ISMA"):
                 bounds.append(min(xdata[i]))
                 bounds.append(max(xdata[i]))
 
-        data = hstack([[ftype, K, d], cs, exs, alpha, exp(bounds),
+        if not hasattr(alpha, "__len__"):
+            alphas = [alpha]
+        else:
+            alphas = alpha
+
+        data = hstack([[ftype, K, d], cs, exps, alphas, exp(bounds),
                        [rms_error, max_error]])
         df = pd.DataFrame(data).transpose()
         colnames = array(["ftype", "K", "d"])
@@ -159,7 +164,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         colnames = hstack([colnames, ["e%d%d" % (k, i) for k in range(1, K+1)
                                       for i in range(1, d+1)]])
         colnames = hstack([colnames, ["a%d" % i for i in
-                                      range(1, len(alpha)+1)]])
+                                      range(1, len(alphas)+1)]])
         colnames = hstack([colnames, hstack([["lb%d" % i, "ub%d" % i]
                                              for i in range(1, d+1)])])
         colnames = hstack([colnames, ["rms_err", "max_err"]])
