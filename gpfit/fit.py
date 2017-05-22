@@ -7,7 +7,6 @@ from .max_affine import max_affine
 from .levenberg_marquardt import levenberg_marquardt
 from .ba_init import ba_init
 from .print_fit import print_ISMA, print_SMA, print_MA
-import pandas as pd
 
 ALPHA_INIT = 10
 RFUN = {"ISMA": implicit_softmax_affine,
@@ -142,6 +141,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
     def get_dataframe(xdata):
         " return fit parameters as a dataframe "
+        import pandas as pd
 
         bounds = []
         if d == 1:
