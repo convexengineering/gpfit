@@ -37,6 +37,7 @@ def get_params(ftype, K, xdata, ydata):
 
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
+# pylint: disable=import-error
 def fit(xdata, ydata, K, ftype="ISMA"):
     """
     Fit a log-convex function to multivariate data, returning a GP constraint
