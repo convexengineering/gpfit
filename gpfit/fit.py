@@ -75,8 +75,6 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
     B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
 
-    cs = []
-    exps = []
     if ftype == "ISMA":
         alpha = 1./params[range(-K, 0)]
     elif ftype == "SMA":
@@ -185,4 +183,4 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
     cstrt.get_dataframe = get_dataframe
 
-    return cstrt, [rms_error, max_error]
+    return cstrt, rms_error
