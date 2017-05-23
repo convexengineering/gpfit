@@ -87,6 +87,9 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
                                         for k in range(K)])**alpha
 
+    if min(exp(B*alpha)) < 1e-100:
+        raise ValueError("Fitted constraint contains too small a value...")
+
     if ftype == "ISMA":
         # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
         lhs, rhs = 1, (monos/w**alpha).sum()
@@ -107,8 +110,6 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         exps = hstack([[fn.exps[0][e] for e in fn.exps[0]] for fn in rhs])
         print_MA(A, B, d, K)
 
-    if len(cs) != K or len(exps) != 2*K:
-        raise ValueError("Fitted constraint contains too small a value...")
     if inf in cs or inf in exps:
         raise ValueError("Fitted constraint contains too large a value...")
 
