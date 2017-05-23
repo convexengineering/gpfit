@@ -1,5 +1,5 @@
 "Implements the all-important 'fit' function."
-from numpy import ones, exp, sqrt, mean, square, hstack, array
+from numpy import ones, exp, sqrt, mean, square, hstack, array, inf
 from gpkit import NamedVariables, VectorVariable, Variable, NomialArray
 from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine
@@ -107,6 +107,10 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         exps = hstack([[fn.exps[0][e] for e in fn.exps[0]] for fn in rhs])
         print_MA(A, B, d, K)
 
+    if len(cs) != K or len(exps) != 2*K:
+        raise ValueError("Fitted constraint contains too small a value...")
+    if inf in cs or inf in exps:
+        raise ValueError("Fitted constraint contains too large a value...")
 
     if K == 1:
         # when possible, return an equality constraint
