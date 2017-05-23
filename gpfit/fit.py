@@ -14,6 +14,7 @@ RFUN = {"ISMA": implicit_softmax_affine,
         "MA": max_affine}
 
 
+# pylint: disable=invalid-name
 def get_params(ftype, K, xdata, ydata):
     "Perform least-squares fitting optimization."
     def rfun(params):
