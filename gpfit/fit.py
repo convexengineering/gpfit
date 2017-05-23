@@ -79,22 +79,10 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     exps = []
     if ftype == "ISMA":
         alpha = 1./params[range(-K, 0)]
-        for k in range(K):
-            cs.append(exp(alpha[k]*B[K]))
-            for i in range(d):
-                exps.append(alpha[k]*A[d*k + i])
     elif ftype == "SMA":
         alpha = 1./params[-1]
-        for k in range(K):
-            cs.append(exp(alpha*B[k]))
-            for i in range(d):
-                exps.append(alpha*A[d*k + i])
     elif ftype == "MA":
         alpha = 1
-        for k in range(K):
-            cs.append(exp(B[k]))
-            for i in range(d):
-                exps.append(A[d*k + i])
 
     monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
                                         for k in range(K)])**alpha
@@ -102,15 +90,23 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     if ftype == "ISMA":
         # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
         lhs, rhs = 1, (monos/w**alpha).sum()
+        cs = rhs.cs
+        exps = hstack([[exs[e] for e in exs if "w" not in str(e)]
+                       for exs in list(rhs.exps)])
         print_ISMA(A, B, alpha, d, K)
     elif ftype == "SMA":
         # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
         lhs, rhs = w**alpha, monos.sum()
+        cs = rhs.cs
+        exps = hstack([[exs[e] for e in exs] for exs in list(rhs.exps)])
         print_SMA(A, B, alpha, d, K)
     elif ftype == "MA":
         # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
         lhs, rhs = w, monos
+        cs = hstack([fn.cs for fn in rhs])
+        exps = hstack([[fn.exps[0][e] for e in fn.exps[0]] for fn in rhs])
         print_MA(A, B, d, K)
+
 
     if K == 1:
         # when possible, return an equality constraint
@@ -139,7 +135,25 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     max_error = sqrt(max(square(evaluate(xdata.T)-ydata)))
 
     def get_dataframe(xdata):
-        " return fit parameters as a dataframe "
+        """
+        Returns fit parameters as a dataframe
+        -------------------------------------
+        INPUTS
+            xdata:      Independent variable data
+                            2D numpy array [nDim, nPoints]
+            ** Must have pandas installed
+
+        OUTPUT
+            df:         Fitted constraint parameters
+                            Pandas dataframe
+                            ex:
+                w**a1 = c1 * u_1**e11 * u_2**e12 + c2 * u_1**e21 * u_2**e22
+                df.columns = ["ftype", "K", "d", "c1", "c2", "e11", "e12",
+                              "e22", "e21", "e22", "a1", "lb1", "ub1", "lb2",
+                              "ub2", "rms_error", "max_error"]
+                lb = lower bound
+                ub = upper bound
+        """
         import pandas as pd
 
         bounds = []
@@ -151,10 +165,8 @@ def fit(xdata, ydata, K, ftype="ISMA"):
                 bounds.append(min(xdata[i]))
                 bounds.append(max(xdata[i]))
 
-        if not hasattr(alpha, "__len__"):
+        if ftype != "ISMA":
             alphas = [alpha]
-        else:
-            alphas = alpha
 
         data = hstack([[ftype, K, d], cs, exps, alphas, exp(bounds),
                        [rms_error, max_error]])
