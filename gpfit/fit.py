@@ -77,26 +77,18 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
     B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
 
-    cs = []
-    exps = []
     if ftype == "ISMA":
         alpha = 1./params[range(-K, 0)]
-        for k in range(K):
-            cs.append(exp(alpha[k]*B[k]))
-            for i in range(d):
-                exps.append(alpha[k]*A[d*k + i])
+        cs = [exp(alpha[k]*B[k]) for k in range(K)]
+        exps = [alpha[k]*A[d*k+i] for k in range(K) for i in range(d)]
     elif ftype == "SMA":
         alpha = 1./params[-1]
-        for k in range(K):
-            cs.append(exp(alpha*B[k]))
-            for i in range(d):
-                exps.append(alpha*A[d*k + i])
+        cs = [exp(alpha*B[k]) for k in range(K)]
+        exps = [alpha*A[d*k+i] for k in range(K) for i in range(d)]
     elif ftype == "MA":
         alpha = 1
-        for k in range(K):
-            cs.append(exp(B[k]))
-            for i in range(d):
-                exps.append(A[d*k + i])
+        cs = [exp(B[k]) for k in range(K)]
+        exps = [A[d*k+i] for k in range(K) for i in range(d)]
 
     monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
                                         for k in range(K)])**alpha
