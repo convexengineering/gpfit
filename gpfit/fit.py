@@ -82,7 +82,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     if ftype == "ISMA":
         alpha = 1./params[range(-K, 0)]
         for k in range(K):
-            cs.append(exp(alpha[k]*B[K]))
+            cs.append(exp(alpha[k]*B[k]))
             for i in range(d):
                 exps.append(alpha[k]*A[d*k + i])
     elif ftype == "SMA":
