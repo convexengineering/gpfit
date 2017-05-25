@@ -67,6 +67,8 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     # Dimension of function (number of independent variables)
     d = int(xdata.shape[1])
 
+    fitdata = {"ftype": ftype, "K": K, "d": d}
+
     with NamedVariables("fit"):
         u = VectorVariable(d, "u")
         w = Variable("w")
@@ -79,44 +81,57 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
     if ftype == "ISMA":
         alpha = 1./params[range(-K, 0)]
-        cs = [exp(alpha[k]*B[k]) for k in range(K)]
-        exps = [alpha[k]*A[d*k+i] for k in range(K) for i in range(d)]
+        for k in range(K):
+            fitdata["c%d" % k] = exp(alpha[k]*B[k])
+            fitdata["a%d" % k] = alpha[k]
+            for i in range(d):
+                fitdata["e%d%d" % (k, d)] = alpha[k]*A[d*k+i]
+        print_ISMA(A, B, alpha, d, K)
     elif ftype == "SMA":
         alpha = 1./params[-1]
-        cs = [exp(alpha*B[k]) for k in range(K)]
-        exps = [alpha*A[d*k+i] for k in range(K) for i in range(d)]
+        fitdata["a1"] = alpha
+        for k in range(K):
+            fitdata["c%d" % k] = exp(alpha*B[k])
+            for i in range(d):
+                fitdata["e%d%d" % (k, d)] = alpha*A[d*k+i]
+        print_SMA(A, B, alpha, d, K)
     elif ftype == "MA":
         alpha = 1
-        cs = [exp(B[k]) for k in range(K)]
-        exps = [A[d*k+i] for k in range(K) for i in range(d)]
-
-    monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
-                                        for k in range(K)])**alpha
+        fitdata["a1"] = 1
+        for k in range(K):
+            fitdata["c%d" % k] = exp(B[k])
+            for i in range(d):
+                fitdata["e%d%d" % (k, d)] = A[d*k+i]
+        print_MA(A, B, d, K)
 
     if min(exp(B*alpha)) < 1e-100:
         raise ValueError("Fitted constraint contains too small a value...")
-
-    if ftype == "ISMA":
-        # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
-        lhs, rhs = 1, (monos/w**alpha).sum()
-        print_ISMA(A, B, alpha, d, K)
-    elif ftype == "SMA":
-        # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
-        lhs, rhs = w**alpha, monos.sum()
-        print_SMA(A, B, alpha, d, K)
-    elif ftype == "MA":
-        # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
-        lhs, rhs = w, monos
-        print_MA(A, B, d, K)
-
-    if inf in cs or inf in exps:
+    if max(exp(B*alpha)) > 1e100:
         raise ValueError("Fitted constraint contains too large a value...")
 
-    if K == 1:
-        # when possible, return an equality constraint
-        cstrt = (lhs == rhs)
-    else:
-        cstrt = (lhs >= rhs)
+    # monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
+    #                                     for k in range(K)])**alpha
+
+
+    # if ftype == "ISMA":
+    #     # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
+    #     lhs, rhs = 1, (monos/w**alpha).sum()
+    #     print_ISMA(A, B, alpha, d, K)
+    # elif ftype == "SMA":
+    #     # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
+    #     lhs, rhs = w**alpha, monos.sum()
+    #     print_SMA(A, B, alpha, d, K)
+    # elif ftype == "MA":
+    #     # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
+    #     lhs, rhs = w, monos
+    #     print_MA(A, B, d, K)
+
+
+    # if K == 1:
+    #     # when possible, return an equality constraint
+    #     cstrt = (lhs == rhs)
+    # else:
+    #     cstrt = (lhs >= rhs)
 
     def evaluate(xdata):
         """
@@ -134,59 +149,67 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
         return RFUN[ftype](xdata, params)[0]
 
-    cstrt.evaluate = evaluate
-    rms_error = sqrt(mean(square(evaluate(xdata.T)-ydata)))
-    max_error = sqrt(max(square(evaluate(xdata.T)-ydata)))
+    # cstrt.evaluate = evaluate
+    fitdata["rms_err"] = sqrt(mean(square(evaluate(xdata.T)-ydata)))
+    fitdata["max_err"] = sqrt(max(square(evaluate(xdata.T)-ydata)))
 
-    def get_dataframe(xdata):
-        """
-        Returns fit parameters as a dataframe
-        -------------------------------------
-        INPUTS
-            xdata:      Independent variable data
-                            2D numpy array [nDim, nPoints]
-            ** Must have pandas installed
+    if d == 1:
+        fitdata["lb1"] = min(xdata)
+        fitdata["ub1"] = max(xdata)
+    else:
+        for i in range(d):
+            fitdata["lb%d" % i] = min(xdata[i])
+            fitdata["ub%d" % i] = max(xdata[i])
 
-        OUTPUT
-            df:         Fitted constraint parameters
-                            Pandas dataframe
-                            ex:
-                w**a1 = c1 * u_1**e11 * u_2**e12 + c2 * u_1**e21 * u_2**e22
-                df.columns = ["ftype", "K", "d", "c1", "c2", "e11", "e12",
-                              "e22", "e21", "e22", "a1", "lb1", "ub1", "lb2",
-                              "ub2", "rms_error", "max_error"]
-                lb = lower bound
-                ub = upper bound
-        """
-        import pandas as pd
+    # def get_dataframe(xdata):
+    #     """
+    #     Returns fit parameters as a dataframe
+    #     -------------------------------------
+    #     INPUTS
+    #         xdata:      Independent variable data
+    #                         2D numpy array [nDim, nPoints]
+    #         ** Must have pandas installed
 
-        bounds = []
-        if d == 1:
-            bounds.append(min(xdata))
-            bounds.append(max(xdata))
-        else:
-            for i in range(d):
-                bounds.append(min(xdata[i]))
-                bounds.append(max(xdata[i]))
+    #     OUTPUT
+    #         df:         Fitted constraint parameters
+    #                         Pandas dataframe
+    #                         ex:
+    #             w**a1 = c1 * u_1**e11 * u_2**e12 + c2 * u_1**e21 * u_2**e22
+    #             df.columns = ["ftype", "K", "d", "c1", "c2", "e11", "e12",
+    #                           "e22", "e21", "e22", "a1", "lb1", "ub1", "lb2",
+    #                           "ub2", "rms_error", "max_error"]
+    #             lb = lower bound
+    #             ub = upper bound
+    #     """
+    #     import pandas as pd
 
-        if ftype != "ISMA":
-            alphas = [alpha]
+    #     bounds = []
+    #     if d == 1:
+    #         bounds.append(min(xdata))
+    #         bounds.append(max(xdata))
+    #     else:
+    #         for i in range(d):
+    #             bounds.append(min(xdata[i]))
+    #             bounds.append(max(xdata[i]))
 
-        data = hstack([[ftype, K, d], cs, exps, alphas, exp(bounds),
-                       [rms_error, max_error]])
-        df = pd.DataFrame(data).transpose()
-        colnames = array(["ftype", "K", "d"])
-        colnames = hstack([colnames, ["c%d" % k for k in range(1, K+1)]])
-        colnames = hstack([colnames, ["e%d%d" % (k, i) for k in range(1, K+1)
-                                      for i in range(1, d+1)]])
-        colnames = hstack([colnames, ["a%d" % i for i in
-                                      range(1, len(alphas)+1)]])
-        colnames = hstack([colnames, hstack([["lb%d" % i, "ub%d" % i]
-                                             for i in range(1, d+1)])])
-        colnames = hstack([colnames, ["rms_err", "max_err"]])
-        df.columns = colnames
-        return df
+    #     if ftype != "ISMA":
+    #         alphas = [alpha]
 
-    cstrt.get_dataframe = get_dataframe
+    #     data = hstack([[ftype, K, d], cs, exps, alphas, exp(bounds),
+    #                    [rms_error, max_error]])
+    #     df = pd.DataFrame(data).transpose()
+    #     colnames = array(["ftype", "K", "d"])
+    #     colnames = hstack([colnames, ["c%d" % k for k in range(1, K+1)]])
+    #     colnames = hstack([colnames, ["e%d%d" % (k, i) for k in range(1, K+1)
+    #                                   for i in range(1, d+1)]])
+    #     colnames = hstack([colnames, ["a%d" % i for i in
+    #                                   range(1, len(alphas)+1)]])
+    #     colnames = hstack([colnames, hstack([["lb%d" % i, "ub%d" % i]
+    #                                          for i in range(1, d+1)])])
+    #     colnames = hstack([colnames, ["rms_err", "max_err"]])
+    #     df.columns = colnames
+    #     return df
 
-    return cstrt, rms_error
+    # cstrt.get_dataframe = get_dataframe
+
+    return cstrt
