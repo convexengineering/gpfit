@@ -23,7 +23,7 @@ class TestEx63ISMA(unittest.TestCase):
 
         _, rms_error = fit(x, y, K, "ISMA")
 
-        self.assertTrue(rms_error < 5e-4)
+        self.assertTrue(rms_error < 1e-3)
 
 
 class TestEx63SMA(unittest.TestCase):
@@ -41,7 +41,7 @@ class TestEx63SMA(unittest.TestCase):
 
         _, rms_error = fit(x, y, K, "SMA")
 
-        self.assertTrue(rms_error < 5e-4)
+        self.assertTrue(rms_error < 1e-3)
 
 
 class TestEx63MA(unittest.TestCase):

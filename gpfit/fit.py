@@ -1,5 +1,5 @@
 "Implements the all-important 'fit' function."
-from numpy import ones, exp, sqrt, mean, square, hstack, array
+from numpy import ones, exp, sqrt, mean, square, hstack, array, inf
 from gpkit import NamedVariables, VectorVariable, Variable, NomialArray
 from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine
@@ -79,34 +79,38 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
     if ftype == "ISMA":
         alpha = 1./params[range(-K, 0)]
+        cs = [exp(alpha[k]*B[k]) for k in range(K)]
+        exps = [alpha[k]*A[d*k+i] for k in range(K) for i in range(d)]
     elif ftype == "SMA":
         alpha = 1./params[-1]
+        cs = [exp(alpha*B[k]) for k in range(K)]
+        exps = [alpha*A[d*k+i] for k in range(K) for i in range(d)]
     elif ftype == "MA":
         alpha = 1
+        cs = [exp(B[k]) for k in range(K)]
+        exps = [A[d*k+i] for k in range(K) for i in range(d)]
 
     monos = exp(B*alpha) * NomialArray([(u**A[k*d:(k+1)*d]).prod()
                                         for k in range(K)])**alpha
 
+    if min(exp(B*alpha)) < 1e-100:
+        raise ValueError("Fitted constraint contains too small a value...")
+
     if ftype == "ISMA":
         # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
         lhs, rhs = 1, (monos/w**alpha).sum()
-        cs = rhs.cs
-        exps = hstack([[exs[e] for e in exs if "w" not in str(e)]
-                       for exs in list(rhs.exps)])
         print_ISMA(A, B, alpha, d, K)
     elif ftype == "SMA":
         # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
         lhs, rhs = w**alpha, monos.sum()
-        cs = rhs.cs
-        exps = hstack([[exs[e] for e in exs] for exs in list(rhs.exps)])
         print_SMA(A, B, alpha, d, K)
     elif ftype == "MA":
         # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
         lhs, rhs = w, monos
-        cs = hstack([fn.cs for fn in rhs])
-        exps = hstack([[fn.exps[0][e] for e in fn.exps[0]] for fn in rhs])
         print_MA(A, B, d, K)
 
+    if inf in cs or inf in exps:
+        raise ValueError("Fitted constraint contains too large a value...")
 
     if K == 1:
         # when possible, return an equality constraint
