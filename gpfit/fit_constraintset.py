@@ -5,8 +5,8 @@ from gpkit.small_scripts import unitstr
 import numpy as np
 
 class FitCS(ConstraintSet):
-    def __init__(self, fitdata, ivar=None, dvars=None, nobounds=False,
-                 err_margin=False, airfoil=False):
+    def __init__(self, fitdata, ivar=None, dvars=None, err_margin=None,
+                 airfoil=False):
 
         self.airfoil = airfoil
 
@@ -17,6 +17,8 @@ class FitCS(ConstraintSet):
 
         self.dvars = dvars
         self.ivar = ivar
+        self.rms_err = fitdata["rms_err"]
+        self.max_err = fitdata["max_err"]
 
         monos = [fitdata["c%d" % k]*NomialArray(dvars**np.array(
             [fitdata["e%d%d" % (k, i)] for i in
@@ -24,11 +26,14 @@ class FitCS(ConstraintSet):
                  range(1, fitdata["K"]+1)]
 
         if err_margin == "Max":
-            self.mfac = Variable("m_{fac-fit}", 1 + fitdata["max_err"], "-",
+            self.mfac = Variable("m_{fac-fit}", 1 + self.max_err, "-",
                                  "max error of fit")
         elif err_margin == "RMS":
-            self.mfac = Variable("m_{fac-fit}", 1 + fitdata["rms_err"], "-",
+            self.mfac = Variable("m_{fac-fit}", 1 + self.rms_err, "-",
                                  "RMS error of fit")
+        elif err_margin != None:
+            raise ValueError("Invalid name for err_margin: valid inputs Max, "
+                             "RMS")
         else:
             self.mfac = Variable("m_{fac-fit}", 1.0, "-", "fit factor")
 
