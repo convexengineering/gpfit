@@ -1,7 +1,7 @@
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
 from gpkit.small_scripts import unitstr
-from xfoilWrapper import blind_call, single_cl
+# from xfoilWrapper import blind_call, single_cl
 import numpy as np
 
 class FitCS(ConstraintSet):
@@ -18,34 +18,10 @@ class FitCS(ConstraintSet):
         self.dvars = dvars
         self.ivar = ivar
 
-        K = int(fitdata["K"].iloc[0])
-        d = int(fitdata["d"].iloc[0])
-        ftype = fitdata["ftype"].iloc[0]
-        A = np.array(fitdata[["e%d%d" % (k, i) for k in range(1, K+1) for i in
-                              range(1, d+1)]])
-        B = np.array(fitdata[["c%d" % k for k in range(1, K+1)]])[0].astype(float)
-
-        withvector = False
-        withvar = False
-        for dv in self.dvars:
-            if hasattr(dv, "__len__"):
-                withvector = True
-                N = len(dv)
-            else:
-                withvar = True
-        if withvector:
-            if withvar:
-                self.dvars = np.array([dv if isinstance(dv, NomialArray) else
-                                       [dv]*N for dv in self.dvars]).T
-            else:
-                self.dvars = np.array(self.dvars).T
-        else:
-            self.dvars = np.array([self.dvars])
-
         monos = [fitdata["c%d" % k]*NomialArray(dvars**np.array(
             [fitdata["e%d%d" % (k, i)] for i in
-             range(1, fitdata["d"]+1)])).prod() for k in
-                 range(1, fitdata["K"]+1)][0]
+             range(1, fitdata["d"]+1)])).prod(0) for k in
+                 range(1, fitdata["K"]+1)]
 
         if err_margin == "Max":
             self.mfac = Variable("m_{fac-fit}", 1 + fitdata["max_err"], "-",
@@ -56,35 +32,30 @@ class FitCS(ConstraintSet):
         else:
             self.mfac = Variable("m_{fac-fit}", 1.0, "-", "fit factor")
 
-        if ftype == "ISMA":
+        if fitdata["ftype"] == "ISMA":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
-            alpha = np.array(fitdata[["a%d" % k for k in
-                                 range(1, K+1)]])[0].astype(float)
-            lhs = 1
-            rhs = NomialArray([(mono/(ivar/self.mfac)**alpha).sum() for mono
-                               in monos])
-        elif ftype == "SMA":
+            alpha = np.array([fitdata["a%d" % k] for k in
+                              range(1, fitdata["K"] + 1)])
+            lhs, rhs = 1, NomialArray(monos/(ivar/self.mfac)**alpha).sum(0)
+        elif fitdata["ftype"] == "SMA":
             # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
-            alpha = float(fitdata["a1"].iloc[0])
-            lhs = (ivar/self.mfac)**alpha
-            rhs = NomialArray([mono.sum() for mono in monos])
-        elif ftype == "MA":
+            alpha = fitdata["a1"]
+            lhs, rhs = (ivar/self.mfac)**alpha, NomialArray(monos).sum(0)
+        elif fitdata["ftype"] == "MA":
             # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
-            lhs, rhs = (ivar/self.mfac), NomialArray(monos)
+            lhs, rhs = (ivar/self.mfac), NomialArray(monos).T
 
-        if K == 1:
+        if fitdata["K"] == 1:
             # when possible, return an equality constraint
-            if withvector:
-                cstrt = [(lh == rh) for rh, lh in zip(rhs, lhs)]
-            else:
+            if not hasattr(rhs, "shape"):
                 cstrt = (lhs == rhs)
         else:
-            if withvector:
+            if hasattr(rhs, "shape"):
                 cstrt = [(lh >= rh) for rh, lh in zip(rhs, lhs)]
             else:
                 cstrt = (lhs >= rhs)
 
-        constraints = [cstrt]
+        self.constraint = cstrt
         if not hasattr(self.mfac, "__len__"):
             self.mfac = [self.mfac]*len(self.dvars)
         if not hasattr(self.ivar, "__len__"):
@@ -98,11 +69,10 @@ class FitCS(ConstraintSet):
                           float(fitdata["ub%d" % (i+1)].iloc[0])]
             self.bounds.append(bds)
 
-        ConstraintSet.__init__(self, constraints)
+        ConstraintSet.__init__(self, self.constraints)
 
     def process_result(self, result, TOL=0.03):
         super(FitCS, self).process_result(result)
-
 
         for mfac, dvrs, ivr, bds in zip(self.mfac, self.dvars, self.ivar,
                                         self.bounds):
