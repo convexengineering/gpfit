@@ -56,22 +56,19 @@ class FitCS(ConstraintSet):
                 cstrt = (lhs >= rhs)
 
         self.constraint = cstrt
-        if not hasattr(self.mfac, "__len__"):
-            self.mfac = [self.mfac]*len(self.dvars)
-        if not hasattr(self.ivar, "__len__"):
-            self.ivar = [self.ivar]*len(self.dvars)
 
-        self.bounds = []
-        for dvar in self.dvars:
-            bds = {}
-            for i, v in enumerate(dvar):
-                bds[v] = [float(fitdata["lb%d" % (i+1)].iloc[0]),
-                          float(fitdata["ub%d" % (i+1)].iloc[0])]
-            self.bounds.append(bds)
+        self.bounds = {}
+        for i, dvar in enumerate(self.dvars):
+            self.bounds[dvar] = [fitdata["lb%d" % (i+1)],
+                                 fitdata["ub%d" % (i+1)]]
 
         ConstraintSet.__init__(self, self.constraint)
 
-    def process_result(self, result, TOL=0.03):
+    def process_result(self, result):
+        """
+        make sure fit result is within bounds of fitted data
+        if data comes from Xfoil and airfoil is provided check against xfoil
+        """
         super(FitCS, self).process_result(result)
 
         if abs(result["sensitivities"]["constants"][self.mfac] < 1e-5):
@@ -87,7 +84,7 @@ class FitCS(ConstraintSet):
                     cl = result(dvar)
             cd = result(self.ivar)
             err, cdx = xfoil_comparison(self.airfoil, cl, re, cd)
-            ind = np.where(err > TOL)[0]
+            ind = np.where(err > 0.05)[0]
             for i in ind:
                 msg = ("Drag error for %s is %.2f. Re=%.1f; CL=%.4f;"
                        " Xfoil cd=%.6f, GP sol cd=%.6f" %
