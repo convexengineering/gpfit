@@ -69,77 +69,46 @@ class FitCS(ConstraintSet):
                           float(fitdata["ub%d" % (i+1)].iloc[0])]
             self.bounds.append(bds)
 
-        ConstraintSet.__init__(self, self.constraints)
+        ConstraintSet.__init__(self, self.constraint)
 
     def process_result(self, result, TOL=0.03):
         super(FitCS, self).process_result(result)
 
-        for mfac, dvrs, ivr, bds in zip(self.mfac, self.dvars, self.ivar,
-                                        self.bounds):
+        if abs(result["sensitivities"]["constants"][self.mfac] < 1e-5):
+            return None
 
-            if self.airfoil:
-                runxfoil = True
-                if ".dat" in self.airfoil:
-                    topline = "load " + self.airfoil + " \n afl \n"
-                elif "naca" in self.airfoil:
-                    topline = self.airfoil + "\n"
-                else:
-                    print "Bad airfoil specified"
-            else:
-                runxfoil = False
-            bndwrn = True
+        if self.airfoil:
+            from .xfoilWrapper import xfoil_comparison
+            cl, re = 0.0, 0.0
+            for dvar in self.dvars:
+                if "Re" in str(dvar):
+                    re = result(dvar)
+                if "C_L" in str(dvar):
+                    cl = result(dvar)
+            cd = result(self.ivar)
+            err, cdx = xfoil_comparison(self.airfoil, cl, re, cd)
+            ind = np.where(err > TOL)[0]
+            for i in ind:
+                msg = ("Drag error for %s is %.2f. Re=%.1f; CL=%.4f;"
+                       " Xfoil cd=%.6f, GP sol cd=%.6f" %
+                       (", ".join(self.ivar.descr["models"]), err[i], re[i],
+                        cl[i], cd[i], cdx[i]))
+                print "Warning: %s" % msg
+        else:
+            for dvar in self.dvars:
+                num = result(dvar)
+                direct = None
+                if any(x < self.bounds[dvar][0] for x in np.hstack([num])):
+                    direct = "lower"
+                    bnd = self.bounds[dvar][0]
+                if any(x > self.bounds[dvar][1] for x in np.hstack([num])):
+                    direct = "upper"
+                    bnd = self.bounds[dvar][1]
 
-            if abs(result["sensitivities"]["constants"][mfac]) < 1e-5:
-                bndwrn = False
-                runxfoil = False
-
-            if runxfoil:
-                cl, re = 0.0, 0.0
-                for d in dvrs:
-                    if "C_L" in str(d):
-                        cl = result(d)
-                    if "Re" in str(d):
-                        re = result(d)
-                cdgp = result(ivr)
-                failmsg = "Xfoil call failed at CL=%.4f and Re=%.1f" % (cl, re)
-                try:
-                    x = blind_call(topline, cl, re, 0.0)
-                    if "VISCAL:  Convergence failed" in x:
-                        print "Convergence Warning: %s" % failmsg
-                        cd, cl = cdgp, 1.0
-                    else:
-                        cd, cl = x[0], x[1]
-                except:
-                    print "Unable to start Xfoil: %s" % failmsg
-                    cd, cl = cdgp, 1.0
-
-                err = 1 - cdgp/cd
-                if err > TOL:
-                    msg = ("Drag error for %s is %.2f. Re=%.1f; CL=%.4f;"
-                           " Xfoil cd=%.6f, GP sol cd=%.6f" %
-                           (", ".join(d.descr["models"]), err, re, cl, cd,
-                            cdgp))
-                    print "Warning: %s" % msg
-                else:
-                    bndwrn = False
-
-            if bndwrn:
-                for d in dvrs:
-                    num = result(d)
-                    err = 0.0
-                    if num < bds[d][0]:
-                        direct = "lower"
-                        bnd = bds[d][0]
-                        err = num/bnd
-                    if num > bds[d][1]:
-                        direct = "upper"
-                        bnd = bds[d][1]
-                        err = 1 - num/bnd
-
-                    if err > TOL:
-                        msg = ("Variable %.100s could cause inaccurate result"
-                               " because it exceeds" % d
-                               + " %s bound. Solution is %.4f but"
-                               " bound is %.4f" %
-                               (direct, num, bnd))
-                        print "Warning: " + msg
+                if direct:
+                    msg = ("Variable %.100s could cause inaccurate result"
+                           " because it exceeds" % dvar
+                           + " %s bound. Solution is %.4f but"
+                           " bound is %.4f" %
+                           (direct, num, bnd))
+                    print "Warning: " + msg
