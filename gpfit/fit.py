@@ -86,7 +86,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             fitdata["c%d" % k] = exp(alpha[k]*B[k])
             fitdata["a%d" % k] = alpha[k]
             for i in range(d):
-                fitdata["e%d%d" % (k, d)] = alpha[k]*A[d*k+i]
+                fitdata["e%d%d" % (k, i)] = alpha[k]*A[d*k+i]
         print_ISMA(A, B, alpha, d, K)
     elif ftype == "SMA":
         alpha = 1./params[-1]
@@ -94,7 +94,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         for k in range(K):
             fitdata["c%d" % k] = exp(alpha*B[k])
             for i in range(d):
-                fitdata["e%d%d" % (k, d)] = alpha*A[d*k+i]
+                fitdata["e%d%d" % (k, i)] = alpha*A[d*k+i]
         print_SMA(A, B, alpha, d, K)
     elif ftype == "MA":
         alpha = 1
@@ -102,7 +102,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         for k in range(K):
             fitdata["c%d" % k] = exp(B[k])
             for i in range(d):
-                fitdata["e%d%d" % (k, d)] = A[d*k+i]
+                fitdata["e%d%d" % (k, i)] = A[d*k+i]
         print_MA(A, B, d, K)
 
     if min(exp(B*alpha)) < 1e-100:
@@ -131,8 +131,8 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     fitdata["max_err"] = sqrt(max(square(evaluate(xdata.T)-ydata)))
 
     if d == 1:
-        fitdata["lb1"] = min(xdata)
-        fitdata["ub1"] = max(xdata)
+        fitdata["lb0"] = min(xdata)
+        fitdata["ub0"] = max(xdata)
     else:
         for i in range(d):
             fitdata["lb%d" % i] = min(xdata[i])
@@ -140,6 +140,8 @@ def fit(xdata, ydata, K, ftype="ISMA"):
 
     cs = FitCS(fitdata)
     cstrt = cs.constraint
-    cstrt.evaluate = evaluate
+    cstrt.get_fitdata = cs.get_fitdata
+    cstrt.get_dataframe = cs.get_dataframe
+    cs.evaluate = evaluate
 
-    return cstrt, cs.rms_err
+    return cs, cs.rms_err
