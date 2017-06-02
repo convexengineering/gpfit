@@ -18,7 +18,7 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
     if not hasattr(Cl, "__len__"):
         Cl, Re, Cd = [Cl], [Re], [Cd]
 
-    err, cdx = [], []
+    err, cdxs = [], []
     for cl, re, cd in zip(Cl, Re, Cd):
         failmsg = "Xfoil call failed at CL=%.4f and Re=%.1f" % (cl, re)
         try:
@@ -33,9 +33,9 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
             cdx, clx = cd, 1.0
 
         err.append(1 - cd/cdx)
-        cdx.append(cdx)
+        cdxs.append(cdx)
 
-    return np.array(err), np.array(cdx)
+    return np.array(err), np.array(cdxs)
 
 def blind_call(topline, cl, Re, M, max_iter = 100,
                pathname = "/usr/local/bin/xfoil"):

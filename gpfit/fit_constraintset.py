@@ -93,7 +93,7 @@ class FitCS(ConstraintSet):
         """
         super(FitCS, self).process_result(result)
 
-        if abs(result["sensitivities"]["constants"][self.mfac] < 1e-5):
+        if np.amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
             return None
 
         if self.airfoil:
@@ -105,6 +105,8 @@ class FitCS(ConstraintSet):
                 if "C_L" in str(dvar):
                     cl = result(dvar)
             cd = result(self.ivar)
+            if not hasattr(cl, "__len__") and hasattr(re, "__len__"):
+                cl = [cl]*len(re)
             err, cdx = xfoil_comparison(self.airfoil, cl, re, cd)
             ind = np.where(err > 0.05)[0]
             for i in ind:
@@ -132,5 +134,5 @@ class FitCS(ConstraintSet):
                            " because it exceeds" % dvar
                            + " %s bound. Solution is %.4f but"
                            " bound is %.4f" %
-                           (direct, num, bnd))
+                           (direct, np.amax([num]), bnd))
                     print "Warning: " + msg
