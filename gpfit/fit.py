@@ -68,7 +68,17 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     # Dimension of function (number of independent variables)
     d = int(xdata.shape[1])
 
+    # begin fit data dict to generate fit constraint set
     fitdata = {"ftype": ftype, "K": K, "d": d}
+
+    # find bounds of x
+    if d == 1:
+        fitdata["lb0"] = exp(min(xdata.reshape(xdata.size)))
+        fitdata["ub0"] = exp(max(xdata.reshape(xdata.size)))
+    else:
+        for i in range(d):
+            fitdata["lb%d" % i] = exp(min(xdata.T[i]))
+            fitdata["ub%d" % i] = exp(max(xdata.T[i]))
 
     with NamedVariables("fit"):
         u = VectorVariable(d, "u")
@@ -129,14 +139,6 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     # cstrt.evaluate = evaluate
     fitdata["rms_err"] = sqrt(mean(square(evaluate(xdata.T)-ydata)))
     fitdata["max_err"] = sqrt(max(square(evaluate(xdata.T)-ydata)))
-
-    if d == 1:
-        fitdata["lb0"] = min(xdata)[0]
-        fitdata["ub0"] = max(xdata)[0]
-    else:
-        for i in range(d):
-            fitdata["lb%d" % i] = min(xdata[i])
-            fitdata["ub%d" % i] = max(xdata[i])
 
     cs = FitCS(fitdata)
     cs.evaluate = evaluate
