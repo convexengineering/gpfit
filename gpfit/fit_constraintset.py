@@ -52,7 +52,13 @@ class FitCS(ConstraintSet):
 
         if fitdata["K"] == 1:
             # when possible, return an equality constraint
-            self.constraint = (lhs == rhs)
+            if hasattr(rhs, "shape"):
+                if rhs.ndim > 1:
+                    self.constraint = [(lh == rh) for lh, rh in zip(lhs, rhs)]
+                else:
+                    self.constraint = (lhs == rhs)
+            else:
+                self.constraint = (lhs == rhs)
         else:
             if hasattr(rhs, "shape"):
                 if rhs.ndim > 1:

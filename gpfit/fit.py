@@ -131,17 +131,14 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     fitdata["max_err"] = sqrt(max(square(evaluate(xdata.T)-ydata)))
 
     if d == 1:
-        fitdata["lb0"] = min(xdata)
-        fitdata["ub0"] = max(xdata)
+        fitdata["lb0"] = min(xdata)[0]
+        fitdata["ub0"] = max(xdata)[0]
     else:
         for i in range(d):
             fitdata["lb%d" % i] = min(xdata[i])
             fitdata["ub%d" % i] = max(xdata[i])
 
     cs = FitCS(fitdata)
-    cstrt = cs.constraint
-    cstrt.get_fitdata = cs.get_fitdata
-    cstrt.get_dataframe = cs.get_dataframe
     cs.evaluate = evaluate
 
     return cs, cs.rms_err
