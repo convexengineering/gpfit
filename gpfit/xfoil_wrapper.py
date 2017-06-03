@@ -3,6 +3,7 @@ import subprocess
 import numpy as np
 
 #pylint: disable=invalid-name, bare-except, too-many-locals
+#pylint: disable=too-many-arguments
 
 def xfoil_comparison(airfoil, Cl, Re, Cd):
     """
