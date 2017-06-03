@@ -4,7 +4,8 @@ from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
 
 # pylint: disable=too-many-instance-attributes, too-many-locals,
-# pylint: disable=too-many-branches, no-member
+# pylint: disable=too-many-branches, no-member, import-error
+# pylint: disable=too-many-arguments
 
 class FitCS(ConstraintSet):
     """
