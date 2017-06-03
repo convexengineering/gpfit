@@ -1,6 +1,5 @@
 "Implements the all-important 'fit' function."
-from numpy import ones, exp, sqrt, mean, square, hstack, array, inf
-from gpkit import NamedVariables, VectorVariable, Variable, NomialArray
+from numpy import ones, exp, sqrt, mean, square, hstack
 from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine
 from .max_affine import max_affine
@@ -13,7 +12,6 @@ ALPHA_INIT = 10
 RFUN = {"ISMA": implicit_softmax_affine,
         "SMA": softmax_affine,
         "MA": max_affine}
-
 
 # pylint: disable=invalid-name
 def get_params(ftype, K, xdata, ydata):
@@ -35,13 +33,12 @@ def get_params(ftype, K, xdata, ydata):
 
     return params
 
-
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
 # pylint: disable=import-error
 def fit(xdata, ydata, K, ftype="ISMA"):
     """
-    Fit a log-convex function to multivariate data, returning a GP constraint
+    Fit a log-convex function to multivariate data, returning a FitConstraintSet
 
     INPUTS
         xdata:      Independent variable data
@@ -79,10 +76,6 @@ def fit(xdata, ydata, K, ftype="ISMA"):
         for i in range(d):
             fitdata["lb%d" % i] = exp(min(xdata.T[i]))
             fitdata["ub%d" % i] = exp(max(xdata.T[i]))
-
-    with NamedVariables("fit"):
-        u = VectorVariable(d, "u")
-        w = Variable("w")
 
     params = get_params(ftype, K, xdata, ydata)
 

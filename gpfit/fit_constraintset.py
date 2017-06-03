@@ -1,10 +1,30 @@
+" fit constraint set "
+from numpy import amax, array, hstack, where
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
-from gpkit.small_scripts import unitstr
-import numpy as np
+
+# pylint: disable=too-many-instance-attributes, too-many-locals,
+# pylint: disable=too-many-branches, no-member
 
 class FitCS(ConstraintSet):
-    def __init__(self, fitdata, ivar=None, dvars=None, err_margin=None,
+    """
+    Constraint set for fitted functions
+    Arguments
+    ---------
+    fitdata:                dict of fit parameters
+                                dict
+    ivar:                   independent variable
+                                gpkit Variable, Monomial, or NomialArray
+    dvars:                  dependent variables
+                                list of gpkit Variables, Monomials, or
+                                NomialArrays
+    err_margin:             flag to set margin factor using RMS or max error
+                                str - ("Max", "RMS")
+    airfoil:                sepecified airfoil if drag polar fit; if specified
+                            will call XFOIL in process solution to check fit
+                                str - ("xxx.dat", "naca xxxx")
+    """
+    def __init__(self, fitdata, ivar=None, dvars=None, name="", err_margin=None,
                  airfoil=False):
 
         self.airfoil = airfoil
@@ -20,27 +40,28 @@ class FitCS(ConstraintSet):
         self.rms_err = fitdata["rms_err"]
         self.max_err = fitdata["max_err"]
 
-        monos = [fitdata["c%d" % k]*NomialArray(np.array(dvars).T**np.array(
+        monos = [fitdata["c%d" % k]*NomialArray(array(dvars).T**array(
             [fitdata["e%d%d" % (k, i)] for i in
              range(fitdata["d"])])).prod(NomialArray(dvars).ndim - 1) for k in
                  range(fitdata["K"])]
 
         if err_margin == "Max":
-            self.mfac = Variable("m_{fac-fit}", 1 + self.max_err, "-",
-                                 "max error of fit")
+            self.mfac = Variable("m_{fac-" + name + "-fit}",
+                                 1 + self.max_err, "-", "max error of fit")
         elif err_margin == "RMS":
-            self.mfac = Variable("m_{fac-fit}", 1 + self.rms_err, "-",
-                                 "RMS error of fit")
+            self.mfac = Variable("m_{fac-" + name + "-fit}",
+                                 1 + self.rms_err, "-", "RMS error of fit")
         elif err_margin != None:
             raise ValueError("Invalid name for err_margin: valid inputs Max, "
                              "RMS")
         else:
-            self.mfac = Variable("m_{fac-fit}", 1.0, "-", "fit factor")
+            self.mfac = Variable("m_{fac-" + name + "-fit}", 1.0, "-",
+                                 "fit factor")
 
         if fitdata["ftype"] == "ISMA":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
-            alpha = np.array([fitdata["a%d" % k] for k in
-                              range(fitdata["K"])])
+            alpha = array([fitdata["a%d" % k] for k in
+                           range(fitdata["K"])])
             lhs, rhs = 1, NomialArray(monos/(ivar/self.mfac)**alpha).sum(0)
         elif fitdata["ftype"] == "SMA":
             # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
@@ -93,7 +114,7 @@ class FitCS(ConstraintSet):
         """
         super(FitCS, self).process_result(result)
 
-        if np.amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
+        if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
             return None
 
         if self.airfoil:
@@ -108,7 +129,7 @@ class FitCS(ConstraintSet):
             if not hasattr(cl, "__len__") and hasattr(re, "__len__"):
                 cl = [cl]*len(re)
             err, cdx = xfoil_comparison(self.airfoil, cl, re, cd)
-            ind = np.where(err > 0.05)[0]
+            ind = where(err > 0.05)[0]
             for i in ind:
                 msg = ("Drag error for %s is %.2f. Re=%.1f; CL=%.4f;"
                        " Xfoil cd=%.6f, GP sol cd=%.6f" %
@@ -122,10 +143,10 @@ class FitCS(ConstraintSet):
                 else:
                     num = result(dvar)
                 direct = None
-                if any(x < self.bounds[dvar][0] for x in np.hstack([num])):
+                if any(x < self.bounds[dvar][0] for x in hstack([num])):
                     direct = "lower"
                     bnd = self.bounds[dvar][0]
-                if any(x > self.bounds[dvar][1] for x in np.hstack([num])):
+                if any(x > self.bounds[dvar][1] for x in hstack([num])):
                     direct = "upper"
                     bnd = self.bounds[dvar][1]
 
@@ -134,5 +155,5 @@ class FitCS(ConstraintSet):
                            " because it exceeds" % dvar
                            + " %s bound. Solution is %.4f but"
                            " bound is %.4f" %
-                           (direct, np.amax([num]), bnd))
+                           (direct, amax([num]), bnd))
                     print "Warning: " + msg
