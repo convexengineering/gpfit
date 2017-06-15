@@ -123,15 +123,15 @@ class FitCS(ConstraintSet):
                 num = result(dvar)
             direct = None
             if any(x < self.bounds[dvar][0] for x in hstack([num])):
-                direct = "lower"
+                direct, state = "lower", "below"
                 bnd = self.bounds[dvar][0]
             if any(x > self.bounds[dvar][1] for x in hstack([num])):
-                direct = "upper"
+                direct, state = "upper", "above"
                 bnd = self.bounds[dvar][1]
 
             if direct:
                 msg = ("Variable %.100s could cause inaccurate result"
-                       " because it exceeds" % dvar
+                       " because it is %s" % (dvar, state)
                        + " %s bound. Solution is %.4f but"
                        " bound is %.4f" %
                        (direct, amax([num]), bnd))
@@ -146,8 +146,8 @@ class XfoilFit(FitCS):
                                             str (e.g. "xxx.dat", "naca xxxx")
 
     """
-    def __init__(self, fitdata, ivar=None, dvars=None, name="", err_margin=None,
-                 airfoil=False):
+    def __init__(self, fitdata, ivar=None, dvars=None, name="",
+                 err_margin=None, airfoil=False):
 
         super(XfoilFit, self).__init__(fitdata, ivar=ivar, dvars=dvars,
                                        name=name, err_margin=err_margin)
