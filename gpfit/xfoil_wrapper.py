@@ -47,7 +47,7 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
                 cdx = cd
             else:
                 cdx = x[0]
-        except:
+        except subprocess.CalledProcessError:
             print "Unable to start Xfoil: %s" % failmsg
             cdx = cd
 

@@ -183,4 +183,3 @@ class XfoilFit(FitCS):
                    (", ".join(self.ivar.descr["models"]), err[i], re[i],
                     cl[i], cd[i], cdx[i]))
             print "Warning: %s" % msg
-
