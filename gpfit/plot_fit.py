@@ -3,13 +3,14 @@ from gpfit.print_fit import print_MA, print_SMA
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_fit_1d(x, y, K=1, fitclass='MA'):
+def plot_fit_1d(x, y, K=1, fitclass='MA', dataonly=False):
     "Finds and plots a fit (MA or SMA) for 1D data"
 
     u = np.log(x)
     w = np.log(y)
 
-    params, _ = fit(u, w, K, fitclass)
+    params, rmserr = fit(u, w, K, fitclass)
+    print rmserr
 
     xx = np.linspace(min(x), max(x), 1000)
     if fitclass == 'MA':
@@ -33,6 +34,9 @@ def plot_fit_1d(x, y, K=1, fitclass='MA'):
 
         print_str = print_SMA(A, B, alpha, 1, K)
         stringlist = [''.join(print_str)]
+
+    if dataonly:
+        return xx, YY
 
     f, ax = plt.subplots()
     ax.plot(x, y, '+r')

@@ -25,16 +25,16 @@ def print_SMA(A, B, alpha, d, K):
 
     stringList = [None]*K
 
-    printString = 'y**{0:.3g} = '.format(alpha)
+    printString = 'y**{0:.4g} = '.format(alpha)
     for k in range(K):
         if k > 0:
             print printString
             printString = '    + '
 
-        printString += '{0:.3g}'.format(exp(alpha * B[k]))
+        printString += '{0:.4g}'.format(exp(alpha * B[k]))
         
         for i in range(d):
-            printString += ' * (x_{0:d})**{1:.3g}'.format(i+1, alpha * A[d*k + i])
+            printString += ' * (x_{0:d})**{1:.4g}'.format(i+1, alpha * A[d*k + i])
 
         stringList[k] = printString
 
