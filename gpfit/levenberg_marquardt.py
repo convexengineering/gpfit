@@ -136,7 +136,8 @@ def levenberg_marquardt(residfun, initparams,
             augJ[npt:, :] = D  # modified from npt+1 ??
 
         # Compute step for this lambda
-        step = np.linalg.lstsq(augJ, augr)[0]
+        step = np.linalg.lstsq(augJ, augr, rcond=-1)[0]
+        # Rank condition specified to default for python upgrades
         trialp = (params + step.T)[0]
 
         # Check function value at trialp

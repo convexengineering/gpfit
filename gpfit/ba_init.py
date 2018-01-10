@@ -76,6 +76,8 @@ def ba_init(x, y, K):
                 print("ba_init: Added %s points to partition %s to maintain"
                       "full rank for local fitting." % (i-iinit, k))
         # now create the local fit
-        b[:, k] = lstsq(X[inds.nonzero()], y[inds.nonzero()])[0][:, 0]
+        b[:, k] = lstsq(X[inds.nonzero()], y[inds.nonzero()], rcond=-1)[0][:, 0]
+        # Rank condition specified to default for python upgrades
+
 
     return b
