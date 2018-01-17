@@ -46,17 +46,16 @@ class FitCS(ConstraintSet):
                  range(fitdata["K"])]
 
         if err_margin == "Max":
-            self.mfac = Variable("m_{fac-" + name + "-fit}",
-                                 1 + self.max_err, "-", "max error of fit")
+            self.mfac = Variable("errMAX-" + name, 1 + self.max_err, "-",
+                                 name + " max error of fit")
         elif err_margin == "RMS":
-            self.mfac = Variable("m_{fac-" + name + "-fit}",
-                                 1 + self.rms_err, "-", "RMS error of fit")
+            self.mfac = Variable("errRMS-" + name, 1 + self.rms_err, "-",
+                                 name + " RMS error of fit")
         elif err_margin != None:
             raise ValueError("Invalid name for err_margin: valid inputs Max, "
                              "RMS")
         else:
-            self.mfac = Variable("m_{fac-" + name + "-fit}", 1.0, "-",
-                                 "fit factor")
+            self.mfac = Variable("mfit", 1.0, "-", name + " fit senstivity var")
 
         if fitdata["ftype"] == "ISMA":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
