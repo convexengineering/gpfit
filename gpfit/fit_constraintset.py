@@ -113,6 +113,8 @@ class FitCS(ConstraintSet):
         """
         super(FitCS, self).process_result(result)
 
+        if self.mfac not in result["sensitivities"]["constants"]:
+            return None
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
             return None
 
@@ -160,6 +162,8 @@ class XfoilFit(FitCS):
         """
         super(XfoilFit, self).process_result(result)
 
+        if self.mfac not in result["sensitivities"]["constants"]:
+            return None
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
             return None
         if not self.airfoil:
