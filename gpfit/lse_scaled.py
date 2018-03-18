@@ -1,7 +1,9 @@
-from numpy import array, tile, exp, log
+"Implements lse_scaled"
+from numpy import tile, exp, log
+
 
 def lse_scaled(x, alpha):
-    '''
+    """
     Log-sum-exponential function with derivatives
     - sums across the second dimension of x
     - note that lse_scaled is a mapping R^n --> R
@@ -22,7 +24,7 @@ def lse_scaled(x, alpha):
 
             dydalpha:
                     [n-element 1D array], n is number of data points
-    '''
+    """
 
     _, n = x.shape
 

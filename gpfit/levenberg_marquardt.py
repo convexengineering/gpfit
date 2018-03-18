@@ -1,17 +1,19 @@
+"Implements LM"
+from time import time
+from sys import float_info
 import numpy as np
 from numpy.linalg import norm
 from scipy.sparse import spdiags, issparse
-from time import time
-from sys import float_info
 
 
-def LM(residfun, initparams,
-       verbose=False,
-       lambdainit=0.02,
-       maxiter=5000,
-       maxtime=5.,
-       tolgrad=np.sqrt(float_info.epsilon),
-       tolrms=1e-7):
+# pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements
+def levenberg_marquardt(residfun, initparams,
+                        verbose=False,
+                        lambdainit=0.02,
+                        maxiter=5000,
+                        maxtime=5.,
+                        tolgrad=np.sqrt(float_info.epsilon),
+                        tolrms=1e-7):
     """
     Levenberg-Marquardt alogrithm
     Minimizes sum of squared error of residual function
@@ -134,7 +136,8 @@ def LM(residfun, initparams,
             augJ[npt:, :] = D  # modified from npt+1 ??
 
         # Compute step for this lambda
-        step = np.linalg.lstsq(augJ, augr)[0]
+        step = np.linalg.lstsq(augJ, augr, rcond=-1)[0]
+        # Rank condition specified to default for python upgrades
         trialp = (params + step.T)[0]
 
         # Check function value at trialp

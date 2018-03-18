@@ -1,5 +1,6 @@
-from gpfit.fit import fit
+"Fits an example function"
 from numpy import logspace, log, log10, random
+from gpfit.fit import fit
 
 # fixed initial guess for fitting
 random.seed(33404)

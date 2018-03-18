@@ -1,7 +1,10 @@
-from numpy import arange, exp, array
+"Implements functions for raw fit printing from params"
+from numpy import exp
 
+
+# pylint: disable=invalid-name
 def print_ISMA(A, B, alpha, d, K):
-
+    "print ISMA fit from params"
     stringList = [None]*K
 
     printString = '1 = '
@@ -10,10 +13,10 @@ def print_ISMA(A, B, alpha, d, K):
             print printString
             printString = '    + '
 
-        printString += '({0:.3g}/w**{1:.3g})'.format(exp(alpha[k] * B[k]), alpha[k])
-        
+        printString += '({0:.6g}/w**{1:.6g})'.format(exp(alpha[k] * B[k]), alpha[k])
+
         for i in range(d):
-            printString += ' * (u_{0:d})**{1:.3g}'.format(i+1, alpha[k] * A[d*k + i])
+            printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, alpha[k] * A[d*k + i])
 
         stringList[k] = printString
 
@@ -21,20 +24,21 @@ def print_ISMA(A, B, alpha, d, K):
     return stringList
 
 
+# pylint: disable=invalid-name
 def print_SMA(A, B, alpha, d, K):
-
+    "print SMA fit from params"
     stringList = [None]*K
 
-    printString = 'w**{0:.3g} = '.format(alpha)
+    printString = 'w**{0:.6g} = '.format(alpha)
     for k in range(K):
         if k > 0:
             print printString
             printString = '    + '
 
-        printString += '{0:.3g}'.format(exp(alpha * B[k]))
-        
+        printString += '{0:.6g}'.format(exp(alpha * B[k]))
+
         for i in range(d):
-            printString += ' * (u_{0:d})**{1:.3g}'.format(i+1, alpha * A[d*k + i])
+            printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, alpha * A[d*k + i])
 
         stringList[k] = printString
 
@@ -42,20 +46,18 @@ def print_SMA(A, B, alpha, d, K):
     return stringList
 
 
+# pylint: disable=invalid-name
 def print_MA(A, B, d, K):
-    '''
-    Print set of K monomial inequality constraints
-    '''
-
+    "print MA fit from params"
     stringList = [None]*K
 
     for k in range(K):
-        printString = 'w = {0:.3g}'.format(exp(B[k]))
-        
+        printString = 'w = {0:.6g}'.format(exp(B[k]))
+
         for i in range(d):
-            printString += ' * (u_{0:d})**{1:.3g}'.format(i+1, A[d*k + i])
+            printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, A[d*k + i])
 
         stringList[k] = printString
         print printString
-        
+
     return stringList
