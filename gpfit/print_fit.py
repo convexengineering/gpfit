@@ -4,13 +4,13 @@ from numpy import exp
 
 # pylint: disable=invalid-name
 def print_ISMA(A, B, alpha, d, K):
-    "print ISMA fit from params"
+    print("ISMA fit from params")
     stringList = [None]*K
 
     printString = '1 = '
     for k in range(K):
         if k > 0:
-            print printString
+            print(printString)
             printString = '    + '
 
         printString += '({0:.6g}/w**{1:.6g})'.format(exp(alpha[k] * B[k]), alpha[k])
@@ -20,19 +20,19 @@ def print_ISMA(A, B, alpha, d, K):
 
         stringList[k] = printString
 
-    print printString
+    print(printString)
     return stringList
 
 
 # pylint: disable=invalid-name
 def print_SMA(A, B, alpha, d, K):
-    "print SMA fit from params"
+    print("SMA fit from params")
     stringList = [None]*K
 
     printString = 'w**{0:.6g} = '.format(alpha)
     for k in range(K):
         if k > 0:
-            print printString
+            print(printString)
             printString = '    + '
 
         printString += '{0:.6g}'.format(exp(alpha * B[k]))
@@ -42,13 +42,13 @@ def print_SMA(A, B, alpha, d, K):
 
         stringList[k] = printString
 
-    print printString
+    print(printString)
     return stringList
 
 
 # pylint: disable=invalid-name
 def print_MA(A, B, d, K):
-    "print MA fit from params"
+    print("MA fit from params")
     stringList = [None]*K
 
     for k in range(K):
@@ -58,6 +58,6 @@ def print_MA(A, B, d, K):
             printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, A[d*k + i])
 
         stringList[k] = printString
-        print printString
+        print(printString)
 
     return stringList
