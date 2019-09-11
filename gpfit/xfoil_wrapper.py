@@ -1,4 +1,5 @@
 " python wrapper to call xfoil "
+from __future__ import print_function
 import subprocess
 import numpy as np
 
@@ -43,12 +44,12 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
         try:
             x = single_call(topline, cl, re, 0.0)
             if "VISCAL:  Convergence failed" in x:
-                print "Convergence Warning: %s" % failmsg
+                print("Convergence Warning: %s" % failmsg)
                 cdx = cd
             else:
                 cdx = x[0]
         except subprocess.CalledProcessError:
-            print "Unable to start Xfoil: %s" % failmsg
+            print("Unable to start Xfoil: %s" % failmsg)
             cdx = cd
 
         err.append(1 - cd/cdx)

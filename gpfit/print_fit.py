@@ -1,4 +1,5 @@
 "Implements functions for raw fit printing from params"
+from __future__ import print_function
 from numpy import exp
 
 
@@ -10,7 +11,7 @@ def print_ISMA(A, B, alpha, d, K):
     printString = '1 = '
     for k in range(K):
         if k > 0:
-            print printString
+            print(printString)
             printString = '    + '
 
         printString += '({0:.6g}/w**{1:.6g})'.format(exp(alpha[k] * B[k]), alpha[k])
@@ -20,7 +21,7 @@ def print_ISMA(A, B, alpha, d, K):
 
         stringList[k] = printString
 
-    print printString
+    print(printString)
     return stringList
 
 
@@ -32,7 +33,7 @@ def print_SMA(A, B, alpha, d, K):
     printString = 'w**{0:.6g} = '.format(alpha)
     for k in range(K):
         if k > 0:
-            print printString
+            print(printString)
             printString = '    + '
 
         printString += '{0:.6g}'.format(exp(alpha * B[k]))
@@ -42,7 +43,7 @@ def print_SMA(A, B, alpha, d, K):
 
         stringList[k] = printString
 
-    print printString
+    print(printString)
     return stringList
 
 
@@ -58,6 +59,6 @@ def print_MA(A, B, d, K):
             printString += ' * (u_{0:d})**{1:.6g}'.format(i+1, A[d*k + i])
 
         stringList[k] = printString
-        print printString
+        print(printString)
 
     return stringList

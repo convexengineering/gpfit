@@ -1,4 +1,5 @@
 " fit constraint set "
+from __future__ import print_function
 from numpy import amax, array, hstack, where
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
@@ -135,7 +136,7 @@ class FitCS(ConstraintSet):
                        + " %s bound. Solution is %.4f but"
                        " bound is %.4f" %
                        (direct, amax([num]), bnd))
-                print "Warning: " + msg
+                print("Warning: " + msg)
 
 
 class XfoilFit(FitCS):
@@ -185,4 +186,4 @@ class XfoilFit(FitCS):
                    " Xfoil cd=%.6f, GP sol cd=%.6f" %
                    (", ".join(self.ivar.descr["models"]), err[i], re[i],
                     cl[i], cd[i], cdx[i]))
-            print "Warning: %s" % msg
+            print("Warning: %s" % msg)
