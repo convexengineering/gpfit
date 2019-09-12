@@ -1,5 +1,10 @@
 " fit constraint set "
 from __future__ import print_function
+from __future__ import division
+from builtins import str
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 from numpy import amax, array, hstack, where
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
@@ -61,14 +66,14 @@ class FitCS(ConstraintSet):
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
             alpha = array([fitdata["a%d" % k] for k in
                            range(fitdata["K"])])
-            lhs, rhs = 1, NomialArray(monos/(ivar/self.mfac)**alpha).sum(0)
+            lhs, rhs = 1, NomialArray(old_div(monos,(old_div(ivar,self.mfac))**alpha)).sum(0)
         elif fitdata["ftype"] == "SMA":
             # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
             alpha = fitdata["a1"]
-            lhs, rhs = (ivar/self.mfac)**alpha, NomialArray(monos).sum(0)
+            lhs, rhs = (old_div(ivar,self.mfac))**alpha, NomialArray(monos).sum(0)
         elif fitdata["ftype"] == "MA":
             # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
-            lhs, rhs = (ivar/self.mfac), NomialArray(monos).T
+            lhs, rhs = (old_div(ivar,self.mfac)), NomialArray(monos).T
 
         if fitdata["K"] == 1:
             # when possible, return an equality constraint
@@ -102,8 +107,8 @@ class FitCS(ConstraintSet):
     def get_dataframe(self):
         " return a pandas DataFrame of fit parameters "
         import pandas as pd
-        df = pd.DataFrame(self.fitdata.values()).transpose()
-        df.columns = self.fitdata.keys()
+        df = pd.DataFrame(list(self.fitdata.values())).transpose()
+        df.columns = list(self.fitdata.keys())
         return df
 
     def process_result(self, result):

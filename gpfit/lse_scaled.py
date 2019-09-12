@@ -1,4 +1,6 @@
 "Implements lse_scaled"
+from __future__ import division
+from past.utils import old_div
 from numpy import tile, exp, log
 
 
@@ -38,12 +40,12 @@ def lse_scaled(x, alpha):
     expo = exp(alpha*h)
     sumexpo = expo.sum(axis=1)
 
-    L = log(sumexpo)/alpha
+    L = old_div(log(sumexpo),alpha)
 
     y = L + m
 
-    dydx = expo/(tile(sumexpo, (n, 1))).T
+    dydx = old_div(expo,(tile(sumexpo, (n, 1))).T)
     # note that sum(dydx,2)==1, i.e. dydx is a probability distribution
-    dydalpha = ((h*expo).sum(axis=1)/sumexpo - L)/alpha
+    dydalpha = old_div((old_div((h*expo).sum(axis=1),sumexpo) - L),alpha)
 
     return y, dydx, dydalpha

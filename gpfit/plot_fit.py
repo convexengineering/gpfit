@@ -1,4 +1,7 @@
 "Fit plotting"
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 from gpfit.fit import fit
@@ -24,10 +27,10 @@ def plot_fit_1d(udata, wdata, K=1, fitclass='MA', plotspace='log'):
 
     if fitclass == 'SMA':
         wexps, = cstrt.left.exps
-        alpha, = wexps.values()
+        alpha, = list(wexps.values())
         uvarkey, = cstrt.right.varkeys
-        A = [d[uvarkey]/alpha for d in cstrt.right.exps]
-        B = np.log(cstrt.right.cs) / alpha
+        A = [old_div(d[uvarkey],alpha) for d in cstrt.right.exps]
+        B = old_div(np.log(cstrt.right.cs), alpha)
 
         ww = 0
         for k in range(K):
@@ -55,5 +58,5 @@ def plot_fit_1d(udata, wdata, K=1, fitclass='MA', plotspace='log'):
 if __name__ == "__main__":
     N = 51
     U = np.logspace(0, np.log10(3), N)
-    W = (U**2+3) / (U+1)**2
+    W = old_div((U**2+3), (U+1)**2)
     plot_fit_1d(U, W, K=2, fitclass='MA', plotspace="linear")

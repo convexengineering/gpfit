@@ -1,5 +1,9 @@
 " python wrapper to call xfoil "
 from __future__ import print_function
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 import subprocess
 import numpy as np
 
@@ -52,7 +56,7 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
             print("Unable to start Xfoil: %s" % failmsg)
             cdx = cd
 
-        err.append(1 - cd/cdx)
+        err.append(1 - old_div(cd,cdx))
         cdxs.append(cdx)
 
     return np.array(err), np.array(cdxs)

@@ -1,4 +1,6 @@
 "Implements ISMA residual function"
+from __future__ import division
+from past.utils import old_div
 from numpy import ones, nan, inf, hstack, dot, tile
 from .lse_implicit import lse_implicit
 
@@ -27,7 +29,7 @@ def implicit_softmax_affine(x, params):
     """
 
     npt, dimx = x.shape
-    K = params.size/(dimx+2)
+    K = old_div(params.size,(dimx+2))
     ba = params[0:-K]
     alpha = params[-K:]
     if any(alpha <= 0):

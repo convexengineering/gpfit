@@ -1,5 +1,7 @@
 "Implements lse_implicit"
 from __future__ import print_function
+from __future__ import division
+from past.utils import old_div
 from numpy import zeros, spacing, exp, log, tile
 
 
@@ -57,12 +59,12 @@ def lse_implicit(x, alpha):
     sumexpo = expo.sum(axis=1)
     sumalphaexpo = alphaexpo.sum(axis=1)
     f = log(sumexpo)
-    dfdL = -alphaexpo.sum(axis=1)/sumexpo
+    dfdL = old_div(-alphaexpo.sum(axis=1),sumexpo)
     neval = 1
     i = abs(f) > tol  # inds to update
 
     while any(i):
-        L[i] = L[i] - f[i]/dfdL[i]    # newton step
+        L[i] = L[i] - old_div(f[i],dfdL[i])    # newton step
         # re-evaluate
         Lmat[i, :] = (tile(L[i], (nx, 1))).T
         expo[i, :] = exp(alphamat[i, :] * (h[i, :] - Lmat[i, :]))
@@ -70,7 +72,7 @@ def lse_implicit(x, alpha):
         sumexpo[i] = expo[i, :].sum(axis=1)
         sumalphaexpo[i, ] = alphaexpo[i, :].sum(axis=1)
         f[i] = log(sumexpo[i])
-        dfdL[i] = -sumalphaexpo[i, ]/sumexpo[i]
+        dfdL[i] = old_div(-sumalphaexpo[i, ],sumexpo[i])
         neval = neval + 1
 
         # update inds that need to be evaluated
@@ -82,7 +84,7 @@ def lse_implicit(x, alpha):
 
     y = m + L
 
-    dydx = alphaexpo/(tile(sumalphaexpo, (nx, 1))).T
-    dydalpha = (h - Lmat)*expo/(tile(sumalphaexpo, (nx, 1))).T
+    dydx = old_div(alphaexpo,(tile(sumalphaexpo, (nx, 1))).T)
+    dydalpha = old_div((h - Lmat)*expo,(tile(sumalphaexpo, (nx, 1))).T)
 
     return y, dydx, dydalpha

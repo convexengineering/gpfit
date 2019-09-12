@@ -1,5 +1,7 @@
 "Implements LM"
 from __future__ import print_function
+from __future__ import division
+from past.utils import old_div
 from time import time
 from sys import float_info
 import numpy as np
@@ -75,7 +77,7 @@ def levenberg_marquardt(residfun, initparams,
                          (J.shape, npt, nparam))
 
     # "Accept" initial point
-    rms = norm(r)/np.sqrt(npt)  # 2-norm
+    rms = old_div(norm(r),np.sqrt(npt))  # 2-norm
     maxgrad = norm(np.dot(r.T, J), ord=np.inf)  # Inf-norm
     prev_trial_accepted = False
 
@@ -143,7 +145,7 @@ def levenberg_marquardt(residfun, initparams,
 
         # Check function value at trialp
         trialr, trialJ = residfun(trialp)
-        trialrms = norm(trialr)/np.sqrt(npt)
+        trialrms = old_div(norm(trialr),np.sqrt(npt))
         RMStraj.append(trialrms)
 
         # Accept or reject trial params
@@ -157,7 +159,7 @@ def levenberg_marquardt(residfun, initparams,
             # but lambda not yet updated
             if verbose:
                 print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ)))
+                                   old_div(max(diagJJ),min(diagJJ))))
 
             if maxgrad < tolgrad:
                 if verbose:
@@ -165,14 +167,14 @@ def levenberg_marquardt(residfun, initparams,
                 break
 
             if prev_trial_accepted and itr > 1:
-                lamb = lamb/10
+                lamb = old_div(lamb,10)
 
             prev_trial_accepted = True
             params_updated = True
         else:
             if verbose:
                 print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ)))
+                                   old_div(max(diagJJ),min(diagJJ))))
             lamb = lamb*10
             prev_trial_accepted = False
             params_updated = False
