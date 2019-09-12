@@ -32,7 +32,7 @@ def softmax_affine(x, params):
     alpha = 1/softness
     if alpha <= 0:
         return inf*ones((npt, 1)), nan
-    K = size(ba)/(dimx+1)
+    K = size(ba)//(dimx+1)
     ba = ba.reshape(dimx+1, K, order='F')
 
     X = hstack((ones((npt, 1)), x))  # augment data with column of ones

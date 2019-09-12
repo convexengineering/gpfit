@@ -28,7 +28,7 @@ def implicit_softmax_affine(x, params):
     """
 
     npt, dimx = x.shape
-    K = params.size/(dimx+2)
+    K = params.size//(dimx+2)
     ba = params[0:-K]
     alpha = params[-K:]
     if any(alpha <= 0):
