@@ -16,6 +16,6 @@ cMA, errorMA = fit(x, y, K, "MA")
 cSMA, errorSMA = fit(x, y, K, "SMA")
 cISMA, errorISMA = fit(x, y, K, "ISMA")
 
-print "MA RMS Error: %.5g" % errorMA
-print "SMA RMS Error: %.5g" % errorSMA
-print "ISMA RMS Error: %.5g" % errorISMA
+print("MA RMS Error: %.5g" % errorMA)
+print("SMA RMS Error: %.5g" % errorSMA)
+print("ISMA RMS Error: %.5g" % errorISMA)
