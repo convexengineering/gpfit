@@ -31,7 +31,16 @@ def softmax_affine(x, params):
     alpha = 1/softness
     if alpha <= 0:
         return inf*ones((npt, 1)), nan
+
     K = size(ba)/(dimx+1)
+    
+    # Integer checking. Needed in Python 3.
+    if K.is_integer():
+        K = int(K)
+    else:
+        error_string("K = %0.2f is not an integer." % K)
+        raise AttributeError(error_string)
+
     ba = ba.reshape(dimx+1, K, order='F')
 
     X = hstack((ones((npt, 1)), x))  # augment data with column of ones
