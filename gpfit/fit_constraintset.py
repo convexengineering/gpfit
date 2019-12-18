@@ -1,9 +1,9 @@
 " fit constraint set "
 from __future__ import print_function
 from __future__ import division
-from numpy import amax, array, hstack, where
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
+from numpy import amax, array, hstack, where
 
 # pylint: disable=too-many-instance-attributes, too-many-locals,
 # pylint: disable=too-many-branches, no-member, import-error
