@@ -6,6 +6,7 @@ from numpy import exp
 
 # pylint: disable=invalid-name
 def print_ISMA(A, B, alpha, d, K):
+    "prints ISMA fit from params"
     print("ISMA fit from params")
     stringList = [None]*K
 
@@ -28,6 +29,7 @@ def print_ISMA(A, B, alpha, d, K):
 
 # pylint: disable=invalid-name
 def print_SMA(A, B, alpha, d, K):
+    "prints SMA fit from params"
     print("SMA fit from params")
     stringList = [None]*K
 
@@ -50,6 +52,7 @@ def print_SMA(A, B, alpha, d, K):
 
 # pylint: disable=invalid-name
 def print_MA(A, B, d, K):
+    "prints MA fit from params"
     print("MA fit from params")
     stringList = [None]*K
 

@@ -46,7 +46,7 @@ class FitCS(ConstraintSet):
         monos = [fitdata["c%d" % k]*NomialArray(array(dvars).T**array(
             [fitdata["e%d%d" % (k, i)] for i in
              range(fitdata["d"])])).prod(NomialArray(dvars).ndim - 1)
-            for k in range(fitdata["K"])]
+                for k in range(fitdata["K"])]
 
         if err_margin == "Max":
             self.mfac = Variable("m_{fac-" + name + "-fit}",

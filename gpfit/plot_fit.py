@@ -1,8 +1,8 @@
 "Fit plotting"
 from __future__ import division
 from builtins import range
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 from gpfit.fit import fit
 from gpfit.print_fit import print_MA, print_SMA
 
