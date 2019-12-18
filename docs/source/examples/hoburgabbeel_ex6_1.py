@@ -1,4 +1,5 @@
 "Fits an example function"
+from __future__ import division
 from numpy import logspace, log, log10, random
 from gpfit.fit import fit
 

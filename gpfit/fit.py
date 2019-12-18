@@ -1,4 +1,5 @@
 "Implements the all-important 'fit' function."
+from builtins import range
 from numpy import ones, exp, sqrt, mean, square, hstack
 from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine
@@ -84,7 +85,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     B = params[[i for i in range(K*(d+1)) if i % (d + 1) == 0]]
 
     if ftype == "ISMA":
-        alpha = 1./params[range(-K, 0)]
+        alpha = 1./params[list(range(-K, 0))]
         for k in range(K):
             fitdata["c%d" % k] = exp(alpha[k]*B[k])
             fitdata["a%d" % k] = alpha[k]

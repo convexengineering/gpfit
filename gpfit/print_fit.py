@@ -1,4 +1,6 @@
 "Implements functions for raw fit printing from params"
+from __future__ import print_function
+from builtins import range
 from numpy import exp
 
 

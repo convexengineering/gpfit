@@ -1,3 +1,4 @@
+from __future__ import division
 from numpy import linspace, logspace, log, exp, log10
 from gpfit.fit import fit
 

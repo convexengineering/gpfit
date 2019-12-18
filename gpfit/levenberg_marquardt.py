@@ -1,4 +1,6 @@
 "Implements LM"
+from __future__ import print_function
+from __future__ import division
 from time import time
 from sys import float_info
 import numpy as np
@@ -164,7 +166,7 @@ def levenberg_marquardt(residfun, initparams,
                 break
 
             if prev_trial_accepted and itr > 1:
-                lamb = lamb/10
+                lamb = lamb/10.
 
             prev_trial_accepted = True
             params_updated = True

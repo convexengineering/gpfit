@@ -48,8 +48,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'GPfit'
-copyright = u'2015, MIT Convex Optimization Group'
+project = 'GPfit'
+copyright = '2015, MIT Convex Optimization Group'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -201,8 +201,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'GPfit.tex', u'GPfit Documentation',
-   u'MIT Convex Optimization Group', 'manual'),
+  ('index', 'GPfit.tex', 'GPfit Documentation',
+   'MIT Convex Optimization Group', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -231,8 +231,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'gpfit', u'GPfit Documentation',
-     [u'MIT Convex Optimization Group'], 1)
+    ('index', 'gpfit', 'GPfit Documentation',
+     ['MIT Convex Optimization Group'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -245,8 +245,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'GPfit', u'GPfit Documentation',
-   u'MIT Convex Optimization Group', 'GPfit', 'One line description of project.',
+  ('index', 'GPfit', 'GPfit Documentation',
+   'MIT Convex Optimization Group', 'GPfit', 'One line description of project.',
    'Miscellaneous'),
 ]
 

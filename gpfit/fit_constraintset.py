@@ -1,4 +1,9 @@
 " fit constraint set "
+from __future__ import print_function
+from __future__ import division
+from builtins import str
+from builtins import zip
+from builtins import range
 from numpy import amax, array, hstack, where
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
@@ -101,8 +106,8 @@ class FitCS(ConstraintSet):
     def get_dataframe(self):
         " return a pandas DataFrame of fit parameters "
         import pandas as pd
-        df = pd.DataFrame(self.fitdata.values()).transpose()
-        df.columns = self.fitdata.keys()
+        df = pd.DataFrame(list(self.fitdata.values())).transpose()
+        df.columns = list(self.fitdata.keys())
         return df
 
     def process_result(self, result):
