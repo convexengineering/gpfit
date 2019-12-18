@@ -1,7 +1,9 @@
 " fit constraint set "
-from numpy import amax, array, hstack, where
+from __future__ import print_function
+from __future__ import division
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
+from numpy import amax, array, hstack, where
 
 # pylint: disable=too-many-instance-attributes, too-many-locals,
 # pylint: disable=too-many-branches, no-member, import-error
@@ -41,7 +43,7 @@ class FitCS(ConstraintSet):
         monos = [fitdata["c%d" % k]*NomialArray(array(dvars).T**array(
             [fitdata["e%d%d" % (k, i)] for i in
              range(fitdata["d"])])).prod(NomialArray(dvars).ndim - 1)
-            for k in range(fitdata["K"])]
+                 for k in range(fitdata["K"])]
 
         if err_margin == "Max":
             self.mfac = Variable("m_{fac-" + name + "-fit}",
@@ -101,8 +103,8 @@ class FitCS(ConstraintSet):
     def get_dataframe(self):
         " return a pandas DataFrame of fit parameters "
         import pandas as pd
-        df = pd.DataFrame(self.fitdata.values()).transpose()
-        df.columns = self.fitdata.keys()
+        df = pd.DataFrame(list(self.fitdata.values())).transpose()
+        df.columns = list(self.fitdata.keys())
         return df
 
     def process_result(self, result):
@@ -112,9 +114,9 @@ class FitCS(ConstraintSet):
         super(FitCS, self).process_result(result)
 
         if self.mfac not in result["sensitivities"]["constants"]:
-            return None
+            return
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
-            return None
+            return
 
         for dvar in self.dvars:
             if isinstance(dvar, NomialArray):
@@ -135,7 +137,7 @@ class FitCS(ConstraintSet):
                        + " %s bound. Solution is %.4f but"
                        " bound is %.4f" %
                        (direct, amax([num]), bnd))
-                print "Warning: " + msg
+                print("Warning: " + msg)
 
 
 class XfoilFit(FitCS):
@@ -162,11 +164,11 @@ class XfoilFit(FitCS):
         super(XfoilFit, self).process_result(result)
 
         if self.mfac not in result["sensitivities"]["constants"]:
-            return None
+            return
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
-            return None
+            return
         if not self.airfoil:
-            return None
+            return
 
         from .xfoilWrapper import xfoil_comparison
         cl, re = 0.0, 0.0
@@ -185,4 +187,4 @@ class XfoilFit(FitCS):
                    " Xfoil cd=%.6f, GP sol cd=%.6f" %
                    (", ".join(self.ivar.descr["models"]), err[i], re[i],
                     cl[i], cd[i], cdx[i]))
-            print "Warning: %s" % msg
+            print("Warning: %s" % msg)

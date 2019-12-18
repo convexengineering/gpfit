@@ -1,4 +1,6 @@
 " python wrapper to call xfoil "
+from __future__ import print_function
+from __future__ import division
 import subprocess
 import numpy as np
 
@@ -43,12 +45,12 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
         try:
             x = single_call(topline, cl, re, 0.0)
             if "VISCAL:  Convergence failed" in x:
-                print "Convergence Warning: %s" % failmsg
+                print("Convergence Warning: %s" % failmsg)
                 cdx = cd
             else:
                 cdx = x[0]
         except subprocess.CalledProcessError:
-            print "Unable to start Xfoil: %s" % failmsg
+            print("Unable to start Xfoil: %s" % failmsg)
             cdx = cd
 
         err.append(1 - cd/cdx)
@@ -106,19 +108,18 @@ def single_call(topline, cl, Re, M, max_iter=100,
         return stdout_val
 
     res = {}
-    if ("VISCAL:  Convergence failed\n" not in stdout_val):
-        ostr = stdout_val.split()
-        ctr = 0
-        for i in range(0, len(ostr)):
-            ix = len(ostr)-(i+1)
-            vl = ostr[ix]
-            if vl in ['a', 'CL', 'CD', 'Cm']:
-                res[vl] = ostr[ix + 2]
-                ctr += 1
-            if ctr >= 4:
-                break
-        cd = res['CD']
-        cl = res['CL']
-        # alpha_ret = res['a']
-        cm = res['Cm']
-        return float(cd), float(cl), float(cm), stdout_val
+    ostr = stdout_val.split()
+    ctr = 0
+    for i in range(0, len(ostr)):
+        ix = len(ostr)-(i+1)
+        vl = ostr[ix]
+        if vl in ['a', 'CL', 'CD', 'Cm']:
+            res[vl] = ostr[ix + 2]
+            ctr += 1
+        if ctr >= 4:
+            break
+    cd = res['CD']
+    cl = res['CL']
+    # alpha_ret = res['a']
+    cm = res['Cm']
+    return float(cd), float(cl), float(cm), stdout_val
