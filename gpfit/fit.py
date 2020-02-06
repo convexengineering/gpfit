@@ -1,5 +1,4 @@
 "Implements the all-important 'fit' function."
-from builtins import range
 from numpy import ones, exp, sqrt, mean, square, hstack
 from .implicit_softmax_affine import implicit_softmax_affine
 from .softmax_affine import softmax_affine

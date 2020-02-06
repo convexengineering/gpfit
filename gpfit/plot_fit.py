@@ -1,6 +1,5 @@
 "Fit plotting"
 from __future__ import division
-from builtins import range
 import matplotlib.pyplot as plt
 import numpy as np
 from gpfit.fit import fit

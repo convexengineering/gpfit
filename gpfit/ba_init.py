@@ -1,6 +1,5 @@
 "Implements ba_init"
 from __future__ import print_function
-from builtins import range
 from numpy import ones, hstack, zeros, tile, argmin
 from numpy.linalg import lstsq, matrix_rank
 from numpy.random import permutation as randperm
