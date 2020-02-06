@@ -31,7 +31,7 @@ def levenberg_marquardt(residfun, initparams,
     initparams: np.array (1D)
         Initial fit parameter guesses
     verbose: bool
-        If true, print verbose output
+        If true, print(verbose output)
     lambdainit: float
         Initial value for step size penalty lambda
     maxiter: int

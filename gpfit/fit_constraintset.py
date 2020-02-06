@@ -7,6 +7,7 @@ from builtins import range
 from numpy import amax, array, hstack, where
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
+from numpy import amax, array, hstack, where
 
 # pylint: disable=too-many-instance-attributes, too-many-locals,
 # pylint: disable=too-many-branches, no-member, import-error
@@ -46,7 +47,7 @@ class FitCS(ConstraintSet):
         monos = [fitdata["c%d" % k]*NomialArray(array(dvars).T**array(
             [fitdata["e%d%d" % (k, i)] for i in
              range(fitdata["d"])])).prod(NomialArray(dvars).ndim - 1)
-            for k in range(fitdata["K"])]
+                 for k in range(fitdata["K"])]
 
         if err_margin == "Max":
             self.mfac = Variable("m_{fac-" + name + "-fit}",
@@ -117,9 +118,9 @@ class FitCS(ConstraintSet):
         super(FitCS, self).process_result(result)
 
         if self.mfac not in result["sensitivities"]["constants"]:
-            return None
+            return
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
-            return None
+            return
 
         for dvar in self.dvars:
             if isinstance(dvar, NomialArray):
@@ -167,11 +168,11 @@ class XfoilFit(FitCS):
         super(XfoilFit, self).process_result(result)
 
         if self.mfac not in result["sensitivities"]["constants"]:
-            return None
+            return
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
-            return None
+            return
         if not self.airfoil:
-            return None
+            return
 
         from .xfoilWrapper import xfoil_comparison
         cl, re = 0.0, 0.0
