@@ -1,4 +1,6 @@
 "Implements LM"
+from __future__ import print_function
+from __future__ import division
 from time import time
 from sys import float_info
 import numpy as np
@@ -29,7 +31,7 @@ def levenberg_marquardt(residfun, initparams,
     initparams: np.array (1D)
         Initial fit parameter guesses
     verbose: bool
-        If true, print verbose output
+        If true, print(verbose output)
     lambdainit: float
         Initial value for step size penalty lambda
     maxiter: int
@@ -92,19 +94,19 @@ def levenberg_marquardt(residfun, initparams,
               'Norm of \n')
         print('Iter        Residual        optimality            Lambda'
               '            step        Jwarp \n')
-        print formatstr1 % (itr, rms, maxgrad)
+        print(formatstr1 % (itr, rms, maxgrad))
 
     # Main Loop
     while True:
 
         if itr == maxiter:
             if verbose:
-                print 'Reached maximum number of iterations'
+                print('Reached maximum number of iterations')
             break
 
         elif time() - t > maxtime:
             if verbose:
-                print 'Reached maxtime (%s seconds)' % maxtime
+                print('Reached maxtime (%s seconds)' % maxtime)
             break
         elif (itr >= 2 and
               abs(RMStraj[itr] - RMStraj[itr-2]) <
@@ -155,8 +157,8 @@ def levenberg_marquardt(residfun, initparams,
             # dsp here so that all grad info is for updated point,
             # but lambda not yet updated
             if verbose:
-                print formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ))
+                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
+                                   max(diagJJ)/min(diagJJ)))
 
             if maxgrad < tolgrad:
                 if verbose:
@@ -164,14 +166,14 @@ def levenberg_marquardt(residfun, initparams,
                 break
 
             if prev_trial_accepted and itr > 1:
-                lamb = lamb/10
+                lamb = lamb/10.
 
             prev_trial_accepted = True
             params_updated = True
         else:
             if verbose:
-                print formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ))
+                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
+                                   max(diagJJ)/min(diagJJ)))
             lamb = lamb*10
             prev_trial_accepted = False
             params_updated = False

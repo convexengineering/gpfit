@@ -1,4 +1,5 @@
 "Implements MA residual function"
+from __future__ import division
 import numpy as np
 
 
@@ -26,7 +27,7 @@ def max_affine(x, ba):
             dydba
     """
     npt, dimx = x.shape
-    K = ba.size/(dimx + 1)
+    K = ba.size//(dimx + 1)
     ba = np.reshape(ba, (dimx + 1, K), order='F')  # 'F' gives Fortran indexing
 
     # augment data with column of ones

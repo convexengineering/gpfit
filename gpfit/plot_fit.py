@@ -1,6 +1,7 @@
 "Fit plotting"
-import matplotlib.pyplot as plt
+from __future__ import division
 import numpy as np
+import matplotlib.pyplot as plt
 from gpfit.fit import fit
 from gpfit.print_fit import print_MA, print_SMA
 
@@ -24,7 +25,7 @@ def plot_fit_1d(udata, wdata, K=1, fitclass='MA', plotspace='log'):
 
     if fitclass == 'SMA':
         wexps, = cstrt.left.exps
-        alpha, = wexps.values()
+        alpha, = list(wexps.values())
         uvarkey, = cstrt.right.varkeys
         A = [d[uvarkey]/alpha for d in cstrt.right.exps]
         B = np.log(cstrt.right.cs) / alpha
