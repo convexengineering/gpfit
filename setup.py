@@ -3,7 +3,7 @@ from distutils.core import setup
 
 LICENSE = """The MIT License (MIT)
 
-Copyright (c) 2016 MIT Hoburg Research Group
+Copyright (c) 2021 Convex Engineering Group
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,10 @@ SOFTWARE."""
 setup(
     name="gpfit",
     description="Package for fitting geometric programming models to data",
-    author="MIT Department of Aeronautics and Astronautics",
+    author="Convex Engineering Group",
     author_email="gpkit@mit.edu",
-    url="https://github.com/hoburg/gpfit",
+    url="https://github.com/convexengineering/gpfit",
+    python_requires=">=3.4",
     install_requires=["numpy", "scipy", "gpkit"],
     version="0.1",
     packages=["gpfit", "gpfit.tests"],
