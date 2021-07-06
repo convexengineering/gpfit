@@ -24,11 +24,11 @@ def plot_fit_1d(udata, wdata, K=1, fitclass='MA', plotspace='log'):
 
 
     if fitclass == 'SMA':
-        wexps, = cstrt.left.exps
-        alpha, = list(wexps.values())
-        uvarkey, = cstrt.right.varkeys
-        A = [d[uvarkey]/alpha for d in cstrt.right.exps]
-        B = np.log(cstrt.right.cs) / alpha
+        wexps, = cstrt[0].left.exps
+        alpha = list(wexps.values())[0]
+        uvarkey, = cstrt[0].right.varkeys
+        A = [d[uvarkey]/alpha for d in cstrt[0].right.exps]
+        B = np.log(cstrt[0].right.cs) / alpha
 
         ww = 0
         for k in range(K):
