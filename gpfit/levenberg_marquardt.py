@@ -1,6 +1,4 @@
 "Implements LM"
-from __future__ import print_function
-from __future__ import division
 from time import time
 from sys import float_info
 import numpy as np

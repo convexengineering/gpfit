@@ -1,5 +1,4 @@
 "Implements ISMA residual function"
-from __future__ import division
 from numpy import ones, nan, inf, hstack, dot, tile
 from .lse_implicit import lse_implicit
 

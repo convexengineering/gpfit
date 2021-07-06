@@ -1,5 +1,4 @@
 "Implements lse_scaled"
-from __future__ import division
 from numpy import tile, exp, log
 
 

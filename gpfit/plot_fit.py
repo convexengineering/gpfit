@@ -1,9 +1,9 @@
 "Fit plotting"
-from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 from gpfit.fit import fit
 from gpfit.print_fit import print_MA, print_SMA
+
 
 # pylint: disable=invalid-name
 # pylint: disable=too-many-locals
@@ -21,7 +21,6 @@ def plot_fit_1d(udata, wdata, K=1, fitclass='MA', plotspace='log'):
         for k in range(K):
             WW += [np.exp(B[k])*uu**A[k]]
         stringlist = print_MA(A, B, 1, K)
-
 
     if fitclass == 'SMA':
         wexps, = cstrt.left.exps
@@ -52,6 +51,7 @@ def plot_fit_1d(udata, wdata, K=1, fitclass='MA', plotspace='log'):
 
     plt.show()
     return f, ax
+
 
 if __name__ == "__main__":
     N = 51

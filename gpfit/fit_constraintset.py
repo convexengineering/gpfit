@@ -1,6 +1,4 @@
 " fit constraint set "
-from __future__ import print_function
-from __future__ import division
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
 from numpy import amax, array, hstack, where

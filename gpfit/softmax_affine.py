@@ -1,5 +1,4 @@
 "Implements SMA residual function"
-from __future__ import division
 from numpy import size, inf, nan, ones, hstack, dot, tile
 from .lse_scaled import lse_scaled
 
