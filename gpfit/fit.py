@@ -4,7 +4,7 @@ from .classes import max_affine, softmax_affine, implicit_softmax_affine
 from .levenberg_marquardt import levenberg_marquardt
 from .ba_init import ba_init
 from .print_fit import print_ISMA, print_SMA, print_MA
-from .fit_constraintset import FitCS
+from .constraint_set import FitConstraintSet
 
 ALPHA_INIT = 10
 RFUN = {"ISMA": implicit_softmax_affine,
@@ -131,7 +131,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
     fitdata["rms_err"] = sqrt(mean(square(evaluate(xdata.T)-ydata)))
     fitdata["max_err"] = sqrt(max(square(evaluate(xdata.T)-ydata)))
 
-    cs = FitCS(fitdata)
+    cs = FitConstraintSet(fitdata)
     cs.evaluate = evaluate
 
     return cs, cs.rms_err

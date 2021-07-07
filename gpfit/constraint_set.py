@@ -8,7 +8,7 @@ from numpy import amax, array, hstack, where
 # pylint: disable=too-many-arguments
 
 
-class FitCS(ConstraintSet):
+class FitConstraintSet(ConstraintSet):
     """Constraint set for fitted functions
 
     Arguments
@@ -109,7 +109,7 @@ class FitCS(ConstraintSet):
         """
         make sure fit result is within bounds of fitted data
         """
-        super(FitCS, self).process_result(result)
+        super(FitConstraintSet, self).process_result(result)
 
         if self.mfac not in result["sensitivities"]["constants"]:
             return
@@ -138,10 +138,10 @@ class FitCS(ConstraintSet):
                 print("Warning: " + msg)
 
 
-class XfoilFit(FitCS):
-    """Special FitCS that can post-solve compare result to XFOIL
+class XfoilFit(FitConstraintSet):
+    """Special FitConstraintSet that can post-solve compare result to XFOIL
 
-    Arguments (in addition to the arguments to FitCS)
+    Arguments (in addition to the arguments to FitConstraintSet)
     ---------
     airfoil:                            airfoil of fitted data
                                             str (e.g. "xxx.dat", "naca xxxx")
