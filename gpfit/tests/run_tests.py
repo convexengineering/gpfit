@@ -11,14 +11,8 @@ TESTS += t_logsumexp.TESTS
 from gpfit.tests import t_ba_init
 TESTS += t_ba_init.TESTS
 
-from gpfit.tests import t_max_affine
-TESTS += t_max_affine.TESTS
-
-from gpfit.tests import t_softmax_affine
-TESTS += t_softmax_affine.TESTS
-
-from gpfit.tests import t_implicit_softmax_affine
-TESTS += t_implicit_softmax_affine.TESTS
+from gpfit.tests import t_classes
+TESTS += t_classes.TESTS
 
 from gpfit.tests import t_print_fit
 TESTS += t_print_fit.TESTS

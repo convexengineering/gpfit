@@ -1,8 +1,6 @@
 "Implements the all-important 'fit' function."
 from numpy import ones, exp, sqrt, mean, square, hstack
-from .implicit_softmax_affine import implicit_softmax_affine
-from .softmax_affine import softmax_affine
-from .max_affine import max_affine
+from .classes import max_affine, softmax_affine, implicit_softmax_affine
 from .levenberg_marquardt import levenberg_marquardt
 from .ba_init import ba_init
 from .print_fit import print_ISMA, print_SMA, print_MA
