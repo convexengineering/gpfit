@@ -5,11 +5,8 @@ TESTS = []
 from gpfit.tests import t_LM
 TESTS += t_LM.TESTS
 
-from gpfit.tests import t_lse_implicit
-TESTS += t_lse_implicit.TESTS
-
-from gpfit.tests import t_lse_scaled
-TESTS += t_lse_scaled.TESTS
+from gpfit.tests import t_logsumexp
+TESTS += t_logsumexp.TESTS
 
 from gpfit.tests import t_ba_init
 TESTS += t_ba_init.TESTS

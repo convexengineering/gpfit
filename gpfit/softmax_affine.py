@@ -1,6 +1,6 @@
 "Implements SMA residual function"
 from numpy import size, inf, nan, ones, hstack, dot, tile
-from .lse_scaled import lse_scaled
+from .logsumexp import lse_scaled
 
 
 # pylint: disable=too-many-locals

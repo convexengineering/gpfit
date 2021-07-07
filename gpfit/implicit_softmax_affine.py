@@ -1,6 +1,6 @@
 "Implements ISMA residual function"
 from numpy import ones, nan, inf, hstack, dot, tile
-from .lse_implicit import lse_implicit
+from .logsumexp import lse_implicit
 
 
 # pylint: disable=too-many-locals
