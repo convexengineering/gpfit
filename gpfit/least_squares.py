@@ -1,4 +1,4 @@
-"Implements LM"
+"Implements the Levenberg-Marquardt algorithm"
 from time import time
 from sys import float_info
 import numpy as np

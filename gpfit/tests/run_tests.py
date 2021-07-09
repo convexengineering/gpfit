@@ -2,8 +2,8 @@
 from gpkit.tests.helpers import run_tests
 TESTS = []
 
-from gpfit.tests import t_LM
-TESTS += t_LM.TESTS
+from gpfit.tests import t_least_squares
+TESTS += t_least_squares.TESTS
 
 from gpfit.tests import t_logsumexp
 TESTS += t_logsumexp.TESTS

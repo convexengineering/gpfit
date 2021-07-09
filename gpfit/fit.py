@@ -1,7 +1,7 @@
 "Implements the all-important 'fit' function."
 from numpy import ones, exp, sqrt, mean, square, hstack
 from .classes import max_affine, softmax_affine, implicit_softmax_affine
-from .levenberg_marquardt import levenberg_marquardt
+from .least_squares import levenberg_marquardt
 from .initialize import get_initial_parameters
 from .print_fit import print_isma, print_sma, print_ma
 from .constraint_set import FitConstraintSet
