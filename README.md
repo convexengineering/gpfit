@@ -5,4 +5,4 @@ It requires installation of [GPkit](http://gpkit.readthedocs.org/en/latest/).
 This [paper](http://hoburg.mit.edu/publications/gpfitting.pdf)
 describes the approach.
 
-[![Build Status](https://acdl.mit.edu/csi/buildStatus/icon?job=gpfit_Push)](https://acdl.mit.edu/csi/job/gpfit_Push/)
+[![Build Status](https://acdl.mit.edu/csi/buildStatus/icon?job=CE_gpfit_Push)](https://acdl.mit.edu/csi/job/CE_gpfit_Push/)

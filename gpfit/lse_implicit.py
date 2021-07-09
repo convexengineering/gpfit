@@ -1,4 +1,6 @@
 "Implements lse_implicit"
+from __future__ import print_function
+from __future__ import division
 from numpy import zeros, spacing, exp, log, tile
 
 

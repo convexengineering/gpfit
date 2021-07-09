@@ -1,29 +1,29 @@
 " fit constraint set "
-from numpy import amax, array, hstack, where
+from __future__ import print_function
+from __future__ import division
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
+from numpy import amax, array, hstack, where
 
 # pylint: disable=too-many-instance-attributes, too-many-locals,
 # pylint: disable=too-many-branches, no-member, import-error
 # pylint: disable=too-many-arguments
 
+
 class FitCS(ConstraintSet):
-    """
-    Constraint set for fitted functions
+    """Constraint set for fitted functions
+
     Arguments
     ---------
-    fitdata:                dict of fit parameters
-                                dict
-    ivar:                   independent variable
-                                gpkit Variable, Monomial, or NomialArray
-    dvars:                  dependent variables
-                                list of gpkit Variables, Monomials, or
-                                NomialArrays
-    err_margin:             flag to set margin factor using RMS or max error
-                                str - ("Max", "RMS")
-    airfoil:                sepecified airfoil if drag polar fit; if specified
-                            will call XFOIL in process solution to check fit
-                                str - ("xxx.dat", "naca xxxx")
+    fitdata : dict
+        dictionary of fit parameters
+    ivar : gpkit Variable, Monomial, or NomialArray
+        independent variable
+    dvars : list of gpkit Variables, Monomials, or NomialArrays
+        dependent variables
+    err_margin : string, either "Max" or "RMS"
+        flag to set margin factor using RMS or max error
+
     """
     def __init__(self, fitdata, ivar=None, dvars=None, name="",
                  err_margin=None):
@@ -42,8 +42,8 @@ class FitCS(ConstraintSet):
 
         monos = [fitdata["c%d" % k]*NomialArray(array(dvars).T**array(
             [fitdata["e%d%d" % (k, i)] for i in
-             range(fitdata["d"])])).prod(NomialArray(dvars).ndim - 1) for k in
-                 range(fitdata["K"])]
+             range(fitdata["d"])])).prod(NomialArray(dvars).ndim - 1)
+                 for k in range(fitdata["K"])]
 
         if err_margin == "Max":
             self.mfac = Variable("m_{fac-" + name + "-fit}",
@@ -51,12 +51,12 @@ class FitCS(ConstraintSet):
         elif err_margin == "RMS":
             self.mfac = Variable("m_{fac-" + name + "-fit}",
                                  1 + self.rms_err, "-", "RMS error of fit")
-        elif err_margin != None:
-            raise ValueError("Invalid name for err_margin: valid inputs Max, "
-                             "RMS")
-        else:
+        elif err_margin is None:
             self.mfac = Variable("m_{fac-" + name + "-fit}", 1.0, "-",
                                  "fit factor")
+        else:
+            raise ValueError("Invalid name for err_margin: valid inputs Max, "
+                             "RMS")
 
         if fitdata["ftype"] == "ISMA":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
@@ -103,8 +103,8 @@ class FitCS(ConstraintSet):
     def get_dataframe(self):
         " return a pandas DataFrame of fit parameters "
         import pandas as pd
-        df = pd.DataFrame(self.fitdata.values()).transpose()
-        df.columns = self.fitdata.keys()
+        df = pd.DataFrame(list(self.fitdata.values())).transpose()
+        df.columns = list(self.fitdata.keys())
         return df
 
     def process_result(self, result):
@@ -114,9 +114,9 @@ class FitCS(ConstraintSet):
         super(FitCS, self).process_result(result)
 
         if self.mfac not in result["sensitivities"]["constants"]:
-            return None
+            return
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
-            return None
+            return
 
         for dvar in self.dvars:
             if isinstance(dvar, NomialArray):
@@ -137,13 +137,14 @@ class FitCS(ConstraintSet):
                        + " %s bound. Solution is %.4f but"
                        " bound is %.4f" %
                        (direct, amax([num]), bnd))
-                print "Warning: " + msg
+                print("Warning: " + msg)
+
 
 class XfoilFit(FitCS):
-    """
-    Special fit constraint set that can post-solve compare result to XFOIL
-    INPUTS
-    ------
+    """Special FitCS that can post-solve compare result to XFOIL
+
+    Arguments (in addition to the arguments to FitCS)
+    ---------
     airfoil:                            airfoil of fitted data
                                             str (e.g. "xxx.dat", "naca xxxx")
 
@@ -163,11 +164,11 @@ class XfoilFit(FitCS):
         super(XfoilFit, self).process_result(result)
 
         if self.mfac not in result["sensitivities"]["constants"]:
-            return None
+            return
         if amax([abs(result["sensitivities"]["constants"][self.mfac])]) < 1e-5:
-            return None
+            return
         if not self.airfoil:
-            return None
+            return
 
         from .xfoilWrapper import xfoil_comparison
         cl, re = 0.0, 0.0
@@ -186,4 +187,4 @@ class XfoilFit(FitCS):
                    " Xfoil cd=%.6f, GP sol cd=%.6f" %
                    (", ".join(self.ivar.descr["models"]), err[i], re[i],
                     cl[i], cd[i], cdx[i]))
-            print "Warning: %s" % msg
+            print("Warning: %s" % msg)
