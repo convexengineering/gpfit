@@ -1,7 +1,7 @@
 "unit tests for gpfit.print_fit module"
 import unittest
 from numpy import array
-from gpfit.print_fit import print_MA, print_SMA, print_ISMA
+from gpfit.print_fit import print_ma, print_sma, print_isma
 
 A = array([2, 3, 4, 6, 7, 8, 10, 11, 12])
 B = array([1, 5, 9])
@@ -11,10 +11,10 @@ K = 3
 
 
 class TestPrintFit(unittest.TestCase):
-    "Unit tests for print_MA, print_SMA, print_ISMA"
+    "Unit tests for print_ma, print_sma, print_isma"
 
     def test_ma(self):
-        strings = print_MA(A, B, DIM, K)
+        strings = print_ma(A, B, DIM, K)
         self.assertEqual(
             strings,
             ['w = 2.71828 * (u_1)**2 * (u_2)**3 * (u_3)**4',
@@ -22,7 +22,7 @@ class TestPrintFit(unittest.TestCase):
              'w = 8103.08 * (u_1)**10 * (u_2)**11 * (u_3)**12'])
 
     def test_sma(self):
-        strings = print_SMA(A, B, ALPHA[0], DIM, K)
+        strings = print_sma(A, B, ALPHA[0], DIM, K)
         self.assertEqual(strings, ['w**0.0769231 = 1.07996 * (u_1)**0.153846 '
                                    '* (u_2)**0.230769 * (u_3)**0.307692',
                                    '    + 1.46905 * (u_1)**0.461538 * '
@@ -31,7 +31,7 @@ class TestPrintFit(unittest.TestCase):
                                    '(u_2)**0.846154 * (u_3)**0.923077'])
 
     def test_isma(self):
-        strings = print_ISMA(A, B, ALPHA, DIM, K)
+        strings = print_isma(A, B, ALPHA, DIM, K)
         self.assertEqual(
             strings,
             ['1 = (1.07996/w**0.0769231) * (u_1)**0.153846 * '

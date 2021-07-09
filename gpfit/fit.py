@@ -3,7 +3,7 @@ from numpy import ones, exp, sqrt, mean, square, hstack
 from .classes import max_affine, softmax_affine, implicit_softmax_affine
 from .levenberg_marquardt import levenberg_marquardt
 from .initialize import get_initial_parameters
-from .print_fit import print_ISMA, print_SMA, print_MA
+from .print_fit import print_isma, print_sma, print_ma
 from .constraint_set import FitConstraintSet
 
 ALPHA0 = 10
@@ -94,7 +94,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             fitdata["a%d" % k] = alpha[k]
             for i in range(d):
                 fitdata["e%d%d" % (k, i)] = alpha[k]*A[d*k+i]
-        print_ISMA(A, B, alpha, d, K)
+        print_isma(A, B, alpha, d, K)
     elif ftype == "SMA":
         alpha = 1./params[-1]
         fitdata["a1"] = alpha
@@ -102,7 +102,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             fitdata["c%d" % k] = exp(alpha*B[k])
             for i in range(d):
                 fitdata["e%d%d" % (k, i)] = alpha*A[d*k+i]
-        print_SMA(A, B, alpha, d, K)
+        print_sma(A, B, alpha, d, K)
     elif ftype == "MA":
         alpha = 1
         fitdata["a1"] = 1
@@ -110,7 +110,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             fitdata["c%d" % k] = exp(B[k])
             for i in range(d):
                 fitdata["e%d%d" % (k, i)] = A[d*k+i]
-        print_MA(A, B, d, K)
+        print_ma(A, B, d, K)
 
     if min(exp(B*alpha)) < 1e-100:
         raise ValueError("Fitted constraint contains too small a value...")
