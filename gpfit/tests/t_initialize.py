@@ -1,9 +1,9 @@
-"unit tests for ba_init function"
+"unit tests for get_initial_parameters function"
 import unittest
 import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
-from gpfit.ba_init import ba_init
+from gpfit.initialize import get_initial_parameters
 
 SEED = 33404
 
@@ -16,7 +16,7 @@ class TestMaxAffineInitK2(unittest.TestCase):
     x = arange(0., 16.)[:, newaxis]
     y = arange(0., 16.)[:, newaxis]
     K = 2
-    ba = ba_init(x, y, K)
+    ba = get_initial_parameters(x, y, K)
 
     def test_ba_ndim_k2(self):
         self.assertEqual(self.ba.ndim, 2)
@@ -43,7 +43,7 @@ class TestMaxAffineInitK4(unittest.TestCase):
     y = y.reshape(y.size, 1)
     K = 4
 
-    ba = ba_init(x, y, K)
+    ba = get_initial_parameters(x, y, K)
 
     def test_ba_shape_k4(self):
         self.assertEqual(self.ba.shape, (3, 4))

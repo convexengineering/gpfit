@@ -2,34 +2,40 @@
 from numpy import ones, exp, sqrt, mean, square, hstack
 from .classes import max_affine, softmax_affine, implicit_softmax_affine
 from .levenberg_marquardt import levenberg_marquardt
-from .ba_init import ba_init
+from .initialize import get_initial_parameters
 from .print_fit import print_ISMA, print_SMA, print_MA
 from .constraint_set import FitConstraintSet
 
-ALPHA_INIT = 10
-RFUN = {"ISMA": implicit_softmax_affine,
-        "SMA": softmax_affine,
-        "MA": max_affine}
+ALPHA0 = 10
+CLASSES = {
+    "ISMA": implicit_softmax_affine,
+    "SMA": softmax_affine,
+    "MA": max_affine,
+}
+
 
 # pylint: disable=invalid-name
-def get_params(ftype, K, xdata, ydata):
+def get_parameters(ftype, K, xdata, ydata):
     "Perform least-squares fitting optimization."
-    def rfun(params):
+
+    ydata_col = ydata.reshape(ydata.size, 1)
+    ba = get_initial_parameters(xdata, ydata_col, K).flatten('F')
+
+    def residual(params):
         "A specific residual function."
-        [yhat, drdp] = RFUN[ftype](xdata, params)
+        [yhat, drdp] = CLASSES[ftype](xdata, params)
         r = yhat - ydata
         return r, drdp
 
-    ba = ba_init(xdata, ydata.reshape(ydata.size, 1), K).flatten('F')
-
     if ftype == "ISMA":
-        params, _ = levenberg_marquardt(rfun, hstack((ba, ALPHA_INIT*ones(K))))
+        params, _ = levenberg_marquardt(residual, hstack((ba, ALPHA0*ones(K))))
     elif ftype == "SMA":
-        params, _ = levenberg_marquardt(rfun, hstack((ba, ALPHA_INIT)))
+        params, _ = levenberg_marquardt(residual, hstack((ba, ALPHA0)))
     else:
-        params, _ = levenberg_marquardt(rfun, ba)
+        params, _ = levenberg_marquardt(residual, ba)
 
     return params
+
 
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
@@ -75,7 +81,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             fitdata["lb%d" % i] = exp(min(xdata.T[i]))
             fitdata["ub%d" % i] = exp(max(xdata.T[i]))
 
-    params = get_params(ftype, K, xdata, ydata)
+    params = get_parameters(ftype, K, xdata, ydata)
 
     # A: exponent parameters, B: coefficient parameters
     A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
@@ -125,7 +131,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             ydata:      Dependent variable data in 1D numpy array
         """
         xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
-        return RFUN[ftype](xdata, params)[0]
+        return CLASSES[ftype](xdata, params)[0]
 
     # cstrt.evaluate = evaluate
     fitdata["rms_err"] = sqrt(mean(square(evaluate(xdata.T)-ydata)))

@@ -8,8 +8,8 @@ TESTS += t_LM.TESTS
 from gpfit.tests import t_logsumexp
 TESTS += t_logsumexp.TESTS
 
-from gpfit.tests import t_ba_init
-TESTS += t_ba_init.TESTS
+from gpfit.tests import t_initialize
+TESTS += t_initialize.TESTS
 
 from gpfit.tests import t_classes
 TESTS += t_classes.TESTS

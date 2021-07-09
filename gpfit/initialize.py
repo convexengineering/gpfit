@@ -1,11 +1,11 @@
-"Implements ba_init"
+"Implements get_initial_parameters"
 from numpy import ones, hstack, zeros, tile, argmin
 from numpy.linalg import lstsq, matrix_rank
 from numpy.random import permutation as randperm
 
 
 # pylint: disable=too-many-locals
-def ba_init(x, y, K):
+def get_initial_parameters(x, y, K):
     """
     Initializes max-affine fit to data (y, x)
     ensures that initialization has at least K+1 points per partition (i.e.
@@ -49,7 +49,8 @@ def ba_init(x, y, K):
     # loop through each partition, making local fits
     # note we expand partitions that result in singular least squares problems
     # why this way? some points will be shared by multiple partitions, but
-    # resulting max-affine fit will tend to be good. (as opposed to solving least-norm version)
+    # resulting max-affine fit will tend to be good. (as opposed to solving
+    # least-norm version)
     for k in range(K):
         inds = mindistind == k
 
@@ -73,11 +74,10 @@ def ba_init(x, y, K):
                 inds[sortdistind[i]] = 1
 
             if options['bverbose']:
-                print("ba_init: Added %s points to partition %s to maintain"
-                      "full rank for local fitting." % (i-iinit, k))
+                print("Initialization: Added %s points to partition %s to "
+                      "maintain full rank for local fitting." % (i-iinit, k))
         # now create the local fit
         b[:, k] = lstsq(X[inds.nonzero()], y[inds.nonzero()], rcond=-1)[0][:, 0]
         # Rank condition specified to default for python upgrades
-
 
     return b
