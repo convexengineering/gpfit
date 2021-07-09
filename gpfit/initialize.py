@@ -23,9 +23,6 @@ def get_initial_parameters(x, y, K):
                     2D array [(dimx+1) x k]
 
     """
-    defaults = {}
-    defaults['bverbose'] = False
-    options = defaults
 
     npt, dimx = x.shape
 
@@ -60,7 +57,6 @@ def get_initial_parameters(x, y, K):
             sortdistind = sqdists[:, k].argsort()
 
             i = sum(inds)  # number of points in partition
-            iinit = i
 
             if i < dimx+1:
                 # obviously, at least need dimx+1 points. fill these in before
@@ -73,9 +69,6 @@ def get_initial_parameters(x, y, K):
                 i = i+1
                 inds[sortdistind[i]] = 1
 
-            if options['bverbose']:
-                print("Initialization: Added %s points to partition %s to "
-                      "maintain full rank for local fitting." % (i-iinit, k))
         # now create the local fit
         b[:, k] = lstsq(X[inds.nonzero()], y[inds.nonzero()], rcond=-1)[0][:, 0]
         # Rank condition specified to default for python upgrades

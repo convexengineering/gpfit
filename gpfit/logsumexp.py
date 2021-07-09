@@ -29,8 +29,6 @@ def lse_implicit(x, alpha):
                         2D array [nPoints x nDim]
     """
 
-    bverbose = False
-
     tol = 10*spacing(1)
     npt, nx = x.shape
 
@@ -42,12 +40,7 @@ def lse_implicit(x, alpha):
     m = x.max(1)  # maximal x values
     # distance from m; note h <= 0 for all entries
     h = x - (tile(m, (nx, 1))).T
-    # (unless x has infs; in this case h has nans;
-    # can prob deal w/ this gracefully)
-    # should also deal with alpha==inf case gracefully
-
     L = zeros((npt,))  # initial guess. note y = m + L
-
     Lmat = (tile(L, (nx, 1))).T
 
     # initial eval
@@ -74,10 +67,6 @@ def lse_implicit(x, alpha):
 
         # update inds that need to be evaluated
         i[i] = abs(f[i]) > tol
-
-    if bverbose:
-        print('lse_implicit converged in ' +
-              repr(neval) + ' newton-raphson steps')
 
     y = m + L
 
@@ -112,21 +101,12 @@ def lse_scaled(x, alpha):
     """
 
     _, n = x.shape
-
     m = x.max(axis=1)  # maximal x values
-
     h = x - (tile(m, (n, 1))).T  # distance from m; note h <= 0 for all entries
-    # (unless x has infs; in this case h has nans;
-    # can prob deal w/ this gracefully)
-    # should also deal with alpha==inf case gracefully
-
     expo = exp(alpha*h)
     sumexpo = expo.sum(axis=1)
-
     L = log(sumexpo)/alpha
-
     y = L + m
-
     dydx = expo/(tile(sumexpo, (n, 1))).T
     # note that sum(dydx,2)==1, i.e. dydx is a probability distribution
     dydalpha = ((h*expo).sum(axis=1)/sumexpo - L)/alpha

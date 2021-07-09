@@ -6,7 +6,6 @@ from .initialize import get_initial_parameters
 from .print_fit import print_isma, print_sma, print_ma
 from .constraint_set import FitConstraintSet
 
-ALPHA0 = 10
 CLASSES = {
     "ISMA": implicit_softmax_affine,
     "SMA": softmax_affine,
@@ -15,7 +14,7 @@ CLASSES = {
 
 
 # pylint: disable=invalid-name
-def get_parameters(ftype, K, xdata, ydata):
+def get_parameters(ftype, K, xdata, ydata, alpha0):
     "Perform least-squares fitting optimization."
 
     ydata_col = ydata.reshape(ydata.size, 1)
@@ -28,9 +27,9 @@ def get_parameters(ftype, K, xdata, ydata):
         return r, drdp
 
     if ftype == "ISMA":
-        params, _ = levenberg_marquardt(residual, hstack((ba, ALPHA0*ones(K))))
+        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0*ones(K))))
     elif ftype == "SMA":
-        params, _ = levenberg_marquardt(residual, hstack((ba, ALPHA0)))
+        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0)))
     else:
         params, _ = levenberg_marquardt(residual, ba)
 
@@ -40,7 +39,7 @@ def get_parameters(ftype, K, xdata, ydata):
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
 # pylint: disable=import-error
-def fit(xdata, ydata, K, ftype="ISMA"):
+def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
     """
     Fit a log-convex function to multivariate data, returning a FitConstraintSet
 
@@ -81,7 +80,7 @@ def fit(xdata, ydata, K, ftype="ISMA"):
             fitdata["lb%d" % i] = exp(min(xdata.T[i]))
             fitdata["ub%d" % i] = exp(max(xdata.T[i]))
 
-    params = get_parameters(ftype, K, xdata, ydata)
+    params = get_parameters(ftype, K, xdata, ydata, alpha0)
 
     # A: exponent parameters, B: coefficient parameters
     A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]

@@ -45,7 +45,7 @@ def levenberg_marquardt(residfun, initparams,
     -------
     params: np.array (1D)
         Parameter vector that locally minimizes norm(residfun, 2)
-    RMStraj: np.array
+    rmstraj: np.array
         History of RMS errors after each step (first point is initialization)
     """
 
@@ -84,7 +84,7 @@ def levenberg_marquardt(residfun, initparams,
     diagJJ = sum(J*J, 0).T
     zeropad = np.zeros((nparam, 1))
     lamb = lambdainit
-    RMStraj = [rms]
+    rmstraj = [rms]
 
     # Display info for 1st iter
     if verbose:
@@ -107,8 +107,8 @@ def levenberg_marquardt(residfun, initparams,
                 print('Reached maxtime (%s seconds)' % maxtime)
             break
         elif (itr >= 2 and
-              abs(RMStraj[itr] - RMStraj[itr-2]) <
-              RMStraj[itr]*tolrms):
+              abs(rmstraj[itr] - rmstraj[itr-2]) <
+              rmstraj[itr]*tolrms):
             # Should really only allow this exit case
             # if trust region constraint is slack
             if verbose:
@@ -143,7 +143,7 @@ def levenberg_marquardt(residfun, initparams,
         # Check function value at trialp
         trialr, trialJ = residfun(trialp)
         trialrms = norm(trialr)/np.sqrt(npt)
-        RMStraj.append(trialrms)
+        rmstraj.append(trialrms)
 
         # Accept or reject trial params
         if trialrms < rms:
@@ -176,9 +176,9 @@ def levenberg_marquardt(residfun, initparams,
             prev_trial_accepted = False
             params_updated = False
 
-    assert len(RMStraj) == itr + 1
-    RMStraj = np.array(RMStraj)
+    assert len(rmstraj) == itr + 1
+    rmstraj = np.array(rmstraj)
     if verbose:
         print('Final RMS: ' + repr(rms))
 
-    return params, RMStraj
+    return params, rmstraj

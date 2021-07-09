@@ -31,7 +31,6 @@ def max_affine(x, ba):
 
     # augment data with column of ones
     X = np.hstack((np.ones((npt, 1)), x))
-
     y, partition = np.dot(X, ba).max(1), np.dot(X, ba).argmax(1)
 
     # The not-sparse sparse version
