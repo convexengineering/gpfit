@@ -17,9 +17,6 @@ TESTS += t_classes.TESTS
 from gpfit.tests import t_print_fit
 TESTS += t_print_fit.TESTS
 
-from gpfit.tests import t_ex6_3
-TESTS += t_ex6_3.TESTS
-
 from gpfit.tests import t_examples
 TESTS += t_examples.TESTS
 
