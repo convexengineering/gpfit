@@ -13,29 +13,6 @@ CLASSES = {
 }
 
 
-# pylint: disable=invalid-name
-def get_parameters(ftype, K, xdata, ydata, alpha0):
-    "Perform least-squares fitting optimization."
-
-    ydata_col = ydata.reshape(ydata.size, 1)
-    ba = get_initial_parameters(xdata, ydata_col, K).flatten('F')
-
-    def residual(params):
-        "A specific residual function."
-        [yhat, drdp] = CLASSES[ftype](xdata, params)
-        r = yhat - ydata
-        return r, drdp
-
-    if ftype == "ISMA":
-        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0*ones(K))))
-    elif ftype == "SMA":
-        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0)))
-    else:
-        params, _ = levenberg_marquardt(residual, ba)
-
-    return params
-
-
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-branches
 # pylint: disable=import-error
@@ -80,7 +57,20 @@ def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
             fitdata["lb%d" % i] = exp(min(xdata.T[i]))
             fitdata["ub%d" % i] = exp(max(xdata.T[i]))
 
-    params = get_parameters(ftype, K, xdata, ydata, alpha0)
+    def residual(params):
+        "A specific residual function."
+        [yhat, drdp] = CLASSES[ftype](xdata, params)
+        r = yhat - ydata
+        return r, drdp
+
+    ydata_col = ydata.reshape(ydata.size, 1)
+    ba = get_initial_parameters(xdata, ydata_col, K).flatten('F')
+    if ftype == "ISMA":
+        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0*ones(K))))
+    elif ftype == "SMA":
+        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0)))
+    else:
+        params, _ = levenberg_marquardt(residual, ba)
 
     # A: exponent parameters, B: coefficient parameters
     A = params[[i for i in range(K*(d+1)) if i % (d + 1) != 0]]
