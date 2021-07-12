@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from gpfit.fit import fit
-from gpfit.print_fit import print_MA, print_SMA
+from gpfit.print_fit import print_ma, print_sma
 
 
 # pylint: disable=invalid-name
@@ -20,7 +20,7 @@ def plot_fit_1d(udata, wdata, K=1, fitclass="SMA", plotspace="log"):
         WW = []
         for k in range(K):
             WW += [np.exp(B[k]) * uu ** A[k]]
-        stringlist = print_MA(A, B, 1, K)
+        stringlist = print_ma(A, B, 1, K)
 
     if fitclass == "SMA":
         (wexps,) = cstrt[0].left.exps
@@ -34,7 +34,7 @@ def plot_fit_1d(udata, wdata, K=1, fitclass="SMA", plotspace="log"):
             ww += np.exp(alpha * B[k]) * uu ** (alpha * A[k])
         WW = [ww ** (1.0 / alpha)]
 
-        print_str = print_SMA(A, B, alpha, 1, K)
+        print_str = print_sma(A, B, alpha, 1, K)
         stringlist = ["".join(print_str)]
 
     f, ax = plt.subplots()
