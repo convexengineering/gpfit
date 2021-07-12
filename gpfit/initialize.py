@@ -27,10 +27,10 @@ def get_initial_parameters(x, y, K):
     npt, dimx = x.shape
 
     X = hstack((ones((npt, 1)), x))
-    b = zeros((dimx+1, K))
+    b = zeros((dimx + 1, K))
 
-    if K*(dimx+1) > npt:
-        raise ValueError('Not enough data points')
+    if K * (dimx + 1) > npt:
+        raise ValueError("Not enough data points")
 
     # Choose K unique indices
     randinds = randperm(npt)[0:K]
@@ -58,15 +58,15 @@ def get_initial_parameters(x, y, K):
 
             i = sum(inds)  # number of points in partition
 
-            if i < dimx+1:
+            if i < dimx + 1:
                 # obviously, at least need dimx+1 points. fill these in before
                 # checking any ranks
-                inds[sortdistind[i+1:dimx+1]] = 1  # TODO: check index
-                i = dimx+1  # TODO: check index
+                inds[sortdistind[i + 1 : dimx + 1]] = 1  # TODO: check index
+                i = dimx + 1  # TODO: check index
 
             # now add points until rank condition satisfied
-            while matrix_rank(X[inds, :]) < dimx+1:
-                i = i+1
+            while matrix_rank(X[inds, :]) < dimx + 1:
+                i = i + 1
                 inds[sortdistind[i]] = 1
 
         # now create the local fit

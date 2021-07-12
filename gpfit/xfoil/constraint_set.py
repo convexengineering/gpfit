@@ -10,11 +10,14 @@ class XfoilFit(FitConstraintSet):
                                             str (e.g. "xxx.dat", "naca xxxx")
 
     """
-    def __init__(self, fitdata, ivar=None, dvars=None, name="",
-                 err_margin=None, airfoil=False):
 
-        super(XfoilFit, self).__init__(fitdata, ivar=ivar, dvars=dvars,
-                                       name=name, err_margin=err_margin)
+    def __init__(
+        self, fitdata, ivar=None, dvars=None, name="", err_margin=None, airfoil=False
+    ):
+
+        super(XfoilFit, self).__init__(
+            fitdata, ivar=ivar, dvars=dvars, name=name, err_margin=err_margin
+        )
 
         self.airfoil = airfoil
 
@@ -32,6 +35,7 @@ class XfoilFit(FitConstraintSet):
             return
 
         from .xfoilWrapper import xfoil_comparison
+
         cl, re = 0.0, 0.0
         for dvar in self.dvars:
             if "Re" in str(dvar):
@@ -40,12 +44,20 @@ class XfoilFit(FitConstraintSet):
                 cl = result(dvar)
         cd = result(self.ivar)
         if not hasattr(cl, "__len__") and hasattr(re, "__len__"):
-            cl = [cl]*len(re)
+            cl = [cl] * len(re)
         err, cdx = xfoil_comparison(self.airfoil, cl, re, cd)
         ind = where(err > 0.05)[0]
         for i in ind:
-            msg = ("Drag error for %s is %.2f. Re=%.1f; CL=%.4f;"
-                   " Xfoil cd=%.6f, GP sol cd=%.6f" %
-                   (", ".join(self.ivar.descr["models"]), err[i], re[i],
-                    cl[i], cd[i], cdx[i]))
+            msg = (
+                "Drag error for %s is %.2f. Re=%.1f; CL=%.4f;"
+                " Xfoil cd=%.6f, GP sol cd=%.6f"
+                % (
+                    ", ".join(self.ivar.descr["models"]),
+                    err[i],
+                    re[i],
+                    cl[i],
+                    cd[i],
+                    cdx[i],
+                )
+            )
             print("Warning: %s" % msg)

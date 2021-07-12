@@ -7,8 +7,8 @@ from gpfit.classes import max_affine, softmax_affine, implicit_softmax_affine
 class t_max_affine(unittest.TestCase):
     "Test max_affine"
 
-    x = arange(0., 16.)[:, newaxis]
-    ba = arange(1., 7.).reshape(2, 3)
+    x = arange(0.0, 16.0)[:, newaxis]
+    ba = arange(1.0, 7.0).reshape(2, 3)
 
     y, dydba = max_affine(x, ba)
 
@@ -28,8 +28,8 @@ class t_max_affine(unittest.TestCase):
 class t_softmax_affine(unittest.TestCase):
     "Tests softmax_affine"
 
-    x = arange(0., 16.)[:, newaxis]
-    params = arange(1., 6.)
+    x = arange(0.0, 16.0)[:, newaxis]
+    params = arange(1.0, 6.0)
 
     y, dydp = softmax_affine(x, params)
 
@@ -49,8 +49,8 @@ class t_softmax_affine(unittest.TestCase):
 class t_implicit_softmax_affine(unittest.TestCase):
     "Tests implicit_softmax_affine"
 
-    x = arange(0., 16.)[:, newaxis]
-    params = arange(1., 7.)
+    x = arange(0.0, 16.0)[:, newaxis]
+    params = arange(1.0, 7.0)
 
     y, dydp = implicit_softmax_affine(x, params)
 
@@ -73,7 +73,7 @@ TESTS = [
     t_implicit_softmax_affine,
 ]
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     SUITE = unittest.TestSuite()
     LOADER = unittest.TestLoader()
 

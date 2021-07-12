@@ -10,8 +10,8 @@ SEED = 33404
 class TestLSEimplicit1D(unittest.TestCase):
     "tests with one-dimensional input"
 
-    x = arange(1., 31.).reshape(15, 2)
-    alpha = arange(1., 3.)
+    x = arange(1.0, 31.0).reshape(15, 2)
+    alpha = arange(1.0, 3.0)
     y, dydx, dydalpha = lse_implicit(x, alpha)
 
     def test_y_ndim(self):
@@ -54,8 +54,8 @@ class TestLSEimplicit2D(unittest.TestCase):
 class TestLSEScaled(unittest.TestCase):
     "Test lse_implicit"
 
-    x = arange(1., 31.).reshape(15, 2)
-    alpha = 1.
+    x = arange(1.0, 31.0).reshape(15, 2)
+    alpha = 1.0
     y, dydx, dydalpha = lse_scaled(x, alpha)
 
     def test_y_ndim(self):
@@ -89,7 +89,7 @@ TESTS = [
     TestLSEScaled,
 ]
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     SUITE = unittest.TestSuite()
     LOADER = unittest.TestLoader()
 

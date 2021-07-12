@@ -7,13 +7,16 @@ from scipy.sparse import spdiags, issparse
 
 
 # pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements
-def levenberg_marquardt(residfun, initparams,
-                        verbose=False,
-                        lambdainit=0.02,
-                        maxiter=5000,
-                        maxtime=5.,
-                        tolgrad=np.sqrt(float_info.epsilon),
-                        tolrms=1e-7):
+def levenberg_marquardt(
+    residfun,
+    initparams,
+    verbose=False,
+    lambdainit=0.02,
+    maxiter=5000,
+    maxtime=5.0,
+    tolgrad=np.sqrt(float_info.epsilon),
+    tolrms=1e-7,
+):
     """
     Levenberg-Marquardt alogrithm
     Minimizes sum of squared error of residual function
@@ -55,12 +58,13 @@ def levenberg_marquardt(residfun, initparams,
     nparam = initparams.size
 
     if initparams.ndim > 1:
-        raise ValueError('params should be a vector')
+        raise ValueError("params should be a vector")
 
     # Define display formatting if required
-    formatstr1 = '%5.0f        %9.6g        %9.3g\n'
-    formatstr = ('%5.0f        %9.6g        %9.3g        '
-                 '%12.4g        %12.4g        %8.4g\n')
+    formatstr1 = "%5.0f        %9.6g        %9.3g\n"
+    formatstr = (
+        "%5.0f        %9.6g        %9.3g        " "%12.4g        %12.4g        %8.4g\n"
+    )
 
     # Get residual values and jacobian at initial point; extract size info
     params = initparams
@@ -70,28 +74,30 @@ def levenberg_marquardt(residfun, initparams,
     r.shape = (npt, 1)  # Make r into column vector
 
     if J.shape != (npt, nparam):
-        raise ValueError('Jacobian size %s inconsistent with (%s, %s)' %
-                         (J.shape, npt, nparam))
+        raise ValueError(
+            "Jacobian size %s inconsistent with (%s, %s)" % (J.shape, npt, nparam)
+        )
 
     # "Accept" initial point
-    rms = norm(r)/np.sqrt(npt)  # 2-norm
+    rms = norm(r) / np.sqrt(npt)  # 2-norm
     maxgrad = norm(np.dot(r.T, J), ord=np.inf)  # Inf-norm
     prev_trial_accepted = False
 
     # Initializations
     itr = 0
     Jissparse = issparse(J)
-    diagJJ = sum(J*J, 0).T
+    diagJJ = sum(J * J, 0).T
     zeropad = np.zeros((nparam, 1))
     lamb = lambdainit
     rmstraj = [rms]
 
     # Display info for 1st iter
     if verbose:
-        print('\n                    First-Order                        '
-              'Norm of \n')
-        print('Iter        Residual        optimality            Lambda'
-              '            step        Jwarp \n')
+        print("\n                    First-Order                        " "Norm of \n")
+        print(
+            "Iter        Residual        optimality            Lambda"
+            "            step        Jwarp \n"
+        )
         print(formatstr1 % (itr, rms, maxgrad))
 
     # Main Loop
@@ -99,20 +105,18 @@ def levenberg_marquardt(residfun, initparams,
 
         if itr == maxiter:
             if verbose:
-                print('Reached maximum number of iterations')
+                print("Reached maximum number of iterations")
             break
 
         elif time() - t > maxtime:
             if verbose:
-                print('Reached maxtime (%s seconds)' % maxtime)
+                print("Reached maxtime (%s seconds)" % maxtime)
             break
-        elif (itr >= 2 and
-              abs(rmstraj[itr] - rmstraj[itr-2]) <
-              rmstraj[itr]*tolrms):
+        elif itr >= 2 and abs(rmstraj[itr] - rmstraj[itr - 2]) < rmstraj[itr] * tolrms:
             # Should really only allow this exit case
             # if trust region constraint is slack
             if verbose:
-                print('RMS changed less than tolrms')
+                print("RMS changed less than tolrms")
             break
 
         itr += 1
@@ -122,13 +126,13 @@ def levenberg_marquardt(residfun, initparams,
         # since either lambda or J (or both) change every iteration
         if Jissparse:
             # spdiags takes the transpose of the matrix in matlab
-            D = spdiags(np.sqrt(lamb*diagJJ), 0, nparam, nparam)
+            D = spdiags(np.sqrt(lamb * diagJJ), 0, nparam, nparam)
         else:
-            D = np.diag(np.sqrt(lamb*diagJJ))
+            D = np.diag(np.sqrt(lamb * diagJJ))
 
         # Update augmented least squares system
         if params_updated:
-            diagJJ = sum(J*J, 0).T
+            diagJJ = sum(J * J, 0).T
             augJ = np.vstack((J, D))
             r.shape = (npt, 1)
             augr = np.vstack((-r, zeropad))
@@ -142,7 +146,7 @@ def levenberg_marquardt(residfun, initparams,
 
         # Check function value at trialp
         trialr, trialJ = residfun(trialp)
-        trialrms = norm(trialr)/np.sqrt(npt)
+        trialrms = norm(trialr) / np.sqrt(npt)
         rmstraj.append(trialrms)
 
         # Accept or reject trial params
@@ -155,30 +159,48 @@ def levenberg_marquardt(residfun, initparams,
             # dsp here so that all grad info is for updated point,
             # but lambda not yet updated
             if verbose:
-                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ)))
+                print(
+                    formatstr
+                    % (
+                        itr,
+                        trialrms,
+                        maxgrad,
+                        lamb,
+                        norm(step),
+                        max(diagJJ) / min(diagJJ),
+                    )
+                )
 
             if maxgrad < tolgrad:
                 if verbose:
-                    print('1st order optimality attained')
+                    print("1st order optimality attained")
                 break
 
             if prev_trial_accepted and itr > 1:
-                lamb = lamb/10.
+                lamb = lamb / 10.0
 
             prev_trial_accepted = True
             params_updated = True
         else:
             if verbose:
-                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ)))
-            lamb = lamb*10
+                print(
+                    formatstr
+                    % (
+                        itr,
+                        trialrms,
+                        maxgrad,
+                        lamb,
+                        norm(step),
+                        max(diagJJ) / min(diagJJ),
+                    )
+                )
+            lamb = lamb * 10
             prev_trial_accepted = False
             params_updated = False
 
     assert len(rmstraj) == itr + 1
     rmstraj = np.array(rmstraj)
     if verbose:
-        print('Final RMS: ' + repr(rms))
+        print("Final RMS: " + repr(rms))
 
     return params, rmstraj
