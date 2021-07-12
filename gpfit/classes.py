@@ -7,8 +7,8 @@ def max_affine(x, ba):
     Evaluates max affine function at values of x, given a set of
     max affine fit parameters.
 
-    INPUTS
-    ------
+    Arguments
+    ---------
         x: 2D array [nPoints x nDim]
             Independent variable data
 
@@ -18,7 +18,7 @@ def max_affine(x, ba):
              [ ....,          ]
              [bk, ak1, ... akk]]
 
-    OUTPUTS
+    Returns
     -------
         y: 1D array [nPoints]
             Max affine output
@@ -28,12 +28,9 @@ def max_affine(x, ba):
     npt, dimx = x.shape
     K = ba.size // (dimx + 1)
     ba = np.reshape(ba, (dimx + 1, K), order="F")  # 'F' gives Fortran indexing
-
-    # augment data with column of ones
-    X = np.hstack((np.ones((npt, 1)), x))
+    X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
     y, partition = np.dot(X, ba).max(1), np.dot(X, ba).argmax(1)
 
-    # The not-sparse sparse version
     dydba = np.zeros((npt, (dimx + 1) * K))
     for k in range(K):
         inds = np.equal(partition, k)
@@ -50,7 +47,8 @@ def softmax_affine(x, params):
     Evaluates softmax affine function at values of x, given a set of
     SMA fit parameters.
 
-    INPUTS:
+    Arguments:
+    ----------
             x:      Independent variable data
                         2D numpy array [nPoints x nDimensions]
 
@@ -59,7 +57,8 @@ def softmax_affine(x, params):
                         [b1, a11, .. a1d, b2, a21, .. a2d, ...
                          bK, aK1, aK2, .. aKd, alpha]
 
-    OUTPUTS:
+    Returns:
+    --------
             y:      SMA approximation to log transformed data
                         1D numpy array [nPoints]
 
@@ -74,14 +73,11 @@ def softmax_affine(x, params):
         return np.inf * np.ones((npt, 1)), np.nan
     K = np.size(ba) // (dimx + 1)
     ba = ba.reshape(dimx + 1, K, order="F")
-
     X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
     z = np.dot(X, ba)  # compute affine functions
-
     y, dydz, dydsoftness = lse_scaled(z, alpha)
 
     dydsoftness = -dydsoftness * (alpha ** 2)
-
     nrow, ncol = dydz.shape
     repmat = np.tile(dydz, (dimx + 1, 1)).reshape(nrow, ncol * (dimx + 1), order="F")
     dydba = repmat * np.tile(X, (1, K))
@@ -97,7 +93,8 @@ def implicit_softmax_affine(x, params):
     Evaluates implicit softmax affine function at values of x, given a set of
     ISMA fit parameters.
 
-    INPUTS:
+    Arguments:
+    ----------
             x:      Independent variable data
                         2D numpy array [nPoints x nDimensions]
 
@@ -106,7 +103,8 @@ def implicit_softmax_affine(x, params):
                         [b1, a11, .. a1d, b2, a21, .. a2d, ...
                          bK, aK1, aK2, .. aKd, alpha1, alpha2, ... alphaK]
 
-    OUTPUTS:
+    Returns:
+    --------
             y:      ISMA approximation to log transformed data
                         1D numpy array [nPoints]
 
@@ -121,10 +119,8 @@ def implicit_softmax_affine(x, params):
     if any(alpha <= 0):
         return np.inf * np.ones((npt, 1)), np.nan
     ba = ba.reshape(dimx + 1, K, order="F")  # reshape ba to matrix
-
     X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
     z = np.dot(X, ba)  # compute affine functions
-
     y, dydz, dydalpha = lse_implicit(z, alpha)
 
     nrow, ncol = dydz.shape

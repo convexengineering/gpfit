@@ -21,8 +21,8 @@ def levenberg_marquardt(
     Levenberg-Marquardt alogrithm
     Minimizes sum of squared error of residual function
 
-    INPUTS
-    ------
+    Arguments
+    ---------
     residfun: function
         Mapping from parameters to residuals, of the form
         (r, drdp) = residfun(params)
@@ -44,7 +44,7 @@ def levenberg_marquardt(
     tolrms: float
         Tolerance on change in rms error per iteration
 
-    OUTPUTS
+    Returns
     -------
     params: np.array (1D)
         Parameter vector that locally minimizes norm(residfun, 2)

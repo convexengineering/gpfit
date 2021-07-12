@@ -9,9 +9,10 @@ import numpy as np
 
 def xfoil_comparison(airfoil, Cl, Re, Cd):
     """
-    comparison of XFOIL cd to input cd for given cl and re
-    INPUTS
-    ------
+    Comparison of XFOIL Cd to input Cd for given Cl and Re.
+
+    Arguments
+    ---------
     airfoil:                    airfoil name
                                     str - ("xxx.dat", "naca xxxx")
     Cl:                         lift coefficient
@@ -21,7 +22,7 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
     Cd:                         drag coefficient
                                     float or 1d-list or array
 
-    OUTPUTS
+    Returns
     -------
     err:                        error between Cd and XFOIL computed Cd
                                     1-d numpy array
@@ -61,9 +62,10 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
 
 def single_call(topline, cl, Re, M, max_iter=100, pathname="/usr/local/bin/xfoil"):
     """
-    single XFOIL call for given cl, re and mach number
-    INPUTS
-    ------
+    Single XFOIL call for given Cl, Re and Mach number.
+
+    Arguments
+    ---------
     topline:                        load airfoil call in XFOIL
                                         str - e.g. "load xxx.dat"
     cl:                             lift coefficient
@@ -76,7 +78,7 @@ def single_call(topline, cl, Re, M, max_iter=100, pathname="/usr/local/bin/xfoil
                                         int: default is 100
     pathname:                       system path to XFOIL
                                         str
-    OUTPUTS
+    Returns
     -------
     cd:                         XFOIL drag coefficient
                                     float

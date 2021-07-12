@@ -11,29 +11,28 @@ def get_initial_parameters(x, y, K):
     ensures that initialization has at least K+1 points per partition (i.e.
     per affine function)
 
-    INPUTS:
+    Arguments:
+    ----------
         x:      Independent variable data
                     2D column vector [nPoints x nDims]
 
         y:      Dependent variable data
                     2D column vector [nPoints x 1]
 
-    OUTPUTS:
+    Returns:
+    --------
         ba:     Initial b and a parameters
                     2D array [(dimx+1) x k]
 
     """
 
     npt, dimx = x.shape
-
-    X = hstack((ones((npt, 1)), x))
-    b = zeros((dimx + 1, K))
-
     if K * (dimx + 1) > npt:
         raise ValueError("Not enough data points")
 
-    # Choose K unique indices
-    randinds = randperm(npt)[0:K]
+    X = hstack((ones((npt, 1)), x))
+    b = zeros((dimx + 1, K))
+    randinds = randperm(npt)[0:K]  # Choose K unique indices
 
     # partition based on distances
     sqdists = zeros((npt, K))

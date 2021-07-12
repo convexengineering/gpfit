@@ -20,7 +20,8 @@ def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
     """
     Fit a log-convex function to multivariate data, returning a FitConstraintSet
 
-    INPUTS
+    Arguments
+    ---------
         xdata:      Independent variable data
                         2D numpy array [nDim, nPoints]
                         [[<--------- x1 ------------->]
@@ -30,25 +31,27 @@ def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
                         1D numpy array [nPoints,]
                         [<---------- y ------------->]
 
+        K:          Number of terms
+
+        ftype:      Function class ["MA", "SMA", "ISMA"]
+
+        alpha0:     Initial guess for smoothing parameter alpha
+
+    Returns
+    -------
+        FitConstraintSet
+
         rms_error:  float
             Root mean square error between original (not log transformed)
             data and function fit.
     """
 
-    # Check data is in correct form
     if ydata.ndim > 1:
         raise ValueError("Dependent data should be a 1D numpy array")
 
-    # Transform to column vector
     xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
-
-    # Dimension of function (number of independent variables)
-    d = int(xdata.shape[1])
-
-    # begin fit data dict to generate fit constraint set
+    d = int(xdata.shape[1])  # Number of dimensions
     fitdata = {"ftype": ftype, "K": K, "d": d}
-
-    # find bounds of x
     if d == 1:
         fitdata["lb0"] = exp(min(xdata.reshape(xdata.size)))
         fitdata["ub0"] = exp(max(xdata.reshape(xdata.size)))
@@ -107,22 +110,10 @@ def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
         raise ValueError("Fitted constraint contains too large a value...")
 
     def evaluate(xdata):
-        """
-        Evaluate the y of this fit over a range of xdata.
-
-        INPUTS
-            xdata:      Independent variable data
-                            2D numpy array [nDim, nPoints]
-                            [[<--------- x1 ------------->]
-                             [<--------- x2 ------------->]]
-
-        OUTPUT
-            ydata:      Dependent variable data in 1D numpy array
-        """
+        """Evaluate the fit over a range of xdata."""
         xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
         return CLASSES[ftype](xdata, params)[0]
 
-    # cstrt.evaluate = evaluate
     fitdata["rms_err"] = sqrt(mean(square(evaluate(xdata.T) - ydata)))
     fitdata["max_err"] = sqrt(max(square(evaluate(xdata.T) - ydata)))
 

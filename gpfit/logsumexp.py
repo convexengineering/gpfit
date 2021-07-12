@@ -11,14 +11,16 @@ def lse_implicit(x, alpha):
     - lse_implicit is a mapping R^n --> R, where n number of dimensions
     - implementation: newton raphson steps to find f(x,y) = 0
 
-    INPUTS:
+    Arguments:
+    ----------
             x:      independent variable data
                         2D numpy array [nPoints x nDim]
 
             alpha:  local softness parameter
                         1D array [K] (K=number of terms)
 
-    OUTPUTS:
+    Returns:
+    --------
             y:      ISMA approximation to log transformed data
                         1D numpy array [nPoints]
 
@@ -71,12 +73,9 @@ def lse_implicit(x, alpha):
             / sumexpo[i]
         )
         neval = neval + 1
-
-        # update inds that need to be evaluated
-        i[i] = abs(f[i]) > tol
+        i[i] = abs(f[i]) > tol  # update inds that need to be evaluated
 
     y = m + L
-
     dydx = alphaexpo / (tile(sumalphaexpo, (nx, 1))).T
     dydalpha = (h - Lmat) * expo / (tile(sumalphaexpo, (nx, 1))).T
 
@@ -89,14 +88,16 @@ def lse_scaled(x, alpha):
     - sums across the second dimension of x
     - note that lse_scaled is a mapping R^n --> R
 
-    INPUTS:
+    Arguments:
+    ----------
             x:      independent variable data
                         2D numpy array [nPoints x nDim]
 
             alpha:  local softness parameter
                         1D array [K] (K=number of terms)
 
-    OUTPUTS:
+    Returns:
+    --------
             y:      ISMA approximation to log transformed data
                         1D numpy array [nPoints]
 
