@@ -12,7 +12,6 @@ Table of Contents
        :maxdepth: 2
 
        gpfit101
-       gettingstarted
        examples
        citinggpfit
        glossary.rst

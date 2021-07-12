@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'GPfit'
-copyright = '2015, MIT Convex Optimization Group'
+copyright = '2021, Convex Engineering Group'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
