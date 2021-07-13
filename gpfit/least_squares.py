@@ -159,17 +159,8 @@ def levenberg_marquardt(
             # dsp here so that all grad info is for updated point,
             # but lambda not yet updated
             if verbose:
-                print(
-                    formatstr
-                    % (
-                        itr,
-                        trialrms,
-                        maxgrad,
-                        lamb,
-                        norm(step),
-                        max(diagJJ)/min(diagJJ),
-                    )
-                )
+                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
+                                   max(diagJJ)/min(diagJJ)))
 
             if maxgrad < tolgrad:
                 if verbose:
@@ -183,17 +174,8 @@ def levenberg_marquardt(
             params_updated = True
         else:
             if verbose:
-                print(
-                    formatstr
-                    % (
-                        itr,
-                        trialrms,
-                        maxgrad,
-                        lamb,
-                        norm(step),
-                        max(diagJJ)/min(diagJJ),
-                    )
-                )
+                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
+                                   max(diagJJ)/min(diagJJ)))
             lamb = lamb*10
             prev_trial_accepted = False
             params_updated = False

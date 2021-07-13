@@ -96,10 +96,6 @@ class FitConstraintSet(ConstraintSet):
 
         ConstraintSet.__init__(self, [self.constraint])
 
-    def get_fitdata(self):
-        "return fit data"
-        return self.fitdata
-
     def get_dataframe(self):
         "return a pandas DataFrame of fit parameters"
         import pandas as pd
