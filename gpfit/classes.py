@@ -31,10 +31,10 @@ def max_affine(x, ba):
     X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
     y, partition = np.dot(X, ba).max(1), np.dot(X, ba).argmax(1)
 
-    dydba = np.zeros((npt, (dimx + 1) * K))
+    dydba = np.zeros((npt, (dimx + 1)*K))
     for k in range(K):
         inds = np.equal(partition, k)
-        indadd = (dimx + 1) * k
+        indadd = (dimx + 1)*k
         ixgrid = np.ix_(inds.nonzero()[0], indadd + np.arange(dimx + 1))
         dydba[ixgrid] = X[inds, :]
 
@@ -68,19 +68,19 @@ def softmax_affine(x, params):
     npt, dimx = x.shape
     ba = params[0:-1]
     softness = params[-1]
-    alpha = 1 / softness
+    alpha = 1/softness
     if alpha <= 0:
-        return np.inf * np.ones((npt, 1)), np.nan
+        return np.inf*np.ones((npt, 1)), np.nan
     K = np.size(ba) // (dimx + 1)
     ba = ba.reshape(dimx + 1, K, order="F")
     X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
     z = np.dot(X, ba)  # compute affine functions
     y, dydz, dydsoftness = lse_scaled(z, alpha)
 
-    dydsoftness = -dydsoftness * (alpha ** 2)
+    dydsoftness = -dydsoftness*(alpha**2)
     nrow, ncol = dydz.shape
-    repmat = np.tile(dydz, (dimx + 1, 1)).reshape(nrow, ncol * (dimx + 1), order="F")
-    dydba = repmat * np.tile(X, (1, K))
+    repmat = np.tile(dydz, (dimx + 1, 1)).reshape(nrow, ncol*(dimx + 1), order="F")
+    dydba = repmat*np.tile(X, (1, K))
     dydsoftness.shape = (dydsoftness.size, 1)
     dydp = np.hstack((dydba, dydsoftness))
 
@@ -117,15 +117,15 @@ def implicit_softmax_affine(x, params):
     ba = params[0:-K]
     alpha = params[-K:]
     if any(alpha <= 0):
-        return np.inf * np.ones((npt, 1)), np.nan
+        return np.inf*np.ones((npt, 1)), np.nan
     ba = ba.reshape(dimx + 1, K, order="F")  # reshape ba to matrix
     X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
     z = np.dot(X, ba)  # compute affine functions
     y, dydz, dydalpha = lse_implicit(z, alpha)
 
     nrow, ncol = dydz.shape
-    repmat = np.tile(dydz, (dimx + 1, 1)).reshape(nrow, ncol * (dimx + 1), order="F")
-    dydba = repmat * np.tile(X, (1, K))
+    repmat = np.tile(dydz, (dimx + 1, 1)).reshape(nrow, ncol*(dimx + 1), order="F")
+    dydba = repmat*np.tile(X, (1, K))
     dydp = np.hstack((dydba, dydalpha))
 
     return y, dydp

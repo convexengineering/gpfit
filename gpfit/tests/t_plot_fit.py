@@ -10,7 +10,7 @@ class TestPlotFit(unittest.TestCase):
     def test_plot_fit_1d(self):
         N = 51
         U = np.logspace(0, np.log10(3), N)
-        W = (U**2+3) / (U+1)**2
+        W = (U**2+3)/(U+1)**2
         plot_fit_1d(U, W, K=2, fitclass='SMA', plotspace="linear")
 
 

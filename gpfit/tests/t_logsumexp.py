@@ -70,10 +70,6 @@ class TestLSEScaled(unittest.TestCase):
     def test_dydx_shape_0(self):
         self.assertEqual(self.dydx.shape[0], self.x.shape[0])
 
-    def test_dydx_shape_1(self):
-        pass
-        # self.assertEqual(self.dydx.shape[0], ???????)
-
     def test_dydalpha_ndim(self):
         self.assertEqual(self.dydalpha.ndim, 1)
 

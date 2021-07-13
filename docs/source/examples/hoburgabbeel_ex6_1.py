@@ -5,7 +5,7 @@ from gpfit.fit import fit
 random.seed(33404)
 
 u = logspace(0, log10(3), 101)
-w = (u ** 2 + 3) / (u + 1) ** 2
+w = (u**2 + 3)/(u + 1)**2
 x = log(u)
 y = log(w)
 K = 3

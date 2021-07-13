@@ -5,7 +5,7 @@ from gpfit.print_fit import print_ma, print_sma, print_isma
 
 A = array([2, 3, 4, 6, 7, 8, 10, 11, 12])
 B = array([1, 5, 9])
-ALPHA = array([1.0 / 13.0, 1.0 / 14.0, 1.0 / 15.0])
+ALPHA = array([1/13, 1/14, 1/15])
 DIM = 3
 K = 3
 

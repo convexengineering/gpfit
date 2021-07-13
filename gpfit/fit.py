@@ -69,31 +69,31 @@ def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
     ydata_col = ydata.reshape(ydata.size, 1)
     ba = get_initial_parameters(xdata, ydata_col, K).flatten("F")
     if ftype == "ISMA":
-        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0 * ones(K))))
+        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0*ones(K))))
     elif ftype == "SMA":
         params, _ = levenberg_marquardt(residual, hstack((ba, alpha0)))
     else:
         params, _ = levenberg_marquardt(residual, ba)
 
     # A: exponent parameters, B: coefficient parameters
-    A = params[[i for i in range(K * (d + 1)) if i % (d + 1) != 0]]
-    B = params[[i for i in range(K * (d + 1)) if i % (d + 1) == 0]]
+    A = params[[i for i in range(K*(d + 1)) if i % (d + 1) != 0]]
+    B = params[[i for i in range(K*(d + 1)) if i % (d + 1) == 0]]
 
     if ftype == "ISMA":
-        alpha = 1.0 / params[list(range(-K, 0))]
+        alpha = 1/params[list(range(-K, 0))]
         for k in range(K):
-            fitdata["c%d" % k] = exp(alpha[k] * B[k])
+            fitdata["c%d" % k] = exp(alpha[k]*B[k])
             fitdata["a%d" % k] = alpha[k]
             for i in range(d):
-                fitdata["e%d%d" % (k, i)] = alpha[k] * A[d * k + i]
+                fitdata["e%d%d" % (k, i)] = alpha[k]*A[d*k + i]
         print_isma(A, B, alpha, d, K)
     elif ftype == "SMA":
-        alpha = 1.0 / params[-1]
+        alpha = 1/params[-1]
         fitdata["a1"] = alpha
         for k in range(K):
-            fitdata["c%d" % k] = exp(alpha * B[k])
+            fitdata["c%d" % k] = exp(alpha*B[k])
             for i in range(d):
-                fitdata["e%d%d" % (k, i)] = alpha * A[d * k + i]
+                fitdata["e%d%d" % (k, i)] = alpha*A[d*k + i]
         print_sma(A, B, alpha, d, K)
     elif ftype == "MA":
         alpha = 1
@@ -101,12 +101,12 @@ def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
         for k in range(K):
             fitdata["c%d" % k] = exp(B[k])
             for i in range(d):
-                fitdata["e%d%d" % (k, i)] = A[d * k + i]
+                fitdata["e%d%d" % (k, i)] = A[d*k + i]
         print_ma(A, B, d, K)
 
-    if min(exp(B * alpha)) < 1e-100:
+    if min(exp(B*alpha)) < 1e-100:
         raise ValueError("Fitted constraint contains too small a value...")
-    if max(exp(B * alpha)) > 1e100:
+    if max(exp(B*alpha)) > 1e100:
         raise ValueError("Fitted constraint contains too large a value...")
 
     def evaluate(xdata):

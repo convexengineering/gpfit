@@ -79,14 +79,14 @@ def levenberg_marquardt(
         )
 
     # "Accept" initial point
-    rms = norm(r) / np.sqrt(npt)  # 2-norm
+    rms = norm(r)/np.sqrt(npt)  # 2-norm
     maxgrad = norm(np.dot(r.T, J), ord=np.inf)  # Inf-norm
     prev_trial_accepted = False
 
     # Initializations
     itr = 0
     Jissparse = issparse(J)
-    diagJJ = sum(J * J, 0).T
+    diagJJ = sum(J*J, 0).T
     zeropad = np.zeros((nparam, 1))
     lamb = lambdainit
     rmstraj = [rms]
@@ -112,7 +112,7 @@ def levenberg_marquardt(
             if verbose:
                 print("Reached maxtime (%s seconds)" % maxtime)
             break
-        elif itr >= 2 and abs(rmstraj[itr] - rmstraj[itr - 2]) < rmstraj[itr] * tolrms:
+        elif itr >= 2 and abs(rmstraj[itr] - rmstraj[itr - 2]) < rmstraj[itr]*tolrms:
             # Should really only allow this exit case
             # if trust region constraint is slack
             if verbose:
@@ -126,13 +126,13 @@ def levenberg_marquardt(
         # since either lambda or J (or both) change every iteration
         if Jissparse:
             # spdiags takes the transpose of the matrix in matlab
-            D = spdiags(np.sqrt(lamb * diagJJ), 0, nparam, nparam)
+            D = spdiags(np.sqrt(lamb*diagJJ), 0, nparam, nparam)
         else:
-            D = np.diag(np.sqrt(lamb * diagJJ))
+            D = np.diag(np.sqrt(lamb*diagJJ))
 
         # Update augmented least squares system
         if params_updated:
-            diagJJ = sum(J * J, 0).T
+            diagJJ = sum(J*J, 0).T
             augJ = np.vstack((J, D))
             r.shape = (npt, 1)
             augr = np.vstack((-r, zeropad))
@@ -146,7 +146,7 @@ def levenberg_marquardt(
 
         # Check function value at trialp
         trialr, trialJ = residfun(trialp)
-        trialrms = norm(trialr) / np.sqrt(npt)
+        trialrms = norm(trialr)/np.sqrt(npt)
         rmstraj.append(trialrms)
 
         # Accept or reject trial params
@@ -167,7 +167,7 @@ def levenberg_marquardt(
                         maxgrad,
                         lamb,
                         norm(step),
-                        max(diagJJ) / min(diagJJ),
+                        max(diagJJ)/min(diagJJ),
                     )
                 )
 
@@ -177,7 +177,7 @@ def levenberg_marquardt(
                 break
 
             if prev_trial_accepted and itr > 1:
-                lamb = lamb / 10.0
+                lamb = lamb/10
 
             prev_trial_accepted = True
             params_updated = True
@@ -191,10 +191,10 @@ def levenberg_marquardt(
                         maxgrad,
                         lamb,
                         norm(step),
-                        max(diagJJ) / min(diagJJ),
+                        max(diagJJ)/min(diagJJ),
                     )
                 )
-            lamb = lamb * 10
+            lamb = lamb*10
             prev_trial_accepted = False
             params_updated = False
 

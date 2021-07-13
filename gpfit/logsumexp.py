@@ -31,7 +31,7 @@ def lse_implicit(x, alpha):
                         2D array [nPoints x nDim]
     """
 
-    tol = 10 * spacing(1)
+    tol = 10*spacing(1)
     npt, nx = x.shape
 
     if nx != alpha.size:
@@ -46,38 +46,31 @@ def lse_implicit(x, alpha):
     Lmat = (tile(L, (nx, 1))).T
 
     # initial eval
-    expo = exp(alphamat * (h - Lmat))
-    alphaexpo = alphamat * expo
+    expo = exp(alphamat*(h - Lmat))
+    alphaexpo = alphamat*expo
     sumexpo = expo.sum(axis=1)
     sumalphaexpo = alphaexpo.sum(axis=1)
     f = log(sumexpo)
-    dfdL = -alphaexpo.sum(axis=1) / sumexpo
+    dfdL = -alphaexpo.sum(axis=1)/sumexpo
     neval = 1
     i = abs(f) > tol  # inds to update
 
     while any(i):
-        L[i] = L[i] - f[i] / dfdL[i]  # newton step
+        L[i] = L[i] - f[i]/dfdL[i]  # newton step
         # re-evaluate
         Lmat[i, :] = (tile(L[i], (nx, 1))).T
-        expo[i, :] = exp(alphamat[i, :] * (h[i, :] - Lmat[i, :]))
-        alphaexpo[i, :] = alphamat[i, :] * expo[i, :]
+        expo[i, :] = exp(alphamat[i, :]*(h[i, :] - Lmat[i, :]))
+        alphaexpo[i, :] = alphamat[i, :]*expo[i, :]
         sumexpo[i] = expo[i, :].sum(axis=1)
-        sumalphaexpo[i,] = alphaexpo[
-            i, :
-        ].sum(axis=1)
+        sumalphaexpo[i, ] = alphaexpo[i, :].sum(axis=1)
         f[i] = log(sumexpo[i])
-        dfdL[i] = (
-            -sumalphaexpo[
-                i,
-            ]
-            / sumexpo[i]
-        )
+        dfdL[i] = -sumalphaexpo[i, ]/sumexpo[i]
         neval = neval + 1
         i[i] = abs(f[i]) > tol  # update inds that need to be evaluated
 
     y = m + L
-    dydx = alphaexpo / (tile(sumalphaexpo, (nx, 1))).T
-    dydalpha = (h - Lmat) * expo / (tile(sumalphaexpo, (nx, 1))).T
+    dydx = alphaexpo/(tile(sumalphaexpo, (nx, 1))).T
+    dydalpha = (h - Lmat)*expo/(tile(sumalphaexpo, (nx, 1))).T
 
     return y, dydx, dydalpha
 
@@ -111,12 +104,12 @@ def lse_scaled(x, alpha):
     _, n = x.shape
     m = x.max(axis=1)  # maximal x values
     h = x - (tile(m, (n, 1))).T  # distance from m; note h <= 0 for all entries
-    expo = exp(alpha * h)
+    expo = exp(alpha*h)
     sumexpo = expo.sum(axis=1)
-    L = log(sumexpo) / alpha
+    L = log(sumexpo)/alpha
     y = L + m
-    dydx = expo / (tile(sumexpo, (n, 1))).T
+    dydx = expo/(tile(sumexpo, (n, 1))).T
     # note that sum(dydx,2)==1, i.e. dydx is a probability distribution
-    dydalpha = ((h * expo).sum(axis=1) / sumexpo - L) / alpha
+    dydalpha = ((h*expo).sum(axis=1)/sumexpo - L)/alpha
 
     return y, dydx, dydalpha

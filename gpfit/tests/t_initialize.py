@@ -35,20 +35,9 @@ class TestMaxAffineInitK4(unittest.TestCase):
     """
 
     np.random.seed(SEED)
-    Vdd = (
-        random_sample(
-            1000,
-        )
-        + 1
-    )
-    Vth = (
-        0.2
-        * random_sample(
-            1000,
-        )
-        + 0.2
-    )
-    P = Vdd ** 2 + 30 * Vdd * exp(-(Vth - 0.06 * Vdd) / 0.039)
+    Vdd = random_sample(1000) + 1
+    Vth = 0.2*random_sample(1000) + 0.2
+    P = Vdd**2 + 30*Vdd*exp(-(Vth - 0.06*Vdd)/0.039)
     u = vstack((Vdd, Vth))
     x = log(u)
     y = log(P)

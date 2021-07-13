@@ -27,7 +27,7 @@ def get_initial_parameters(x, y, K):
     """
 
     npt, dimx = x.shape
-    if K * (dimx + 1) > npt:
+    if K*(dimx + 1) > npt:
         raise ValueError("Not enough data points")
 
     X = hstack((ones((npt, 1)), x))
@@ -37,7 +37,7 @@ def get_initial_parameters(x, y, K):
     # partition based on distances
     sqdists = zeros((npt, K))
     for k in range(K):
-        sqdists[:, k] = ((x - tile(x[randinds[k], :], (npt, 1))) ** 2).sum(1)
+        sqdists[:, k] = ((x - tile(x[randinds[k], :], (npt, 1)))**2).sum(1)
 
     # index to closest k for each data pt
     mindistind = argmin(sqdists, axis=1)

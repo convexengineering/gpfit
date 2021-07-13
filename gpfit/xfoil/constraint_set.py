@@ -44,7 +44,7 @@ class XfoilFit(FitConstraintSet):
                 cl = result(dvar)
         cd = result(self.ivar)
         if not hasattr(cl, "__len__") and hasattr(re, "__len__"):
-            cl = [cl] * len(re)
+            cl = [cl]*len(re)
         err, cdx = xfoil_comparison(self.airfoil, cl, re, cd)
         ind = where(err > 0.05)[0]
         for i in ind:

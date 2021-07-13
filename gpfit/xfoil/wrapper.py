@@ -54,7 +54,7 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
             print("Unable to start Xfoil: %s" % failmsg)
             cdx = cd
 
-        err.append(1 - cd / cdx)
+        err.append(1 - cd/cdx)
         cdxs.append(cdx)
 
     return np.array(err), np.array(cdxs)
