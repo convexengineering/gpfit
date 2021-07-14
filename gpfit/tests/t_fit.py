@@ -3,10 +3,10 @@ import unittest
 from numpy import logspace, log10, log, vstack
 from gpfit.fit import fit
 
-class t_fit(unittest.TestCase):
+class TestFit(unittest.TestCase):
 
     u = logspace(0, log10(3), 501)
-    w = (u**2 + 3)/(u+1)**2
+    w = (u**2 + 3)/(u + 1)**2
     x = log(u)
     y = log(w)
     K = 3
@@ -24,7 +24,7 @@ class t_fit(unittest.TestCase):
             fit(self.x, vstack((self.y, self.y)), self.K, "MA")
 
 
-TESTS = [t_fit]
+TESTS = [TestFit]
 
 if __name__ == '__main__':
     SUITE = unittest.TestSuite()

@@ -1,7 +1,8 @@
-" fit constraint set "
+"""Fit constraint set"""
+from numpy import amax, array, hstack
 from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
-from numpy import amax, array, hstack, where
+from gpkit.small_scripts import initsolwarning, appendsolwarning
 
 # pylint: disable=too-many-instance-attributes, too-many-locals,
 # pylint: disable=too-many-branches, no-member, import-error
@@ -9,7 +10,8 @@ from numpy import amax, array, hstack, where
 
 
 class FitConstraintSet(ConstraintSet):
-    """Constraint set for fitted functions
+    """
+    Constraint set for fitted functions
 
     Arguments
     ---------
@@ -19,7 +21,7 @@ class FitConstraintSet(ConstraintSet):
         independent variable
     dvars : list of gpkit Variables, Monomials, or NomialArrays
         dependent variables
-    err_margin : string, either "Max" or "RMS"
+    err_margin : string, either "max" or "rms"
         flag to set margin factor using RMS or max error
 
     """
@@ -47,18 +49,12 @@ class FitConstraintSet(ConstraintSet):
             for k in range(fitdata["K"])
         ]
 
-        if err_margin == "Max":
-            self.mfac = Variable(
-                "m_{fac-" + name + "-fit}", 1 + self.max_err, "-", "max error of fit"
-            )
-        elif err_margin == "RMS":
-            self.mfac = Variable(
-                "m_{fac-" + name + "-fit}", 1 + self.rms_err, "-", "RMS error of fit"
-            )
-        elif err_margin is None:
-            self.mfac = Variable("m_{fac-" + name + "-fit}", 1.0, "-", "fit factor")
-        else:
-            raise ValueError("Invalid name for err_margin: valid inputs Max, " "RMS")
+        with NamedVariables(name):
+            self.mfac = Variable("mfac", 1.0, "-", "fit factor")
+        if err_margin == "max":
+            self.mfac.key.descr["value"] = 1 + self.max_err
+        elif err_margin == "rms":
+            self.mfac.key.descr["value"] = 1 + self.rms_err
 
         if fitdata["ftype"] == "ISMA":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
@@ -109,6 +105,7 @@ class FitConstraintSet(ConstraintSet):
         make sure fit result is within bounds of fitted data
         """
         super(FitConstraintSet, self).process_result(result)
+        initsolwarning(result, "Fit Out-of-Bounds")
 
         if self.mfac not in result["sensitivities"]["constants"]:
             return
@@ -135,4 +132,4 @@ class FitConstraintSet(ConstraintSet):
                     + " %s bound. Solution is %.4f but"
                     " bound is %.4f" % (direct, amax([num]), bnd)
                 )
-                print("Warning: " + msg)
+                appendsolwarning(msg, self, result, "Fit Out-of-Bounds")

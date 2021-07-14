@@ -4,36 +4,31 @@ from gpkit.tests.helpers import run_tests
 TESTS = []
 
 from gpfit.tests import t_least_squares
-
 TESTS += t_least_squares.TESTS
 
 from gpfit.tests import t_logsumexp
-
 TESTS += t_logsumexp.TESTS
 
 from gpfit.tests import t_initialize
-
 TESTS += t_initialize.TESTS
 
 from gpfit.tests import t_classes
-
 TESTS += t_classes.TESTS
 
 from gpfit.tests import t_print_fit
-
 TESTS += t_print_fit.TESTS
 
 from gpfit.tests import t_plot_fit
-
 TESTS += t_plot_fit.TESTS
 
 from gpfit.tests import t_examples
-
 TESTS += t_examples.TESTS
 
 from gpfit.tests import t_fit
-
 TESTS += t_fit.TESTS
+
+from gpfit.tests import t_constraint_set
+TESTS += t_constraint_set.TESTS
 
 
 def run(xmloutput=False):
