@@ -6,7 +6,7 @@ from numpy.linalg import norm
 from scipy.sparse import spdiags, issparse
 
 
-# pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements
+# pylint: disable=too-many-locals,too-many-arguments,too-many-branches,too-many-statements,no-else-break
 def levenberg_marquardt(
     residfun,
     initparams,
@@ -63,7 +63,7 @@ def levenberg_marquardt(
     # Define display formatting if required
     formatstr1 = "%5.0f        %9.6g        %9.3g\n"
     formatstr = (
-        "%5.0f        %9.6g        %9.3g        " "%12.4g        %12.4g        %8.4g\n"
+        "%5.0f        %9.6g        %9.3g        %12.4g        %12.4g        %8.4g\n"
     )
 
     # Get residual values and jacobian at initial point; extract size info
@@ -102,12 +102,10 @@ def levenberg_marquardt(
 
     # Main Loop
     while True:
-
         if itr == maxiter:
             if verbose:
                 print("Reached maximum number of iterations")
             break
-
         elif time() - t > maxtime:
             if verbose:
                 print("Reached maxtime (%s seconds)" % maxtime)

@@ -1,3 +1,7 @@
+"""
+Implements the Max Affine, Softmax Affine, and Implicit Softmax Affine function
+classes
+"""
 import numpy as np
 from .logsumexp import lse_scaled, lse_implicit
 

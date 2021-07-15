@@ -4,11 +4,10 @@ from gpkit import ConstraintSet
 from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
 from gpkit.small_scripts import initsolwarning, appendsolwarning
 
+
 # pylint: disable=too-many-instance-attributes, too-many-locals,
 # pylint: disable=too-many-branches, no-member, import-error
-# pylint: disable=too-many-arguments
-
-
+# pylint: disable=too-many-arguments, import-outside-toplevel
 class FitConstraintSet(ConstraintSet):
     """
     Constraint set for fitted functions
@@ -104,7 +103,7 @@ class FitConstraintSet(ConstraintSet):
         """
         make sure fit result is within bounds of fitted data
         """
-        super(FitConstraintSet, self).process_result(result)
+        super().process_result(result)
         initsolwarning(result, "Fit Out-of-Bounds")
 
         if self.mfac not in result["sensitivities"]["constants"]:

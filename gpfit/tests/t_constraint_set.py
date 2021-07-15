@@ -24,7 +24,7 @@ class TestFitConstraintSet(unittest.TestCase):
         sol = m.solve(verbosity=0)
         self.assertAlmostEqual(sol["cost"], 0.7777593)
 
-    def test_fit_constraint_set_outside_bounds(self):
+    def test_outside_bounds(self):
         m = Model(self.wvar, [self.fcs, self.uvar <= 4])
         sol = m.solve(verbosity=0)
         self.assertTrue(len(sol['warnings']["Fit Out-of-Bounds"]) == 1)

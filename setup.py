@@ -30,7 +30,7 @@ setup(
     author_email="gpkit@mit.edu",
     url="https://github.com/convexengineering/gpfit",
     python_requires=">=3.4",
-    install_requires=["numpy", "scipy", "gpkit"],
+    install_requires=["numpy", "scipy", "gpkit", "matplotlib"],
     version="0.1.0",
     packages=["gpfit", "gpfit.tests"],
     license=LICENSE,

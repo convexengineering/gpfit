@@ -1,9 +1,11 @@
-#unit tests for gpfit.fit module"
+"""unit tests for fit module"""
 import unittest
 from numpy import logspace, log10, log, vstack
 from gpfit.fit import fit
 
+
 class TestFit(unittest.TestCase):
+    """Test fit function"""
 
     u = logspace(0, log10(3), 501)
     w = (u**2 + 3)/(u + 1)**2
@@ -12,11 +14,11 @@ class TestFit(unittest.TestCase):
     K = 3
 
     def test_rms_error(self):
-        cstrt, rms_error = fit(self.x, self.y, self.K, "SMA")
+        _, rms_error = fit(self.x, self.y, self.K, "SMA")
         self.assertTrue(rms_error < 1e-4)
-        cstrt, rms_error = fit(self.x, self.y, self.K, "ISMA")
+        _, rms_error = fit(self.x, self.y, self.K, "ISMA")
         self.assertTrue(rms_error < 1e-5)
-        cstrt, rms_error = fit(self.x, self.y, self.K, "MA")
+        _, rms_error = fit(self.x, self.y, self.K, "MA")
         self.assertTrue(rms_error < 1e-2)
 
     def test_incorrect_inputs(self):

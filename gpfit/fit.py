@@ -66,8 +66,8 @@ def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
         r = yhat - ydata
         return r, drdp
 
-    ydata_col = ydata.reshape(ydata.size, 1)
-    ba = get_initial_parameters(xdata, ydata_col, K).flatten("F")
+    ba = get_initial_parameters(xdata, ydata.reshape(ydata.size, 1),
+                                K).flatten("F")
     if ftype == "ISMA":
         params, _ = levenberg_marquardt(residual, hstack((ba, alpha0*ones(K))))
     elif ftype == "SMA":
