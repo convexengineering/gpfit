@@ -34,14 +34,22 @@ class TestExamples(unittest.TestCase):
         self.assertTrue(example.errorSMA < 1e-4)
         self.assertTrue(example.errorISMA < 1e-5)
 
+    def test_hoburgabbeel_ex6_3(self, example):
+        """test_hoburgabbeel_ex6_3"""
+        self.assertTrue(example.errorMA < 1e-2)
+        self.assertTrue(example.errorSMA < 1e-3)
+        self.assertTrue(example.errorISMA < 1e-3)
+
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-EXAMPLE_DIR = os.path.abspath(FILE_DIR + '../../../docs/source/examples')
+EXAMPLE_DIR = os.path.abspath(FILE_DIR + "../../../docs/source/examples")
 # use gpkit.tests.helpers.generate_example_tests default: only default solver
-TESTS = generate_example_tests(EXAMPLE_DIR, [TestExamples],
-                               settings["installed_solvers"])
+TESTS = generate_example_tests(
+    EXAMPLE_DIR, [TestExamples], settings["installed_solvers"]
+)
 
 
 if __name__ == "__main__":
     from gpkit.tests.helpers import run_tests
+
     run_tests(TESTS)

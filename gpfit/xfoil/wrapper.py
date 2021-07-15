@@ -1,17 +1,18 @@
 " python wrapper to call xfoil "
-from __future__ import print_function
-from __future__ import division
 import subprocess
 import numpy as np
 
-#pylint: disable=invalid-name, bare-except, too-many-locals
-#pylint: disable=too-many-arguments
+
+# pylint: disable=invalid-name, bare-except, too-many-locals
+# pylint: disable=too-many-arguments
+
 
 def xfoil_comparison(airfoil, Cl, Re, Cd):
     """
-    comparison of XFOIL cd to input cd for given cl and re
-    INPUTS
-    ------
+    Comparison of XFOIL Cd to input Cd for given Cl and Re.
+
+    Arguments
+    ---------
     airfoil:                    airfoil name
                                     str - ("xxx.dat", "naca xxxx")
     Cl:                         lift coefficient
@@ -21,7 +22,7 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
     Cd:                         drag coefficient
                                     float or 1d-list or array
 
-    OUTPUTS
+    Returns
     -------
     err:                        error between Cd and XFOIL computed Cd
                                     1-d numpy array
@@ -58,12 +59,13 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
 
     return np.array(err), np.array(cdxs)
 
-def single_call(topline, cl, Re, M, max_iter=100,
-                pathname="/usr/local/bin/xfoil"):
+
+def single_call(topline, cl, Re, M, max_iter=100, pathname="/usr/local/bin/xfoil"):
     """
-    single XFOIL call for given cl, re and mach number
-    INPUTS
-    ------
+    Single XFOIL call for given Cl, Re and Mach number.
+
+    Arguments
+    ---------
     topline:                        load airfoil call in XFOIL
                                         str - e.g. "load xxx.dat"
     cl:                             lift coefficient
@@ -76,7 +78,7 @@ def single_call(topline, cl, Re, M, max_iter=100,
                                         int: default is 100
     pathname:                       system path to XFOIL
                                         str
-    OUTPUTS
+    Returns
     -------
     cd:                         XFOIL drag coefficient
                                     float
@@ -88,38 +90,39 @@ def single_call(topline, cl, Re, M, max_iter=100,
                                     str
     """
 
-    proc = subprocess.Popen([pathname], stdout=subprocess.PIPE,
-                            stdin=subprocess.PIPE)
-    proc.stdin.write(topline +
-                     'oper \n' +
-                     "iter %d\n" %(max_iter)+
-                     'visc \n' +
-                     "%.2e \n" %(Re) +
-                     "M \n" +
-                     "%.2f \n" %(M) +
-                     "a 2.0 \n" +
-                     "cl %.4f \n" %(cl) +
-                     '\n' +
-                     'quit \n')
+    proc = subprocess.Popen([pathname], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    proc.stdin.write(
+        topline
+        + "oper \n"
+        + "iter %d\n" % (max_iter)
+        + "visc \n"
+        + "%.2e \n" % (Re)
+        + "M \n"
+        + "%.2f \n" % (M)
+        + "a 2.0 \n"
+        + "cl %.4f \n" % (cl)
+        + "\n"
+        + "quit \n"
+    )
     stdout_val = proc.communicate()[0]
     proc.stdin.close()
 
-    if ("VISCAL:  Convergence failed\n" in stdout_val):
+    if "VISCAL:  Convergence failed\n" in stdout_val:
         return stdout_val
 
     res = {}
     ostr = stdout_val.split()
     ctr = 0
     for i in range(0, len(ostr)):
-        ix = len(ostr)-(i+1)
+        ix = len(ostr) - (i + 1)
         vl = ostr[ix]
-        if vl in ['a', 'CL', 'CD', 'Cm']:
+        if vl in ["a", "CL", "CD", "Cm"]:
             res[vl] = ostr[ix + 2]
             ctr += 1
         if ctr >= 4:
             break
-    cd = res['CD']
-    cl = res['CL']
+    cd = res["CD"]
+    cl = res["CL"]
     # alpha_ret = res['a']
-    cm = res['Cm']
+    cm = res["Cm"]
     return float(cd), float(cl), float(cm), stdout_val

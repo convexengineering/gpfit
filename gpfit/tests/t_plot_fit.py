@@ -6,12 +6,12 @@ from gpfit.plot_fit import plot_fit_1d
 
 class TestPlotFit(unittest.TestCase):
     "Unit tests for plot_fit_1d"
+    N = 51
+    u = np.logspace(0, np.log10(3), N)
+    w = (u**2 + 3)/(u + 1)**2
 
     def test_plot_fit_1d(self):
-        N = 51
-        U = np.logspace(0, np.log10(3), N)
-        W = (U**2+3) / (U+1)**2
-        plot_fit_1d(U, W, K=2, fitclass='SMA', plotspace="linear")
+        plot_fit_1d(self.u, self.w, K=2, fitclass='SMA', plotspace="linear")
 
 
 TESTS = [TestPlotFit]

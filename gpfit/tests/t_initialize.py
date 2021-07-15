@@ -1,9 +1,9 @@
-"unit tests for ba_init function"
+"unit tests for get_initial_parameters function"
 import unittest
 import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
-from gpfit.ba_init import ba_init
+from gpfit.initialize import get_initial_parameters
 
 SEED = 33404
 
@@ -13,10 +13,11 @@ class TestMaxAffineInitK2(unittest.TestCase):
     This unit test ensures that max affine init produces an array
     of the expected shape and size
     """
-    x = arange(0., 16.)[:, newaxis]
-    y = arange(0., 16.)[:, newaxis]
+
+    x = arange(0.0, 16.0)[:, newaxis]
+    y = arange(0.0, 16.0)[:, newaxis]
     K = 2
-    ba = ba_init(x, y, K)
+    ba = get_initial_parameters(x, y, K)
 
     def test_ba_ndim_k2(self):
         self.assertEqual(self.ba.ndim, 2)
@@ -24,7 +25,7 @@ class TestMaxAffineInitK2(unittest.TestCase):
     def test_ba_shape_k2(self):
 
         _, dimx = self.x.shape
-        self.assertEqual(self.ba.shape, (dimx+1, self.K))
+        self.assertEqual(self.ba.shape, (dimx + 1, self.K))
 
 
 class TestMaxAffineInitK4(unittest.TestCase):
@@ -32,10 +33,11 @@ class TestMaxAffineInitK4(unittest.TestCase):
     This unit test ensures that max affine init produces an array
     of the expected shape and size
     """
+
     np.random.seed(SEED)
-    Vdd = random_sample(1000,) + 1
-    Vth = 0.2*random_sample(1000,) + 0.2
-    P = Vdd**2 + 30*Vdd*exp(-(Vth-0.06*Vdd)/0.039)
+    Vdd = random_sample(1000) + 1
+    Vth = 0.2*random_sample(1000) + 0.2
+    P = Vdd**2 + 30*Vdd*exp(-(Vth - 0.06*Vdd)/0.039)
     u = vstack((Vdd, Vth))
     x = log(u)
     y = log(P)
@@ -43,15 +45,15 @@ class TestMaxAffineInitK4(unittest.TestCase):
     y = y.reshape(y.size, 1)
     K = 4
 
-    ba = ba_init(x, y, K)
+    ba = get_initial_parameters(x, y, K)
 
     def test_ba_shape_k4(self):
         self.assertEqual(self.ba.shape, (3, 4))
 
-TESTS = [TestMaxAffineInitK2,
-         TestMaxAffineInitK4]
 
-if __name__ == '__main__':
+TESTS = [TestMaxAffineInitK2, TestMaxAffineInitK4]
+
+if __name__ == "__main__":
     SUITE = unittest.TestSuite()
     LOADER = unittest.TestLoader()
 
