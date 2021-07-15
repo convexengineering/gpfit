@@ -31,7 +31,7 @@ setup(
     url="https://github.com/convexengineering/gpfit",
     python_requires=">=3.4",
     install_requires=["numpy", "scipy", "gpkit"],
-    version="0.1",
+    version="0.1.0",
     packages=["gpfit", "gpfit.tests"],
     license=LICENSE,
 )
