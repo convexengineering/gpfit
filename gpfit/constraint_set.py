@@ -25,7 +25,7 @@ class FitConstraintSet(ConstraintSet):
 
     """
 
-    def __init__(self, fitdata, ivar=None, dvars=None, name="", err_margin=None):
+    def __init__(self, fitdata, ivar=None, dvars=None, name="fit", err_margin=None):
 
         self.fitdata = fitdata
 
