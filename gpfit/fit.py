@@ -1,123 +1,353 @@
-"Implements the all-important 'fit' function."
-from numpy import ones, exp, sqrt, mean, square, hstack
-from .classes import max_affine, softmax_affine, implicit_softmax_affine
+"""Implements the Fit class"""
+import numpy as np
+import matplotlib.pyplot as plt
 from .least_squares import levenberg_marquardt
 from .initialize import get_initial_parameters
-from .print_fit import print_isma, print_sma, print_ma
-from .constraint_set import FitConstraintSet
-
-CLASSES = {
-    "ISMA": implicit_softmax_affine,
-    "SMA": softmax_affine,
-    "MA": max_affine,
-}
+from .logsumexp import lse_scaled, lse_implicit
 
 
 # pylint: disable=too-many-locals
+# pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
 # pylint: disable=import-error
-def fit(xdata, ydata, K, ftype="ISMA", alpha0=10):
-    """
-    Fit a log-convex function to multivariate data, returning a FitConstraintSet
+# pylint: disable=too-many-instance-attributes
+class Fit:
+    """The base class for GPfit"""
+    def __init__(self, xdata, ydata, K, alpha0=10, verbosity=1):
+        """
+        Initialize Fit object
 
-    Arguments
-    ---------
-        xdata:      Independent variable data
-                        2D numpy array [nDim, nPoints]
-                        [[<--------- x1 ------------->]
-                         [<--------- x2 ------------->]]
+        Arguments
+        ---------
+            xdata:      Independent variable data
+                            2D numpy array [nDim, nPoints]
+                            [[<--------- x1 ------------->]
+                             [<--------- x2 ------------->]]
 
-        ydata:      Dependent variable data
-                        1D numpy array [nPoints,]
-                        [<---------- y ------------->]
+            ydata:      Dependent variable data
+                            1D numpy array [nPoints,]
+                            [<---------- y ------------->]
 
-        K:          Number of terms
+            K:          Number of terms
 
-        ftype:      Function class ["MA", "SMA", "ISMA"]
+            ftype:      Function class ["MA", "SMA", "ISMA"]
 
-        alpha0:     Initial guess for smoothing parameter alpha
+            alpha0:     Initial guess for smoothing parameter alpha
 
-    Returns
-    -------
-        FitConstraintSet
+        Returns
+        -------
+        """
 
-        rms_error:  float
-            Root mean square error between original (not log transformed)
-            data and function fit.
-    """
+        if ydata.ndim > 1:
+            raise ValueError("Dependent data should be a 1D numpy array")
 
-    if ydata.ndim > 1:
-        raise ValueError("Dependent data should be a 1D numpy array")
+        self.ydata = ydata
+        self.xdata = xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
+        self.d = d = int(xdata.shape[1])  # Number of dimensions
+        self.K = K
+        self.fitdata = {"K": K, "d": d, "alpha0": alpha0}
+        if d == 1:
+            self.fitdata["lb0"] = np.exp(min(xdata.reshape(xdata.size)))
+            self.fitdata["ub0"] = np.exp(max(xdata.reshape(xdata.size)))
+        else:
+            for i in range(d):
+                self.fitdata["lb%d" % i] = np.exp(min(xdata.T[i]))
+                self.fitdata["ub%d" % i] = np.exp(max(xdata.T[i]))
 
-    xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
-    d = int(xdata.shape[1])  # Number of dimensions
-    fitdata = {"ftype": ftype, "K": K, "d": d}
-    if d == 1:
-        fitdata["lb0"] = exp(min(xdata.reshape(xdata.size)))
-        fitdata["ub0"] = exp(max(xdata.reshape(xdata.size)))
-    else:
-        for i in range(d):
-            fitdata["lb%d" % i] = exp(min(xdata.T[i]))
-            fitdata["ub%d" % i] = exp(max(xdata.T[i]))
+        ba = get_initial_parameters(xdata, ydata.reshape(self.ydata.size, 1),
+                                    K).flatten("F")
+        self.A, self.B, self.alpha, self.params = self.get_parameters(ba, K, d)
 
-    def residual(params):
-        "A specific residual function."
-        [yhat, drdp] = CLASSES[ftype](xdata, params)
-        r = yhat - ydata
+        self.error = {
+            "rms": np.sqrt(np.mean(np.square(self.evaluate(xdata, self.params)[0] - ydata))),
+            "max": np.sqrt(max(np.square(self.evaluate(xdata, self.params)[0] - ydata)))
+            # TODO: check max, check .T behaviour of old code
+        }
+
+        if verbosity >= 1:
+            self.print_fit()
+            print(self.error["rms"])
+
+    def residual(self, params):
+        """Calculate residual"""
+        [yhat, drdp] = self.evaluate(self.xdata, params)
+        r = yhat - self.ydata
         return r, drdp
 
-    ba = get_initial_parameters(xdata, ydata.reshape(ydata.size, 1),
-                                K).flatten("F")
-    if ftype == "ISMA":
-        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0*ones(K))))
-    elif ftype == "SMA":
-        params, _ = levenberg_marquardt(residual, hstack((ba, alpha0)))
-    else:
-        params, _ = levenberg_marquardt(residual, ba)
+    def plot_fit(self):
+        """Plots fit"""
+        cstrt, _ = fit(np.log(udata), np.log(wdata), K, fitclass)
+        uu = np.linspace(min(udata), max(udata), 1000)
+        WW = super().plot_fit_data(cstrt, uu)
+        stringlist = super().print_fit()
+        f, ax = plt.subplots()
+        ax.plot(udata, wdata, "+r")
+        for ww in WW:
+            ax.plot(uu, ww)
+        ax.set_xlabel("u")
+        ax.legend(["Data"] + stringlist, loc="best")
 
-    # A: exponent parameters, B: coefficient parameters
-    A = params[[i for i in range(K*(d + 1)) if i % (d + 1) != 0]]
-    B = params[[i for i in range(K*(d + 1)) if i % (d + 1) == 0]]
+        return f, ax
 
-    if ftype == "ISMA":
-        alpha = 1/params[list(range(-K, 0))]
-        for k in range(K):
-            fitdata["c%d" % k] = exp(alpha[k]*B[k])
-            fitdata["a%d" % k] = alpha[k]
-            for i in range(d):
-                fitdata["e%d%d" % (k, i)] = alpha[k]*A[d*k + i]
-        print_isma(A, B, alpha, d, K)
-    elif ftype == "SMA":
-        alpha = 1/params[-1]
-        fitdata["a1"] = alpha
-        for k in range(K):
-            fitdata["c%d" % k] = exp(alpha*B[k])
-            for i in range(d):
-                fitdata["e%d%d" % (k, i)] = alpha*A[d*k + i]
-        print_sma(A, B, alpha, d, K)
-    elif ftype == "MA":
+
+class MaxAffine(Fit):
+    """Max Affine fit class"""
+
+    def get_parameters(self, ba, K, d):
+        """Get fit parameters"""
+        params, _ = levenberg_marquardt(self.residual, ba)
+
+        # A: exponent parameters, B: coefficient parameters
+        A = params[[i for i in range(K*(d + 1)) if i % (d + 1) != 0]]
+        B = params[[i for i in range(K*(d + 1)) if i % (d + 1) == 0]]
         alpha = 1
-        fitdata["a1"] = 1
+
+        self.fitdata["a1"] = alpha
         for k in range(K):
-            fitdata["c%d" % k] = exp(B[k])
+            self.fitdata["c%d" % k] = np.exp(B[k])
             for i in range(d):
-                fitdata["e%d%d" % (k, i)] = A[d*k + i]
-        print_ma(A, B, d, K)
+                self.fitdata["e%d%d" % (k, i)] = A[d*k + i]
+        return A, B, alpha, params
 
-    if min(exp(B*alpha)) < 1e-100:
-        raise ValueError("Fitted constraint contains too small a value...")
-    if max(exp(B*alpha)) > 1e100:
-        raise ValueError("Fitted constraint contains too large a value...")
+    def evaluate(self, x, params):
+        """
+        Evaluates max affine function at values of x, given a set of
+        max affine fit parameters.
 
-    def evaluate(xdata):
-        """Evaluate the fit over a range of xdata."""
-        xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
-        return CLASSES[ftype](xdata, params)[0]
+        Arguments
+        ---------
+            x: 2D array [nPoints x nDim]
+                Independent variable data
 
-    fitdata["rms_err"] = sqrt(mean(square(evaluate(xdata.T) - ydata)))
-    fitdata["max_err"] = sqrt(max(square(evaluate(xdata.T) - ydata)))
+            ba: 2D array
+                max affine fit parameters
+                [[b1, a11, ... a1k]
+                 [ ....,          ]
+                 [bk, ak1, ... akk]]
 
-    cs = FitConstraintSet(fitdata)
-    cs.evaluate = evaluate
+        Returns
+        -------
+            y: 1D array [nPoints]
+                Max affine output
+            dydba: 2D array [nPoints x (nDim + 1)*K]
+                dydba
+        """
+        ba = params
+        npt, dimx = x.shape
+        K = ba.size // (dimx + 1)
+        ba = np.reshape(ba, (dimx + 1, K), order="F")  # 'F' gives Fortran indexing
+        X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
+        y, partition = np.dot(X, ba).max(1), np.dot(X, ba).argmax(1)
 
-    return cs, cs.rms_err
+        dydba = np.zeros((npt, (dimx + 1)*K))
+        for k in range(K):
+            inds = np.equal(partition, k)
+            indadd = (dimx + 1)*k
+            ixgrid = np.ix_(inds.nonzero()[0], indadd + np.arange(dimx + 1))
+            dydba[ixgrid] = X[inds, :]
+
+        return y, dydba
+
+    def print_fit(self):
+        """Print fit"""
+        K, d = self.K, self.d
+        A, B = self.A, self.B
+        string_list = [None]*K
+        for k in range(K):
+            print_string = "w = {0:.6g}".format(np.exp(B[k]))
+            for i in range(d):
+                print_string += " * (u_{0:d})**{1:.6g}".format(i + 1, A[d*k + i])
+            string_list[k] = print_string
+            print(print_string)
+        return string_list
+
+    #def plot_fit_data(self):
+    #    """Return data for plotting"""
+    #    (uvarkey,) = cstrt[0].left.varkeys
+    #    A = [c.left.exps[0][uvarkey] for c in cstrt]
+    #    B = np.log([c.left.cs[0] for c in cstrt])
+    #    WW = []
+    #    for k in range(K):
+    #        WW += [np.exp(B[k])*uu**A[k]]
+    #    return WW
+
+
+class SoftmaxAffine(Fit):
+    """Softmax Affine fit class"""
+
+    def get_parameters(self, ba, K, d):
+        """Get fit parameters"""
+        alpha0 = self.fitdata["alpha0"]
+        params, _ = levenberg_marquardt(self.residual, np.hstack((ba, alpha0)))
+
+        # A: exponent parameters, B: coefficient parameters
+        A = params[[i for i in range(K*(d + 1)) if i % (d + 1) != 0]]
+        B = params[[i for i in range(K*(d + 1)) if i % (d + 1) == 0]]
+        alpha = 1/params[-1]
+
+        self.fitdata["a1"] = alpha
+        for k in range(K):
+            self.fitdata["c%d" % k] = np.exp(alpha*B[k])
+            for i in range(d):
+                self.fitdata["e%d%d" % (k, i)] = alpha*A[d*k + i]
+        return A, B, alpha, params
+
+    def evaluate(self, x, params):
+        """
+        Evaluates softmax affine function at values of x, given a set of
+        SMA fit parameters.
+
+        Arguments:
+        ----------
+                x:      Independent variable data
+                            2D numpy array [nPoints x nDimensions]
+
+                params: Fit parameters
+                            1D numpy array [(nDim + 2)*K,]
+                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
+                             bK, aK1, aK2, .. aKd, alpha]
+
+        Returns:
+        --------
+                y:      SMA approximation to log transformed data
+                            1D numpy array [nPoints]
+
+                dydp:   Jacobian matrix
+        """
+
+        npt, dimx = x.shape
+        ba = params[0:-1]
+        softness = params[-1]
+        alpha = 1/softness
+        if alpha <= 0:
+            return np.inf*np.ones((npt, 1)), np.nan
+        K = np.size(ba) // (dimx + 1)
+        ba = ba.reshape(dimx + 1, K, order="F")
+        X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
+        z = np.dot(X, ba)  # compute affine functions
+        y, dydz, dydsoftness = lse_scaled(z, alpha)
+
+        dydsoftness = -dydsoftness*(alpha**2)
+        nrow, ncol = dydz.shape
+        repmat = np.tile(dydz, (dimx + 1, 1)).reshape(nrow, ncol*(dimx + 1), order="F")
+        dydba = repmat*np.tile(X, (1, K))
+        dydsoftness.shape = (dydsoftness.size, 1)
+        dydp = np.hstack((dydba, dydsoftness))
+
+        return y, dydp
+
+    def print_fit(self):
+        """Print fit"""
+        K, d = self.K, self.d
+        A, B, alpha = self.A, self.B, self.alpha
+        string_list = [None]*K
+        print_string = "w**{0:.6g} = ".format(alpha)
+        for k in range(K):
+            if k > 0:
+                print(print_string)
+                print_string = "    + "
+            print_string += "{0:.6g}".format(np.exp(alpha*B[k]))
+            for i in range(d):
+                print_string += " * (u_{0:d})**{1:.6g}".format(i + 1, alpha*A[d*k + i])
+            string_list[k] = print_string
+        print(print_string)
+        return ["".join(string_list)]
+
+    #def plot_fit_data(self):
+    #    """Return data for plotting"""
+    #    (wexps,) = cstrt[0].left.exps
+    #    alpha = list(wexps.values())[0]
+    #    (uvarkey,) = cstrt[0].right.varkeys
+    #    A = [d[uvarkey]/alpha for d in cstrt[0].right.exps]
+    #    B = np.log(cstrt[0].right.cs)/alpha
+
+    #    ww = 0
+    #    for k in range(K):
+    #        ww += np.exp(alpha*B[k])*uu**(alpha*A[k])
+    #    WW = [ww**(1/alpha)]
+    #    return WW
+
+
+class ImplicitSoftmaxAffine(Fit):
+    """Implicit Softmax Affine fit class"""
+
+    def get_parameters(self, ba, K, d):
+        """Get fit parameters"""
+        alpha0 = self.fitdata["alpha0"]
+        params, _ = levenberg_marquardt(self.residual, np.hstack((ba, alpha0*np.ones(K))))
+
+        # A: exponent parameters, B: coefficient parameters
+        A = params[[i for i in range(K*(d + 1)) if i % (d + 1) != 0]]
+        B = params[[i for i in range(K*(d + 1)) if i % (d + 1) == 0]]
+        alpha = 1/params[list(range(-K, 0))]
+
+        for k in range(K):
+            self.fitdata["c%d" % k] = np.exp(alpha[k]*B[k])
+            self.fitdata["a%d" % k] = alpha[k]
+            for i in range(d):
+                self.fitdata["e%d%d" % (k, i)] = alpha[k]*A[d*k + i]
+        return A, B, alpha, params
+
+    def evaluate(self, x, params):
+        """
+        Evaluates implicit softmax affine function at values of x, given a set of
+        ISMA fit parameters.
+
+        Arguments:
+        ----------
+                x:      Independent variable data
+                            2D numpy array [nPoints x nDimensions]
+
+                params: Fit parameters
+                            1D numpy array [(nDim + 2)*K,]
+                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
+                             bK, aK1, aK2, .. aKd, alpha1, alpha2, ... alphaK]
+
+        Returns:
+        --------
+                y:      ISMA approximation to log transformed data
+                            1D numpy array [nPoints]
+
+                dydp:   Jacobian matrix
+
+        """
+
+        npt, dimx = x.shape
+        K = self.params.size // (dimx + 2)
+        ba = self.params[0:-K]
+        alpha = self.params[-K:]
+        if any(alpha <= 0):
+            return np.inf*np.ones((npt, 1)), np.nan
+        ba = ba.reshape(dimx + 1, K, order="F")  # reshape ba to matrix
+        X = np.hstack((np.ones((npt, 1)), x))  # augment data with column of ones
+        z = np.dot(X, ba)  # compute affine functions
+        y, dydz, dydalpha = lse_implicit(z, alpha)
+
+        nrow, ncol = dydz.shape
+        repmat = np.tile(dydz, (dimx + 1, 1)).reshape(nrow, ncol*(dimx + 1), order="F")
+        dydba = repmat*np.tile(X, (1, K))
+        dydp = np.hstack((dydba, dydalpha))
+
+        return y, dydp
+
+    def print_fit(self):
+        """Print fit"""
+        K, d = self.K, self.d
+        A, B, alpha = self.A, self.B, self.alpha
+        string_list = [None]*K
+        print_string = "1 = "
+        for k in range(K):
+            if k > 0:
+                print(print_string)
+                print_string = "    + "
+            print_string += "({0:.6g}/w**{1:.6g})".format(np.exp(alpha[k]*B[k]), alpha[k])
+            for i in range(d):
+                print_string += " * (u_{0:d})**{1:.6g}".format(
+                    i + 1, alpha[k]*A[d*k + i]
+                )
+            string_list[k] = print_string
+        print(print_string)
+
+    def plot_fit_data(self):
+        """Return data for plotting"""
+        raise NotImplementedError
