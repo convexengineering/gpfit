@@ -18,8 +18,8 @@ TESTS += t_evaluate.TESTS
 from gpfit.tests import t_print_fit
 TESTS += t_print_fit.TESTS
 
-#from gpfit.tests import t_plot_fit
-#TESTS += t_plot_fit.TESTS
+from gpfit.tests import t_plot_fit
+TESTS += t_plot_fit.TESTS
 
 from gpfit.tests import t_examples
 TESTS += t_examples.TESTS

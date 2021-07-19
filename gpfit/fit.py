@@ -76,17 +76,21 @@ class Fit:
 
     def plot_fit(self):
         """Plots fit"""
-        cstrt, _ = fit(np.log(udata), np.log(wdata), K, fitclass)
-        uu = np.linspace(min(udata), max(udata), 1000)
-        WW = super().plot_fit_data(cstrt, uu)
-        stringlist = super().print_fit()
         f, ax = plt.subplots()
+        udata = np.exp(self.xdata)
+        wdata = np.exp(self.ydata)
         ax.plot(udata, wdata, "+r")
-        for ww in WW:
-            ax.plot(uu, ww)
-        ax.set_xlabel("u")
-        ax.legend(["Data"] + stringlist, loc="best")
 
+        xx = np.linspace(min(self.xdata), max(self.xdata), 10)
+        yy, _ = self.evaluate(xx, self.params)
+        uu = np.exp(xx)
+        ww = np.exp(yy)
+        ax.plot(uu, ww)
+
+        stringlist = self.print_fit()
+        ax.set_xlabel("u")
+        ax.set_ylabel("w")
+        ax.legend(["Data"] + stringlist, loc="best")
         return f, ax
 
 
@@ -161,16 +165,6 @@ class MaxAffine(Fit):
             string_list[k] = print_string
             print(print_string)
         return string_list
-
-    #def plot_fit_data(self):
-    #    """Return data for plotting"""
-    #    (uvarkey,) = cstrt[0].left.varkeys
-    #    A = [c.left.exps[0][uvarkey] for c in cstrt]
-    #    B = np.log([c.left.cs[0] for c in cstrt])
-    #    WW = []
-    #    for k in range(K):
-    #        WW += [np.exp(B[k])*uu**A[k]]
-    #    return WW
 
 
 class SoftmaxAffine(Fit):
@@ -255,20 +249,6 @@ class SoftmaxAffine(Fit):
         print(print_string)
         return ["".join(string_list)]
 
-    #def plot_fit_data(self):
-    #    """Return data for plotting"""
-    #    (wexps,) = cstrt[0].left.exps
-    #    alpha = list(wexps.values())[0]
-    #    (uvarkey,) = cstrt[0].right.varkeys
-    #    A = [d[uvarkey]/alpha for d in cstrt[0].right.exps]
-    #    B = np.log(cstrt[0].right.cs)/alpha
-
-    #    ww = 0
-    #    for k in range(K):
-    #        ww += np.exp(alpha*B[k])*uu**(alpha*A[k])
-    #    WW = [ww**(1/alpha)]
-    #    return WW
-
 
 class ImplicitSoftmaxAffine(Fit):
     """Implicit Softmax Affine fit class"""
@@ -351,7 +331,3 @@ class ImplicitSoftmaxAffine(Fit):
             string_list[k] = print_string
         print(print_string)
         return ["".join(string_list)]
-
-    def plot_fit_data(self):
-        """Return data for plotting"""
-        raise NotImplementedError
