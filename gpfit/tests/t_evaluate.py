@@ -1,16 +1,16 @@
-"Test max_affine"
+"Test evaluate methods"
 import unittest
 from numpy import arange, newaxis
-from gpfit.classes import max_affine, softmax_affine, implicit_softmax_affine
+from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
 
-class t_max_affine(unittest.TestCase):
+class TestMaxAffine(unittest.TestCase):
     "Test max_affine"
 
     x = arange(0.0, 16.0)[:, newaxis]
     ba = arange(1.0, 7.0).reshape(2, 3)
 
-    y, dydba = max_affine(x, ba)
+    y, dydba = MaxAffine.evaluate(x, ba)
 
     def test_y_size(self):
         self.assertEqual(self.y.size, self.x.size)
@@ -25,13 +25,13 @@ class t_max_affine(unittest.TestCase):
         self.assertEqual(self.dydba.ndim, 2)
 
 
-class t_softmax_affine(unittest.TestCase):
+class TestSoftmaxAffine(unittest.TestCase):
     "Tests softmax_affine"
 
     x = arange(0.0, 16.0)[:, newaxis]
     params = arange(1.0, 6.0)
 
-    y, dydp = softmax_affine(x, params)
+    y, dydp = SoftmaxAffine.evaluate(x, params)
 
     def test_y_size(self):
         self.assertEqual(self.y.size, self.x.size)
@@ -46,13 +46,13 @@ class t_softmax_affine(unittest.TestCase):
         self.assertEqual(self.dydp.ndim, 2)
 
 
-class t_implicit_softmax_affine(unittest.TestCase):
+class TestImplicitSoftmaxAffine(unittest.TestCase):
     "Tests implicit_softmax_affine"
 
     x = arange(0.0, 16.0)[:, newaxis]
     params = arange(1.0, 7.0)
 
-    y, dydp = implicit_softmax_affine(x, params)
+    y, dydp = ImplicitSoftmaxAffine.evaluate(x, params)
 
     def test_y_size(self):
         self.assertEqual(self.y.size, self.x.size)
@@ -68,9 +68,9 @@ class t_implicit_softmax_affine(unittest.TestCase):
 
 
 TESTS = [
-    t_max_affine,
-    t_softmax_affine,
-    t_implicit_softmax_affine,
+    TestMaxAffine,
+    TestSoftmaxAffine,
+    TestImplicitSoftmaxAffine,
 ]
 
 if __name__ == "__main__":

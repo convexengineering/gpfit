@@ -2,12 +2,12 @@
 import unittest
 from numpy import arange, newaxis
 from gpfit.least_squares import levenberg_marquardt
-from gpfit.classes import max_affine
+from gpfit.fit import MaxAffine
 
 
 def rfun(params):
     "A specific residual function."
-    [yhat, drdp] = max_affine(arange(0.0, 16.0)[:, newaxis], params)
+    [yhat, drdp] = MaxAffine.evaluate(arange(0.0, 16.0)[:, newaxis], params)
     r = yhat - arange(0.0, 16.0)[:, newaxis].T[0]
     return r, drdp
 

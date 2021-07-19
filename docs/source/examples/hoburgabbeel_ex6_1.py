@@ -1,6 +1,6 @@
 "Fits an example function"
 from numpy import logspace, log, log10, random
-from gpfit.fit import fit
+from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
 random.seed(33404)
 
@@ -10,10 +10,10 @@ x = log(u)
 y = log(w)
 K = 3
 
-cMA, errorMA = fit(x, y, K, "MA")
-cSMA, errorSMA = fit(x, y, K, "SMA")
-cISMA, errorISMA = fit(x, y, K, "ISMA")
+fma = MaxAffine(x, y, K)
+fsma = SoftmaxAffine(x, y, K)
+fisma = ImplicitSoftmaxAffine(x, y, K)
 
-print("MA RMS Error: %.5g" % errorMA)
-print("SMA RMS Error: %.5g" % errorSMA)
-print("ISMA RMS Error: %.5g" % errorISMA)
+print("MA RMS Error: %.5g" % fma.error["rms"])
+print("SMA RMS Error: %.5g" % fsma.error["rms"])
+print("ISMA RMS Error: %.5g" % fisma.error["rms"])

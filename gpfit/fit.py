@@ -109,7 +109,8 @@ class MaxAffine(Fit):
                 self.fitdata["e%d%d" % (k, i)] = A[d*k + i]
         return A, B, alpha, params
 
-    def evaluate(self, x, params):
+    @staticmethod
+    def evaluate(x, params):
         """
         Evaluates max affine function at values of x, given a set of
         max affine fit parameters.
@@ -192,7 +193,8 @@ class SoftmaxAffine(Fit):
                 self.fitdata["e%d%d" % (k, i)] = alpha*A[d*k + i]
         return A, B, alpha, params
 
-    def evaluate(self, x, params):
+    @staticmethod
+    def evaluate(x, params):
         """
         Evaluates softmax affine function at values of x, given a set of
         SMA fit parameters.
@@ -288,7 +290,8 @@ class ImplicitSoftmaxAffine(Fit):
                 self.fitdata["e%d%d" % (k, i)] = alpha[k]*A[d*k + i]
         return A, B, alpha, params
 
-    def evaluate(self, x, params):
+    @staticmethod
+    def evaluate(x, params):
         """
         Evaluates implicit softmax affine function at values of x, given a set of
         ISMA fit parameters.
@@ -313,9 +316,9 @@ class ImplicitSoftmaxAffine(Fit):
         """
 
         npt, dimx = x.shape
-        K = self.params.size // (dimx + 2)
-        ba = self.params[0:-K]
-        alpha = self.params[-K:]
+        K = params.size // (dimx + 2)
+        ba = params[0:-K]
+        alpha = params[-K:]
         if any(alpha <= 0):
             return np.inf*np.ones((npt, 1)), np.nan
         ba = ba.reshape(dimx + 1, K, order="F")  # reshape ba to matrix
@@ -347,6 +350,7 @@ class ImplicitSoftmaxAffine(Fit):
                 )
             string_list[k] = print_string
         print(print_string)
+        return ["".join(string_list)]
 
     def plot_fit_data(self):
         """Return data for plotting"""

@@ -1,20 +1,28 @@
 "unit tests for gpfit.print_fit module"
 import unittest
-from numpy import array
-from gpfit.print_fit import print_ma, print_sma, print_isma
+import numpy as np
+from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
-A = array([2, 3, 4, 6, 7, 8, 10, 11, 12])
-B = array([1, 5, 9])
-ALPHA = array([1/13, 1/14, 1/15])
+A = np.array([2, 3, 4, 6, 7, 8, 10, 11, 12])
+B = np.array([1, 5, 9])
+ALPHA = np.array([1/13, 1/14, 1/15])
 DIM = 3
 K = 3
 
 
 class TestPrintFit(unittest.TestCase):
-    "Unit tests for print_ma, print_sma, print_isma"
+    "Unit tests for print functions"
+    u = np.logspace(0, np.log10(3), 501)
+    w = (u**2 + 3)/(u + 1)**2
+    x = np.log(u)
+    y = np.log(w)
 
     def test_ma(self):
-        strings = print_ma(A, B, DIM, K)
+        f = MaxAffine(self.x, self.y, K)
+        f.A = A
+        f.B = B
+        f.d = DIM
+        strings = f.print_fit()
         self.assertEqual(
             strings,
             [
@@ -25,30 +33,40 @@ class TestPrintFit(unittest.TestCase):
         )
 
     def test_sma(self):
-        strings = print_sma(A, B, ALPHA[0], DIM, K)
+        f = SoftmaxAffine(self.x, self.y, K)
+        f.A = A
+        f.B = B
+        f.alpha = ALPHA[0]
+        f.d = DIM
+        strings = f.print_fit()
         self.assertEqual(
             strings,
             [
                 "w**0.0769231 = 1.07996 * (u_1)**0.153846 "
-                "* (u_2)**0.230769 * (u_3)**0.307692",
+                "* (u_2)**0.230769 * (u_3)**0.307692"
                 "    + 1.46905 * (u_1)**0.461538 * "
-                "(u_2)**0.538462 * (u_3)**0.615385",
+                "(u_2)**0.538462 * (u_3)**0.615385"
                 "    + 1.99832 * (u_1)**0.769231 * "
-                "(u_2)**0.846154 * (u_3)**0.923077",
+                "(u_2)**0.846154 * (u_3)**0.923077"
             ],
         )
 
     def test_isma(self):
-        strings = print_isma(A, B, ALPHA, DIM, K)
+        f = ImplicitSoftmaxAffine(self.x, self.y, K)
+        f.A = A
+        f.B = B
+        f.alpha = ALPHA
+        f.d = DIM
+        strings = f.print_fit()
         self.assertEqual(
             strings,
             [
                 "1 = (1.07996/w**0.0769231) * (u_1)**0.153846 * "
-                "(u_2)**0.230769 * (u_3)**0.307692",
+                "(u_2)**0.230769 * (u_3)**0.307692"
                 "    + (1.42924/w**0.0714286) * (u_1)**0.428571 * "
-                "(u_2)**0.5 * (u_3)**0.571429",
+                "(u_2)**0.5 * (u_3)**0.571429"
                 "    + (1.82212/w**0.0666667) * (u_1)**0.666667 * "
-                "(u_2)**0.733333 * (u_3)**0.8",
+                "(u_2)**0.733333 * (u_3)**0.8"
             ],
         )
 

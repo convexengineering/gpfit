@@ -29,9 +29,9 @@ class TestFit(unittest.TestCase):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-5)
 
-    #def test_incorrect_inputs(self):
-    #    with self.assertRaises(ValueError):
-    #        fit(self.x, vstack((self.y, self.y)), self.K, "MA")
+    def test_incorrect_inputs(self):
+        with self.assertRaises(ValueError):
+            f = MaxAffine(self.x, vstack((self.y, self.y)), self.K)
 
 
 TESTS = [TestFit]

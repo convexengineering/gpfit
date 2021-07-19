@@ -1,7 +1,7 @@
 "Example 6.3 from Hoburg/Abbeel GPfit paper"
 import numpy as np
 from numpy.random import seed, random_sample
-from gpfit.fit import fit
+from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
 seed(33404)
 
@@ -13,10 +13,10 @@ x = np.log(u)
 y = np.log(P)
 K = 4
 
-_, errorMA = fit(x, y, K, "MA")
-_, errorSMA = fit(x, y, K, "SMA")
-_, errorISMA = fit(x, y, K, "ISMA")
+fma = MaxAffine(x, y, K)
+fsma = SoftmaxAffine(x, y, K)
+fisma = ImplicitSoftmaxAffine(x, y, K)
 
-print("MA RMS Error: %.5g" % errorMA)
-print("SMA RMS Error: %.5g" % errorSMA)
-print("ISMA RMS Error: %.5g" % errorISMA)
+print("MA RMS Error: %.5g" % fma.error["rms"])
+print("SMA RMS Error: %.5g" % fsma.error["rms"])
+print("ISMA RMS Error: %.5g" % fisma.error["rms"])
