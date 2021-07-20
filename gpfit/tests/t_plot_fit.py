@@ -20,17 +20,17 @@ class TestPlot(unittest.TestCase):
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot()
-        fig.savefig("plots/ma_test.png")
+        fig.savefig("artifacts/ma_test.png")
 
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot()
-        fig.savefig("plots/sma_test.png")
+        fig.savefig("artifacts/sma_test.png")
 
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot()
-        fig.savefig("plots/isma_test.png")
+        fig.savefig("artifacts/isma_test.png")
 
 
 class TestPlotSurface(unittest.TestCase):
@@ -48,17 +48,17 @@ class TestPlotSurface(unittest.TestCase):
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_surface(azim=135)
-        fig.savefig("plots/ma_test_surface.png")
+        fig.savefig("artifacts/ma_test_surface.png")
 
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_surface(azim=135)
-        fig.savefig("plots/sma_test_surface.png")
+        fig.savefig("artifacts/sma_test_surface.png")
 
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_surface(azim=135)
-        fig.savefig("plots/isma_test_surface.png")
+        fig.savefig("artifacts/isma_test_surface.png")
 
 
 class TestPlotSlices(unittest.TestCase):
@@ -78,17 +78,17 @@ class TestPlotSlices(unittest.TestCase):
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_slices()
-        fig.savefig("plots/ma_test_slices.png")
+        fig.savefig("artifacts/ma_test_slices.png")
 
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_slices()
-        fig.savefig("plots/sma_test_slices.png")
+        fig.savefig("artifacts/sma_test_slices.png")
 
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_slices()
-        fig.savefig("plots/isma_test_slices.png")
+        fig.savefig("artifacts/isma_test_slices.png")
 
 
 TESTS = [

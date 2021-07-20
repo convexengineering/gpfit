@@ -1,4 +1,5 @@
 """Implements the Fit class"""
+import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -147,6 +148,10 @@ class Fit:
                     label="{0:.3g}".format(u2slice))
             ax.legend(title="u2")
         return fig, ax
+
+    def save(self, filename="fit.pkl"):
+        """Save Fit object to pickle"""
+        pickle.dump(self, open(filename, "wb"))
 
 
 class MaxAffine(Fit):
