@@ -1,6 +1,7 @@
 """Implements the Fit class"""
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from .least_squares import levenberg_marquardt
 from .initialize import get_initial_parameters
 from .logsumexp import lse_scaled, lse_implicit
@@ -92,6 +93,30 @@ class Fit:
         ax.set_ylabel("w")
         ax.legend(["Data"] + stringlist, loc="best")
         return f, ax
+
+    def plot_fit_2d(self, azim=0):
+        """Plots surface of fit alongside original data"""
+        fig = plt.figure()
+        ax = plt.axes(projection='3d')
+        ax.set_xlabel("u1")
+        ax.set_ylabel("u2")
+        ax.set_zlabel("w")
+        ax.azim = azim
+        # Plot original data
+        udata = np.exp(self.xdata)
+        wdata = np.exp(self.ydata)
+        ax.scatter3D(udata[:, 0], udata[:, 1], wdata, color="r")
+        # Plot surface of fit
+        x1 = np.linspace(min(self.xdata[:, 0]), max(self.xdata[:, 0]), 10)
+        x2 = np.linspace(min(self.xdata[:, 1]), max(self.xdata[:, 1]), 10)
+        xx1, xx2 = np.meshgrid(x1, x2)
+        xx = np.vstack((xx1.flatten(), xx2.flatten()))
+        yy, _ = self.evaluate(xx.T, self.params)
+        uu1, uu2 = np.exp(xx1), np.exp(xx2)
+        ww = np.exp(yy)
+        ax.plot_surface(uu1, uu2, ww.reshape(uu1.shape), cmap=cm.coolwarm,
+                        alpha=0.8)
+        return fig, ax
 
 
 class MaxAffine(Fit):

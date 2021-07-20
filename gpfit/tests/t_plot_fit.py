@@ -6,7 +6,7 @@ from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 SEED = 33404
 
 
-class TestPlotFit(unittest.TestCase):
+class TestPlotFit1D(unittest.TestCase):
     "Unit tests for plot_fit methods"
 
     np.random.seed(SEED)
@@ -24,18 +24,47 @@ class TestPlotFit(unittest.TestCase):
 
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
-        f.plot_fit()
         fig, _ = f.plot_fit()
         fig.savefig("plots/sma_test.png")
 
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
-        f.plot_fit()
         fig, _ = f.plot_fit()
         fig.savefig("plots/isma_test.png")
 
 
-TESTS = [TestPlotFit]
+class TestPlotFit2D(unittest.TestCase):
+    "Unit tests for plot_fit methods"
+
+    np.random.seed(SEED)
+    Vdd = np.random.random_sample(100) + 1
+    Vth = 0.2*np.random.random_sample(100) + 0.2
+    P = Vdd**2 + 30*Vdd*np.exp(-(Vth - 0.06*Vdd)/0.039)
+    u = np.vstack((Vdd, Vth))
+    x = np.log(u)
+    y = np.log(P)
+    K = 3
+
+    def test_max_affine(self):
+        f = MaxAffine(self.x, self.y, self.K)
+        fig, _ = f.plot_fit_2d(azim=135)
+        fig.savefig("plots/ma_test_2d.png")
+
+    def test_softmax_affine(self):
+        f = SoftmaxAffine(self.x, self.y, self.K)
+        fig, _ = f.plot_fit_2d(azim=135)
+        fig.savefig("plots/sma_test_2d.png")
+
+    def test_implicit_softmax_affine(self):
+        f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        fig, _ = f.plot_fit_2d(azim=135)
+        fig.savefig("plots/isma_test_2d.png")
+
+
+TESTS = [
+    TestPlotFit1D,
+    TestPlotFit2D,
+]
 
 if __name__ == '__main__':
     SUITE = unittest.TestSuite()
