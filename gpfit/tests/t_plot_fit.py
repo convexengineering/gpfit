@@ -6,8 +6,8 @@ from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 SEED = 33404
 
 
-class TestPlotFit1D(unittest.TestCase):
-    "Unit tests for plot_fit methods"
+class TestPlot(unittest.TestCase):
+    "Unit tests for plot methods"
 
     np.random.seed(SEED)
     N = 51
@@ -19,22 +19,22 @@ class TestPlotFit1D(unittest.TestCase):
 
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
-        fig, _ = f.plot_fit()
+        fig, _ = f.plot()
         fig.savefig("plots/ma_test.png")
 
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
-        fig, _ = f.plot_fit()
+        fig, _ = f.plot()
         fig.savefig("plots/sma_test.png")
 
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
-        fig, _ = f.plot_fit()
+        fig, _ = f.plot()
         fig.savefig("plots/isma_test.png")
 
 
-class TestPlotFit2D(unittest.TestCase):
-    "Unit tests for plot_fit methods"
+class TestPlotSurface(unittest.TestCase):
+    "Unit tests for plot_surface methods"
 
     np.random.seed(SEED)
     Vdd = np.random.random_sample(100) + 1
@@ -47,23 +47,54 @@ class TestPlotFit2D(unittest.TestCase):
 
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
-        fig, _ = f.plot_fit_2d(azim=135)
-        fig.savefig("plots/ma_test_2d.png")
+        fig, _ = f.plot_surface(azim=135)
+        fig.savefig("plots/ma_test_surface.png")
 
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
-        fig, _ = f.plot_fit_2d(azim=135)
-        fig.savefig("plots/sma_test_2d.png")
+        fig, _ = f.plot_surface(azim=135)
+        fig.savefig("plots/sma_test_surface.png")
 
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
-        fig, _ = f.plot_fit_2d(azim=135)
-        fig.savefig("plots/isma_test_2d.png")
+        fig, _ = f.plot_surface(azim=135)
+        fig.savefig("plots/isma_test_surface.png")
+
+
+class TestPlotSlices(unittest.TestCase):
+    "Unit tests for plot_slices method"
+
+    np.random.seed(SEED)
+    Vdd = np.linspace(1, 2, 10)
+    Vth = np.linspace(0.2, 0.4, 5)
+    Vdd, Vth = np.meshgrid(Vdd, Vth)
+    Vdd, Vth = Vdd.flatten(), Vth.flatten()
+    P = Vdd**2 + 30*Vdd*np.exp(-(Vth - 0.06*Vdd)/0.039)
+    u = np.vstack((Vdd, Vth))
+    x = np.log(u)
+    y = np.log(P)
+    K = 3
+
+    def test_max_affine(self):
+        f = MaxAffine(self.x, self.y, self.K)
+        fig, _ = f.plot_slices()
+        fig.savefig("plots/ma_test_slices.png")
+
+    def test_softmax_affine(self):
+        f = SoftmaxAffine(self.x, self.y, self.K)
+        fig, _ = f.plot_slices()
+        fig.savefig("plots/sma_test_slices.png")
+
+    def test_implicit_softmax_affine(self):
+        f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        fig, _ = f.plot_slices()
+        fig.savefig("plots/isma_test_slices.png")
 
 
 TESTS = [
-    TestPlotFit1D,
-    TestPlotFit2D,
+    TestPlot,
+    TestPlotSurface,
+    TestPlotSlices,
 ]
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
+from matplotlib.colors import Normalize
 from .least_squares import levenberg_marquardt
 from .initialize import get_initial_parameters
 from .logsumexp import lse_scaled, lse_implicit
@@ -75,8 +76,8 @@ class Fit:
         r = yhat - self.ydata
         return r, drdp
 
-    def plot_fit(self):
-        """Plots fit"""
+    def plot(self):
+        """Plots fit alongside original data for a 1D fit"""
         f, ax = plt.subplots()
         udata = np.exp(self.xdata)
         wdata = np.exp(self.ydata)
@@ -94,7 +95,7 @@ class Fit:
         ax.legend(["Data"] + stringlist, loc="best")
         return f, ax
 
-    def plot_fit_2d(self, azim=0):
+    def plot_surface(self, azim=0):
         """Plots surface of fit alongside original data"""
         fig = plt.figure()
         ax = plt.axes(projection='3d')
@@ -116,6 +117,35 @@ class Fit:
         ww = np.exp(yy)
         ax.plot_surface(uu1, uu2, ww.reshape(uu1.shape), cmap=cm.coolwarm,
                         alpha=0.8)
+        return fig, ax
+
+    def plot_slices(self):
+        """
+        Plots slices of fit alongside original data.
+
+        x-axis is first dependent variable, each slice is at a different value
+        of the second dependent variable.
+        """
+        fig, ax = plt.subplots()
+        ax.set_xlabel("u1")
+        ax.set_ylabel("w")
+        # Plot original data
+        udata = np.exp(self.xdata)
+        wdata = np.exp(self.ydata)
+        norm = Normalize(vmin=min(udata[:, 1]), vmax=max(udata[:, 1]))
+        ax.scatter(udata[:, 0], wdata, c=cm.viridis(norm(udata[:, 1])))
+        # Plot slices
+        x1 = np.linspace(min(self.xdata[:, 0]), max(self.xdata[:, 0]), 10)
+        x2slices = np.unique(self.xdata[:, 1])
+        for x2slice in x2slices:
+            x2 = x2slice*np.ones(x1.shape)
+            xx = np.vstack((x1, x2))
+            yy, _ = self.evaluate(xx.T, self.params)
+            u1, u2slice = np.exp(x1), np.exp(x2slice)
+            ww = np.exp(yy)
+            ax.plot(u1, ww, c=cm.viridis(norm(u2slice)),
+                    label="{0:.3g}".format(u2slice))
+            ax.legend(title="u2")
         return fig, ax
 
 
