@@ -22,31 +22,31 @@ class TestFit(unittest.TestCase):
         np.random.seed(SEED)
         f = MaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-2)
-        self.assertEqual(f.print_fit(), [
-            "w = 0.807159 * (u_1)**-0.0703921",
-            "w = 0.995106 * (u_1)**-0.431386",
-            "w = 0.92288 * (u_1)**-0.247099",
-        ])
+        self.assertEqual(f.__repr__(), (
+            "w = 0.807159 * (u_1)**-0.0703921\n"
+            "w = 0.995106 * (u_1)**-0.431386\n"
+            "w = 0.92288 * (u_1)**-0.247099"
+        ))
 
     def test_softmax_affine(self):
         np.random.seed(SEED)
         f = SoftmaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-4)
-        self.assertEqual(f.print_fit(), [
-            "w**3.44109 = 0.15339 * (u_1)**0.584655"
-            "    + 0.431128 * (u_1)**-2.14831"
+        self.assertEqual(f.__repr__(), (
+            "w**3.44109 = 0.15339 * (u_1)**0.584655\n"
+            "    + 0.431128 * (u_1)**-2.14831\n"
             "    + 0.415776 * (u_1)**-2.14794"
-        ])
+        ))
 
     def test_implicit_softmax_affine(self):
         np.random.seed(SEED)
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-5)
-        self.assertEqual(f.print_fit(), [
-            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859"
-            "    + (0.992721/w**0.349639) * (u_1)**-0.201861"
+        self.assertEqual(f.__repr__(), (
+            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859\n"
+            "    + (0.992721/w**0.349639) * (u_1)**-0.201861\n"
             "    + (0.961596/w**0.116677) * (u_1)**-0.0112199"
-        ])
+        ))
 
     def test_incorrect_inputs(self):
         with self.assertRaises(ValueError):
@@ -56,10 +56,10 @@ class TestFit(unittest.TestCase):
         np.random.seed(SEED)
         f1 = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         f1.save("artifacts/fit.pkl")
-        strings1 = f1.print_fit()
+        strings1 = f1.__repr__()
         f2 = pickle.load(open("artifacts/fit.pkl", "rb"))
         self.assertTrue(f2.error["rms"] < 1e-5)
-        strings2 = f2.print_fit()
+        strings2 = f2.__repr__()
         self.assertEqual(strings1, strings2)
 
     def test_savetxt(self):
@@ -69,10 +69,11 @@ class TestFit(unittest.TestCase):
         with open("artifacts/fit.txt", "r") as f:
             fitstring = f.read()
         self.assertEqual(fitstring, (
-            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859"
-            "    + (0.992721/w**0.349639) * (u_1)**-0.201861"
+            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859\n"
+            "    + (0.992721/w**0.349639) * (u_1)**-0.201861\n"
             "    + (0.961596/w**0.116677) * (u_1)**-0.0112199"
         ))
+
 
 TESTS = [TestFit]
 

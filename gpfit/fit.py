@@ -16,7 +16,7 @@ from .logsumexp import lse_scaled, lse_implicit
 # pylint: disable=too-many-instance-attributes
 class Fit:
     """The base class for GPfit"""
-    def __init__(self, xdata, ydata, K, alpha0=10, verbosity=1):
+    def __init__(self, xdata, ydata, K, alpha0=10, verbosity=0):
         """
         Initialize Fit object
 
@@ -90,10 +90,10 @@ class Fit:
         ww = np.exp(yy)
         ax.plot(uu, ww)
 
-        stringlist = self.print_fit()
+        stringlist = self.__repr__()
         ax.set_xlabel("u")
         ax.set_ylabel("w")
-        ax.legend(["Data"] + stringlist, loc="best")
+        ax.legend(["Data"] + [stringlist], loc="best")
         return f, ax
 
     def plot_surface(self, azim=0):
@@ -156,7 +156,7 @@ class Fit:
     def savetxt(self, filename="fit.txt"):
         """Save Fit object to pickle"""
         with open(filename, "w") as f:
-            f.write("".join(self.print_fit()))
+            f.write(self.__repr__())
 
 
 class MaxAffine(Fit):
@@ -218,8 +218,8 @@ class MaxAffine(Fit):
 
         return y, dydba
 
-    def print_fit(self):
-        """Print fit"""
+    def __repr__(self):
+        """String representation of fit"""
         K, d = self.K, self.d
         A, B = self.A, self.B
         string_list = [None]*K
@@ -228,8 +228,7 @@ class MaxAffine(Fit):
             for i in range(d):
                 print_string += " * (u_{0:d})**{1:.6g}".format(i + 1, A[d*k + i])
             string_list[k] = print_string
-            print(print_string)
-        return string_list
+        return "\n".join(string_list)
 
 
 class SoftmaxAffine(Fit):
@@ -297,22 +296,20 @@ class SoftmaxAffine(Fit):
 
         return y, dydp
 
-    def print_fit(self):
-        """Print fit"""
+    def __repr__(self):
+        """String representation of fit"""
         K, d = self.K, self.d
         A, B, alpha = self.A, self.B, self.alpha
         string_list = [None]*K
         print_string = "w**{0:.6g} = ".format(alpha)
         for k in range(K):
             if k > 0:
-                print(print_string)
                 print_string = "    + "
             print_string += "{0:.6g}".format(np.exp(alpha*B[k]))
             for i in range(d):
                 print_string += " * (u_{0:d})**{1:.6g}".format(i + 1, alpha*A[d*k + i])
             string_list[k] = print_string
-        print(print_string)
-        return ["".join(string_list)]
+        return "\n".join(string_list)
 
 
 class ImplicitSoftmaxAffine(Fit):
@@ -378,15 +375,14 @@ class ImplicitSoftmaxAffine(Fit):
 
         return y, dydp
 
-    def print_fit(self):
-        """Print fit"""
+    def __repr__(self):
+        """String representation of fit"""
         K, d = self.K, self.d
         A, B, alpha = self.A, self.B, self.alpha
         string_list = [None]*K
         print_string = "1 = "
         for k in range(K):
             if k > 0:
-                print(print_string)
                 print_string = "    + "
             print_string += "({0:.6g}/w**{1:.6g})".format(np.exp(alpha[k]*B[k]), alpha[k])
             for i in range(d):
@@ -394,5 +390,4 @@ class ImplicitSoftmaxAffine(Fit):
                     i + 1, alpha[k]*A[d*k + i]
                 )
             string_list[k] = print_string
-        print(print_string)
-        return ["".join(string_list)]
+        return "\n".join(string_list)
