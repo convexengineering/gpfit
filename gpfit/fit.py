@@ -153,6 +153,11 @@ class Fit:
         """Save Fit object to pickle"""
         pickle.dump(self, open(filename, "wb"))
 
+    def savetxt(self, filename="fit.txt"):
+        """Save Fit object to pickle"""
+        with open(filename, "w") as f:
+            f.write("".join(self.print_fit()))
+
 
 class MaxAffine(Fit):
     """Max Affine fit class"""

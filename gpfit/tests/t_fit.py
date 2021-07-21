@@ -12,25 +12,41 @@ class TestFit(unittest.TestCase):
     """Test fit class"""
 
     np.random.seed(SEED)
-    u = logspace(0, log10(3), 501)
+    u = logspace(0, log10(3), 101)
     w = (u**2 + 3)/(u + 1)**2
     x = log(u)
     y = log(w)
     K = 3
 
     def test_max_affine(self):
+        np.random.seed(SEED)
         f = MaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-2)
+        self.assertEqual(f.print_fit(), [
+            "w = 0.807159 * (u_1)**-0.0703921",
+            "w = 0.995106 * (u_1)**-0.431386",
+            "w = 0.92288 * (u_1)**-0.247099",
+        ])
 
     def test_softmax_affine(self):
+        np.random.seed(SEED)
         f = SoftmaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-4)
+        self.assertEqual(f.print_fit(), [
+            "w**3.44109 = 0.15339 * (u_1)**0.584655"
+            "    + 0.431128 * (u_1)**-2.14831"
+            "    + 0.415776 * (u_1)**-2.14794"
+        ])
 
     def test_implicit_softmax_affine(self):
         np.random.seed(SEED)
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-5)
-        strings = f.print_fit()
+        self.assertEqual(f.print_fit(), [
+            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859"
+            "    + (0.992721/w**0.349639) * (u_1)**-0.201861"
+            "    + (0.961596/w**0.116677) * (u_1)**-0.0112199"
+        ])
 
     def test_incorrect_inputs(self):
         with self.assertRaises(ValueError):
@@ -45,6 +61,18 @@ class TestFit(unittest.TestCase):
         self.assertTrue(f2.error["rms"] < 1e-5)
         strings2 = f2.print_fit()
         self.assertEqual(strings1, strings2)
+
+    def test_savetxt(self):
+        np.random.seed(SEED)
+        f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        f.savetxt("artifacts/fit.txt")
+        with open("artifacts/fit.txt", "r") as f:
+            fitstring = f.read()
+        self.assertEqual(fitstring, (
+            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859"
+            "    + (0.992721/w**0.349639) * (u_1)**-0.201861"
+            "    + (0.961596/w**0.116677) * (u_1)**-0.0112199"
+        ))
 
 TESTS = [TestFit]
 
