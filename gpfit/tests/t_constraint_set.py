@@ -2,8 +2,7 @@
 import unittest
 import numpy as np
 from gpkit import Variable, Model
-from gpfit.fit import fit
-from gpfit.constraint_set import FitConstraintSet
+from gpfit.fit import SoftmaxAffine
 
 
 class TestFitConstraintSet(unittest.TestCase):
@@ -14,10 +13,10 @@ class TestFitConstraintSet(unittest.TestCase):
     x = np.log(u)
     y = np.log(w)
     K = 3
-    cs, _ = fit(x, y, K, "SMA")
+    f = SoftmaxAffine(x, y, K)
     uvar = Variable("u")
     wvar = Variable("w")
-    fcs = FitConstraintSet(cs.fitdata, wvar, [uvar])
+    fcs = f.constraint_set(ivar=wvar, dvars=[uvar])
 
     def test_fit_constraint_set(self):
         m = Model(self.wvar, [self.fcs, self.uvar <= 2])

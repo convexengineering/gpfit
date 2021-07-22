@@ -25,9 +25,9 @@ class FitConstraintSet(ConstraintSet):
 
     """
 
-    def __init__(self, fitdata, ivar=None, dvars=None, name="fit", err_margin=None):
+    def __init__(self, Fit, ivar=None, dvars=None, name="fit", err_margin=None):
 
-        self.fitdata = fitdata
+        fitdata = Fit.fitdata
 
         if ivar is None:
             with NamedVariables("fit"):
@@ -36,16 +36,13 @@ class FitConstraintSet(ConstraintSet):
 
         self.dvars = dvars
         self.ivar = ivar
-        self.rms_err = fitdata["rms_err"]
-        self.max_err = fitdata["max_err"]
+        self.rms_err = Fit.error["rms"]
+        self.max_err = Fit.error["max"]
 
         monos = [
-            fitdata["c%d" % k]
-            *NomialArray(
-                array(dvars).T
-                **array([fitdata["e%d%d" % (k, i)] for i in range(fitdata["d"])])
-            ).prod(NomialArray(dvars).ndim - 1)
-            for k in range(fitdata["K"])
+            fitdata["c%d" % k]*NomialArray(array(dvars).T**array(
+                [fitdata["e%d%d" % (k, i)] for i in range(fitdata["d"])]
+                )).prod(NomialArray(dvars).ndim - 1) for k in range(fitdata["K"])
         ]
 
         with NamedVariables(name):
@@ -55,15 +52,15 @@ class FitConstraintSet(ConstraintSet):
         elif err_margin == "rms":
             self.mfac.key.descr["value"] = 1 + self.rms_err
 
-        if fitdata["ftype"] == "ISMA":
+        if type(Fit).__name__ == "ImplictSoftmaxAffine":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
             alpha = array([fitdata["a%d" % k] for k in range(fitdata["K"])])
             lhs, rhs = 1, NomialArray(monos/(ivar/self.mfac)**alpha).sum(0)
-        elif fitdata["ftype"] == "SMA":
+        elif type(Fit).__name__ == "SoftmaxAffine":
             # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
             alpha = fitdata["a1"]
             lhs, rhs = (ivar/self.mfac)**alpha, NomialArray(monos).sum(0)
-        elif fitdata["ftype"] == "MA":
+        elif type(Fit).__name__ == "MaxAffine":
             # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
             lhs, rhs = (ivar/self.mfac), NomialArray(monos).T
 
@@ -90,14 +87,6 @@ class FitConstraintSet(ConstraintSet):
             self.bounds[dvar] = [fitdata["lb%d" % i], fitdata["ub%d" % i]]
 
         ConstraintSet.__init__(self, [self.constraint])
-
-    def get_dataframe(self):
-        "return a pandas DataFrame of fit parameters"
-        import pandas as pd
-
-        df = pd.DataFrame(list(self.fitdata.values())).transpose()
-        df.columns = list(self.fitdata.keys())
-        return df
 
     def process_result(self, result):
         """

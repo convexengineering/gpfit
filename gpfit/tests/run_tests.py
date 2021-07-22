@@ -27,8 +27,8 @@ TESTS += t_examples.TESTS
 from gpfit.tests import t_fit
 TESTS += t_fit.TESTS
 
-#from gpfit.tests import t_constraint_set
-#TESTS += t_constraint_set.TESTS
+from gpfit.tests import t_constraint_set
+TESTS += t_constraint_set.TESTS
 
 
 def run(xmloutput=False):

@@ -7,6 +7,7 @@ from matplotlib.colors import Normalize
 from .least_squares import levenberg_marquardt
 from .initialize import get_initial_parameters
 from .logsumexp import lse_scaled, lse_implicit
+from .constraint_set import FitConstraintSet
 
 
 # pylint: disable=too-many-locals
@@ -32,8 +33,6 @@ class Fit:
                             [<---------- y ------------->]
 
             K:          Number of terms
-
-            ftype:      Function class ["MA", "SMA", "ISMA"]
 
             alpha0:     Initial guess for smoothing parameter alpha
 
@@ -157,6 +156,10 @@ class Fit:
         """Save Fit object to pickle"""
         with open(filename, "w") as f:
             f.write(self.__repr__())
+
+    def constraint_set(self, **kwargs):
+        """Returns constraint set"""
+        return FitConstraintSet(self, **kwargs)
 
 
 class MaxAffine(Fit):
