@@ -1,6 +1,6 @@
-.. figure::  GPfit_logo.png
-   :width: 250 px
-
+=====
+GPfit
+=====
 
 GPfit is a Python package for fitting GP-compatible constraints to data.
 It requires installation of `GPkit <http://gpkit.readthedocs.org/en/latest/>`_.

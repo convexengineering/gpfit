@@ -1,4 +1,4 @@
-<img src="http://gpfit.readthedocs.io/en/latest/_images/GPfit_logo.png" width=110 alt="GPfit" />
+# GPfit
 
 **[Documentation](http://gpfit.readthedocs.org/)** | [Examples](http://gpfit.readthedocs.org/en/latest/examples.html) |
 
