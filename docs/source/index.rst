@@ -11,6 +11,7 @@ Table of Contents
     .. toctree::
        :maxdepth: 2
 
+       installation
        gpfit101
        examples
        citinggpfit
