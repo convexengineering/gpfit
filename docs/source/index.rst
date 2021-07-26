@@ -16,3 +16,4 @@ Table of Contents
        examples
        citinggpfit
        glossary.rst
+       acknowledgements
