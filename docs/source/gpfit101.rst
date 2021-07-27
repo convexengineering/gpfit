@@ -105,4 +105,4 @@ Where can I learn more?
 
 To learn more about fitting GP-compatible models to data, take a look at the following resources:
 
-    * `Fitting geometric programming models to data <http://web.mit.edu/~whoburg/www/papers/gp_fitting.pdf>`_, by W. Hoburg, P. Kirschen, and P. Abbeel.
+    * `Fitting geometric programming models to data <http://web.mit.edu/~whoburg/www/papers/gpfitting.pdf>`_, by W. Hoburg, P. Kirschen, and P. Abbeel.

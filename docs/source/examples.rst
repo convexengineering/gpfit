@@ -1,9 +1,8 @@
 Examples
 ********
 
-Both examples come from Section 6 of the paper "`Fitting geometric programming
-models to data <http://web.mit.edu/~whoburg/www/papers/gp_fitting.pdf>`_", by
-W. Hoburg et. al.
+Both examples come from Section 6 of this `paper
+<https://dspace.mit.edu/bitstream/handle/1721.1/105753/11081_2016_9332_ReferencePDF.pdf?sequence=2&isAllowed=y>`_.
 
 Example 1
 =========
