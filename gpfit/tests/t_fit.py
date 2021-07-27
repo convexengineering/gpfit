@@ -1,6 +1,8 @@
 """unit tests for fit module"""
 import unittest
 import pickle
+import sys
+from io import StringIO
 import numpy as np
 from numpy import logspace, log10, log, vstack
 from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
@@ -73,6 +75,28 @@ class TestFit(unittest.TestCase):
             "    + (0.992721/w**0.349639) * (u_1)**-0.201861\n"
             "    + (0.961596/w**0.116677) * (u_1)**-0.0112199"
         ))
+
+    def test_verbosity_1(self):
+        captured_output = StringIO()
+        sys.stdout = captured_output
+        np.random.seed(SEED)
+        ImplicitSoftmaxAffine(self.x, self.y, self.K, verbosity=1)
+        sys.stdout = sys.__stdout__
+        expected_output = (
+            "Generated ImplicitSoftmaxAffine fit with 3 terms.\n"
+            "\n"
+            "Fit\n"
+            "---\n"
+            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859\n"
+            "    + (0.992721/w**0.349639) * (u_1)**-0.201861\n"
+            "    + (0.961596/w**0.116677) * (u_1)**-0.0112199\n"
+            "\n"
+            "Error\n"
+            "-----\n"
+            "RMS: 8.1e-05%\n"
+            "Max: 0.00035%\n\n"
+        )
+        self.assertEqual(expected_output, captured_output.getvalue())
 
 
 TESTS = [TestFit]

@@ -13,13 +13,6 @@ x = np.log(u)
 y = np.log(P)
 K = 4
 
-fma = MaxAffine(x, y, K)
-fsma = SoftmaxAffine(x, y, K)
-fisma = ImplicitSoftmaxAffine(x, y, K)
-
-print(fma)
-print(fsma)
-print(fisma)
-print("MA RMS Error: %.5g" % fma.error["rms"])
-print("SMA RMS Error: %.5g" % fsma.error["rms"])
-print("ISMA RMS Error: %.5g" % fisma.error["rms"])
+fma = MaxAffine(x, y, K, verbosity=1)
+fsma = SoftmaxAffine(x, y, K, verbosity=1)
+fisma = ImplicitSoftmaxAffine(x, y, K, verbosity=1)

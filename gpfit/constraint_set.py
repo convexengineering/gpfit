@@ -52,15 +52,15 @@ class FitConstraintSet(ConstraintSet):
         elif err_margin == "rms":
             self.mfac.key.descr["value"] = 1 + self.rms_err
 
-        if type(Fit).__name__ == "ImplictSoftmaxAffine":
+        if Fit.type == "ImplictSoftmaxAffine":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
             alpha = array([parameters["a%d" % k] for k in range(Fit.K)])
             lhs, rhs = 1, NomialArray(monos/(ivar/self.mfac)**alpha).sum(0)
-        elif type(Fit).__name__ == "SoftmaxAffine":
+        elif Fit.type == "SoftmaxAffine":
             # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
             alpha = parameters["a1"]
             lhs, rhs = (ivar/self.mfac)**alpha, NomialArray(monos).sum(0)
-        elif type(Fit).__name__ == "MaxAffine":
+        elif Fit.type == "MaxAffine":
             # constraint of the form w >= c1*u1^exp1, w >= c2*u2^exp2, ....
             lhs, rhs = (ivar/self.mfac), NomialArray(monos).T
 

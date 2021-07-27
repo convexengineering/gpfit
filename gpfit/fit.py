@@ -47,6 +47,7 @@ class Fit:
         self.xdata = xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
         self.d = d = int(xdata.shape[1])  # Number of dimensions
         self.K = K
+        self.type = type(self).__name__
         self.parameters = {"alpha0": alpha0}
         self.bounds = {}
         if d == 1:
@@ -68,8 +69,7 @@ class Fit:
         }
 
         if verbosity >= 1:
-            self.print_fit()
-            print(self.error["rms"])
+            self.print_result()
 
     def residual(self, params):
         """Calculate residual"""
@@ -161,6 +161,23 @@ class Fit:
     def constraint_set(self, **kwargs):
         """Returns constraint set"""
         return FitConstraintSet(self, **kwargs)
+
+    def print_result(self):
+        """Prints time, fit, and error"""
+
+        fitstr = self.__repr__()
+
+        printstr = (
+            f"Generated {self.type} fit with {self.K} terms.\n\n"
+            f"Fit\n"
+            f"---\n"
+            f"{fitstr}\n\n"
+            f"Error\n"
+            f"-----\n"
+            f"""RMS: {self.error["rms"]*100:.2g}%\n"""
+            f"""Max: {self.error["max"]*100:.2g}%\n"""
+        )
+        print(printstr)
 
 
 class MaxAffine(Fit):
