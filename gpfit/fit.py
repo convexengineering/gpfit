@@ -47,14 +47,15 @@ class Fit:
         self.xdata = xdata = xdata.reshape(xdata.size, 1) if xdata.ndim == 1 else xdata.T
         self.d = d = int(xdata.shape[1])  # Number of dimensions
         self.K = K
-        self.fitdata = {"K": K, "d": d, "alpha0": alpha0}
+        self.parameters = {"alpha0": alpha0}
+        self.bounds = {}
         if d == 1:
-            self.fitdata["lb0"] = np.exp(min(xdata.reshape(xdata.size)))
-            self.fitdata["ub0"] = np.exp(max(xdata.reshape(xdata.size)))
+            self.bounds["lb0"] = np.exp(min(xdata.reshape(xdata.size)))
+            self.bounds["ub0"] = np.exp(max(xdata.reshape(xdata.size)))
         else:
             for i in range(d):
-                self.fitdata["lb%d" % i] = np.exp(min(xdata.T[i]))
-                self.fitdata["ub%d" % i] = np.exp(max(xdata.T[i]))
+                self.bounds["lb%d" % i] = np.exp(min(xdata.T[i]))
+                self.bounds["ub%d" % i] = np.exp(max(xdata.T[i]))
 
         ba = get_initial_parameters(xdata, ydata.reshape(self.ydata.size, 1),
                                     K).flatten("F")
@@ -174,11 +175,11 @@ class MaxAffine(Fit):
         B = params[[i for i in range(K*(d + 1)) if i % (d + 1) == 0]]
         alpha = 1
 
-        self.fitdata["a1"] = alpha
+        self.parameters["a1"] = alpha
         for k in range(K):
-            self.fitdata["c%d" % k] = np.exp(B[k])
+            self.parameters["c%d" % k] = np.exp(B[k])
             for i in range(d):
-                self.fitdata["e%d%d" % (k, i)] = A[d*k + i]
+                self.parameters["e%d%d" % (k, i)] = A[d*k + i]
         return A, B, alpha, params
 
     @staticmethod
@@ -239,7 +240,7 @@ class SoftmaxAffine(Fit):
 
     def get_parameters(self, ba, K, d):
         """Get fit parameters"""
-        alpha0 = self.fitdata["alpha0"]
+        alpha0 = self.parameters["alpha0"]
         params, _ = levenberg_marquardt(self.residual, np.hstack((ba, alpha0)))
 
         # A: exponent parameters, B: coefficient parameters
@@ -247,11 +248,11 @@ class SoftmaxAffine(Fit):
         B = params[[i for i in range(K*(d + 1)) if i % (d + 1) == 0]]
         alpha = 1/params[-1]
 
-        self.fitdata["a1"] = alpha
+        self.parameters["a1"] = alpha
         for k in range(K):
-            self.fitdata["c%d" % k] = np.exp(alpha*B[k])
+            self.parameters["c%d" % k] = np.exp(alpha*B[k])
             for i in range(d):
-                self.fitdata["e%d%d" % (k, i)] = alpha*A[d*k + i]
+                self.parameters["e%d%d" % (k, i)] = alpha*A[d*k + i]
         return A, B, alpha, params
 
     @staticmethod
@@ -320,7 +321,7 @@ class ImplicitSoftmaxAffine(Fit):
 
     def get_parameters(self, ba, K, d):
         """Get fit parameters"""
-        alpha0 = self.fitdata["alpha0"]
+        alpha0 = self.parameters["alpha0"]
         params, _ = levenberg_marquardt(self.residual, np.hstack((ba, alpha0*np.ones(K))))
 
         # A: exponent parameters, B: coefficient parameters
@@ -329,10 +330,10 @@ class ImplicitSoftmaxAffine(Fit):
         alpha = 1/params[list(range(-K, 0))]
 
         for k in range(K):
-            self.fitdata["c%d" % k] = np.exp(alpha[k]*B[k])
-            self.fitdata["a%d" % k] = alpha[k]
+            self.parameters["c%d" % k] = np.exp(alpha[k]*B[k])
+            self.parameters["a%d" % k] = alpha[k]
             for i in range(d):
-                self.fitdata["e%d%d" % (k, i)] = alpha[k]*A[d*k + i]
+                self.parameters["e%d%d" % (k, i)] = alpha[k]*A[d*k + i]
         return A, B, alpha, params
 
     @staticmethod
