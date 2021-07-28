@@ -1,7 +1,7 @@
 "Tests levenberg_marquardt"
 import unittest
 from numpy import arange, newaxis
-from gpfit.least_squares import levenberg_marquardt
+from gpfit.maths.least_squares import levenberg_marquardt
 from gpfit.fit import MaxAffine
 
 

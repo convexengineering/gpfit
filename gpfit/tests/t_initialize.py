@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
-from gpfit.initialize import get_initial_parameters
+from gpfit.maths.initialize import get_initial_parameters
 
 SEED = 33404
 

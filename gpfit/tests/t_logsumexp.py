@@ -2,7 +2,7 @@
 import unittest
 import numpy as np
 from numpy import array, arange
-from gpfit.logsumexp import lse_implicit, lse_scaled
+from gpfit.maths.logsumexp import lse_implicit, lse_scaled
 
 SEED = 33404
 
