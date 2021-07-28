@@ -5,7 +5,7 @@ import sys
 from io import StringIO
 import numpy as np
 from numpy import logspace, log10, log, vstack
-from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
+from gpfit.fit import fit, MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
 SEED = 33404
 
@@ -43,6 +43,36 @@ class TestFit(unittest.TestCase):
     def test_implicit_softmax_affine(self):
         np.random.seed(SEED)
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        self.assertTrue(f.error["rms"] < 1e-5)
+        self.assertEqual(f.__repr__(), (
+            "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859\n"
+            "    + (0.992721/w**0.349639) * (u_1)**-0.201861\n"
+            "    + (0.961596/w**0.116677) * (u_1)**-0.0112199"
+        ))
+
+    def test_fit_ma(self):
+        np.random.seed(SEED)
+        f = fit(self.x, self.y, self.K, fit_type="ma")
+        self.assertTrue(f.error["rms"] < 1e-2)
+        self.assertEqual(f.__repr__(), (
+            "w = 0.807159 * (u_1)**-0.0703921\n"
+            "w = 0.995106 * (u_1)**-0.431386\n"
+            "w = 0.92288 * (u_1)**-0.247099"
+        ))
+
+    def test_fit_sma(self):
+        np.random.seed(SEED)
+        f = fit(self.x, self.y, self.K, fit_type="sma")
+        self.assertTrue(f.error["rms"] < 1e-4)
+        self.assertEqual(f.__repr__(), (
+            "w**3.44109 = 0.15339 * (u_1)**0.584655\n"
+            "    + 0.431128 * (u_1)**-2.14831\n"
+            "    + 0.415776 * (u_1)**-2.14794"
+        ))
+
+    def test_fit_isma(self):
+        np.random.seed(SEED)
+        f = fit(self.x, self.y, self.K)
         self.assertTrue(f.error["rms"] < 1e-5)
         self.assertEqual(f.__repr__(), (
             "1 = (0.947385/w**0.0920329) * (u_1)**0.0176859\n"
