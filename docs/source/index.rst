@@ -17,7 +17,7 @@ Table of Contents
 
        gpfit101
        installation
-       examples
+       tutorial
        reference
        citinggpfit
        acknowledgements

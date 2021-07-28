@@ -1,13 +1,13 @@
-"Fits an example function"
-from numpy import logspace, log, log10, random
+"""Example 6.1 from Hoburg et al."""
+import numpy as np
 from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
-random.seed(33404)
+np.random.seed(33404)
 
-u = logspace(0, log10(3), 101)
+u = np.logspace(0, np.log10(3), 101)
 w = (u**2 + 3)/(u + 1)**2
-x = log(u)
-y = log(w)
+x = np.log(u)
+y = np.log(w)
 K = 3
 
 fma = MaxAffine(x, y, K, verbosity=1)
