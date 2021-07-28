@@ -154,9 +154,10 @@ class _Fit:
         pickle.dump(self, open(filename, "wb"))
 
     def savetxt(self, filename="fit.txt"):
-        """Save Fit object to pickle"""
+        """Save string of fit to text file using python math convention (**)"""
+        fitstr = self.__repr__().replace("^", "**")
         with open(filename, "w") as f:
-            f.write(self.__repr__())
+            f.write(fitstr)
 
     def constraint_set(self, **kwargs):
         """Returns constraint set"""
@@ -247,7 +248,7 @@ class MaxAffine(_Fit):
         for k in range(K):
             print_string = "w = {0:.6g}".format(np.exp(B[k]))
             for i in range(d):
-                print_string += " * (u_{0:d})**{1:.6g}".format(i + 1, A[d*k + i])
+                print_string += "*(u_{0:d})^{1:.6g}".format(i + 1, A[d*k + i])
             string_list[k] = print_string
         return "\n".join(string_list)
 
@@ -322,13 +323,13 @@ class SoftmaxAffine(_Fit):
         K, d = self.K, self.d
         A, B, alpha = self.A, self.B, self.alpha
         string_list = [None]*K
-        print_string = "w**{0:.6g} = ".format(alpha)
+        print_string = "w^{0:.6g} = ".format(alpha)
         for k in range(K):
             if k > 0:
                 print_string = "    + "
             print_string += "{0:.6g}".format(np.exp(alpha*B[k]))
             for i in range(d):
-                print_string += " * (u_{0:d})**{1:.6g}".format(i + 1, alpha*A[d*k + i])
+                print_string += "*(u_{0:d})^{1:.6g}".format(i + 1, alpha*A[d*k + i])
             string_list[k] = print_string
         return "\n".join(string_list)
 
@@ -404,10 +405,10 @@ class ImplicitSoftmaxAffine(_Fit):
         print_string = "1 = "
         for k in range(K):
             if k > 0:
-                print_string = "    + "
-            print_string += "({0:.6g}/w**{1:.6g})".format(np.exp(alpha[k]*B[k]), alpha[k])
+                print_string = "  + "
+            print_string += "({0:.6g}/w^{1:.6g})".format(np.exp(alpha[k]*B[k]), alpha[k])
             for i in range(d):
-                print_string += " * (u_{0:d})**{1:.6g}".format(
+                print_string += "*(u_{0:d})^{1:.6g}".format(
                     i + 1, alpha[k]*A[d*k + i]
                 )
             string_list[k] = print_string
