@@ -15,7 +15,7 @@ from .constraint_set import FitConstraintSet
 # pylint: disable=too-many-branches
 # pylint: disable=import-error
 # pylint: disable=too-many-instance-attributes
-class Fit:
+class _Fit:
     """The base class for GPfit"""
     def __init__(self, xdata, ydata, K, alpha0=10, verbosity=0):
         """
@@ -180,7 +180,7 @@ class Fit:
         print(printstr)
 
 
-class MaxAffine(Fit):
+class MaxAffine(_Fit):
     """Max Affine fit class"""
 
     def get_parameters(self, ba, K, d):
@@ -252,7 +252,7 @@ class MaxAffine(Fit):
         return "\n".join(string_list)
 
 
-class SoftmaxAffine(Fit):
+class SoftmaxAffine(_Fit):
     """Softmax Affine fit class"""
 
     def get_parameters(self, ba, K, d):
@@ -333,7 +333,7 @@ class SoftmaxAffine(Fit):
         return "\n".join(string_list)
 
 
-class ImplicitSoftmaxAffine(Fit):
+class ImplicitSoftmaxAffine(_Fit):
     """Implicit Softmax Affine fit class"""
 
     def get_parameters(self, ba, K, d):
