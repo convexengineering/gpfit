@@ -62,10 +62,15 @@ class _Fit:
                                     K).flatten("F")
         self.A, self.B, self.alpha, self.params = self.get_parameters(ba, K, d)
 
+        yhat = self.evaluate(xdata, self.params)[0]
+        what = np.exp(yhat)
+        wdata = np.exp(self.ydata)
+        werror = what - wdata
         self.error = {
-            "rms": np.sqrt(np.mean(np.square(self.evaluate(xdata, self.params)[0] - ydata))),
-            "max": np.sqrt(max(np.square(self.evaluate(xdata, self.params)[0] - ydata)))
-            # TODO: check max, check .T behaviour of old code
+            "rms_abs": np.sqrt(np.mean(np.square(werror))),
+            "rms_rel": np.sqrt(np.mean(np.square(werror/wdata))),
+            "max_abs": np.sqrt(max(np.square(werror))),
+            "max_rel": np.sqrt(max(np.square(werror/wdata))),
         }
 
         if verbosity >= 1:
@@ -175,8 +180,8 @@ class _Fit:
             f"{fitstr}\n\n"
             f"Error\n"
             f"-----\n"
-            f"""RMS: {self.error["rms"]*100:.2g}%\n"""
-            f"""Max: {self.error["max"]*100:.2g}%\n"""
+            f"""RMS: {self.error["rms_rel"]*100:.2g}%\n"""
+            f"""Max: {self.error["max_rel"]*100:.2g}%\n"""
         )
         print(printstr)
 

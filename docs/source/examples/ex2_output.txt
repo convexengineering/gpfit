@@ -10,7 +10,7 @@ w = 0.38541*(u_1)^2.13119*(u_2)^-0.826143
 Error
 -----
 RMS: 0.74%
-Max: 3.4%
+Max: 3.3%
 
 Generated SoftmaxAffine fit with 4 terms.
 

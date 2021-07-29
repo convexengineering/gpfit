@@ -30,15 +30,15 @@ class TestExamples(unittest.TestCase):
 
     def test_ex1(self, example):
         """test_ex1"""
-        self.assertTrue(example.fma.error["rms"] < 1e-2)
-        self.assertTrue(example.fsma.error["rms"] < 1e-4)
-        self.assertTrue(example.fisma.error["rms"] < 1e-5)
+        self.assertTrue(example.fma.error["rms_rel"] < 1e-2)
+        self.assertTrue(example.fsma.error["rms_rel"] < 1e-4)
+        self.assertTrue(example.fisma.error["rms_rel"] < 1e-5)
 
     def test_ex2(self, example):
         """test_ex2"""
-        self.assertTrue(example.fma.error["rms"] < 1e-2)
-        self.assertTrue(example.fsma.error["rms"] < 1e-3)
-        self.assertTrue(example.fisma.error["rms"] < 1e-3)
+        self.assertTrue(example.fma.error["rms_rel"] < 1e-2)
+        self.assertTrue(example.fsma.error["rms_rel"] < 1e-3)
+        self.assertTrue(example.fisma.error["rms_rel"] < 1e-3)
 
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))

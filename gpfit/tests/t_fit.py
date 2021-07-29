@@ -23,7 +23,7 @@ class TestFit(unittest.TestCase):
     def test_max_affine(self):
         np.random.seed(SEED)
         f = MaxAffine(self.x, self.y, self.K)
-        self.assertTrue(f.error["rms"] < 1e-2)
+        self.assertTrue(f.error["rms_rel"] < 1e-2)
         self.assertEqual(f.__repr__(), (
             "w = 0.807159*(u_1)^-0.0703921\n"
             "w = 0.995106*(u_1)^-0.431386\n"
@@ -33,7 +33,7 @@ class TestFit(unittest.TestCase):
     def test_softmax_affine(self):
         np.random.seed(SEED)
         f = SoftmaxAffine(self.x, self.y, self.K)
-        self.assertTrue(f.error["rms"] < 1e-4)
+        self.assertTrue(f.error["rms_rel"] < 1e-4)
         self.assertEqual(f.__repr__(), (
             "w^3.44109 = 0.15339*(u_1)^0.584655\n"
             "    + 0.431128*(u_1)^-2.14831\n"
@@ -43,7 +43,7 @@ class TestFit(unittest.TestCase):
     def test_implicit_softmax_affine(self):
         np.random.seed(SEED)
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
-        self.assertTrue(f.error["rms"] < 1e-5)
+        self.assertTrue(f.error["rms_rel"] < 1e-5)
         self.assertEqual(f.__repr__(), (
             "1 = (0.947385/w^0.0920329)*(u_1)^0.0176859\n"
             "  + (0.992721/w^0.349639)*(u_1)^-0.201861\n"
@@ -53,7 +53,7 @@ class TestFit(unittest.TestCase):
     def test_fit_ma(self):
         np.random.seed(SEED)
         f = fit(self.x, self.y, self.K, fit_type="ma")
-        self.assertTrue(f.error["rms"] < 1e-2)
+        self.assertTrue(f.error["rms_rel"] < 1e-2)
         self.assertEqual(f.__repr__(), (
             "w = 0.807159*(u_1)^-0.0703921\n"
             "w = 0.995106*(u_1)^-0.431386\n"
@@ -63,7 +63,7 @@ class TestFit(unittest.TestCase):
     def test_fit_sma(self):
         np.random.seed(SEED)
         f = fit(self.x, self.y, self.K, fit_type="sma")
-        self.assertTrue(f.error["rms"] < 1e-4)
+        self.assertTrue(f.error["rms_rel"] < 1e-4)
         self.assertEqual(f.__repr__(), (
             "w^3.44109 = 0.15339*(u_1)^0.584655\n"
             "    + 0.431128*(u_1)^-2.14831\n"
@@ -73,7 +73,7 @@ class TestFit(unittest.TestCase):
     def test_fit_isma(self):
         np.random.seed(SEED)
         f = fit(self.x, self.y, self.K)
-        self.assertTrue(f.error["rms"] < 1e-5)
+        self.assertTrue(f.error["rms_rel"] < 1e-5)
         self.assertEqual(f.__repr__(), (
             "1 = (0.947385/w^0.0920329)*(u_1)^0.0176859\n"
             "  + (0.992721/w^0.349639)*(u_1)^-0.201861\n"
@@ -90,7 +90,7 @@ class TestFit(unittest.TestCase):
         f1.save("artifacts/fit.pkl")
         strings1 = f1.__repr__()
         f2 = pickle.load(open("artifacts/fit.pkl", "rb"))
-        self.assertTrue(f2.error["rms"] < 1e-5)
+        self.assertTrue(f2.error["rms_rel"] < 1e-5)
         strings2 = f2.__repr__()
         self.assertEqual(strings1, strings2)
 
@@ -127,6 +127,14 @@ class TestFit(unittest.TestCase):
             "Max: 0.00035%\n\n"
         )
         self.assertEqual(expected_output, captured_output.getvalue())
+
+    def test_error(self):
+        np.random.seed(SEED)
+        f1 = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        np.random.seed(SEED)
+        f2 = ImplicitSoftmaxAffine(self.x, 2*self.y, self.K)
+        self.assertAlmostEqual(f1.error["rms_rel"], 8.12727e-07)
+        self.assertAlmostEqual(f2.error["rms_rel"], 1.61329e-06)
 
 
 TESTS = [TestFit]
