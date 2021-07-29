@@ -5,9 +5,8 @@ from gpkit import Variable, NomialArray, NamedVariables, VectorVariable
 from gpkit.small_scripts import initsolwarning, appendsolwarning
 
 
-# pylint: disable=too-many-instance-attributes, too-many-locals,
-# pylint: disable=too-many-branches, no-member, import-error
-# pylint: disable=too-many-arguments, import-outside-toplevel
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-arguments
 class FitConstraintSet(ConstraintSet):
     """
     Constraint set for fitted functions

@@ -12,8 +12,6 @@ from .constraint_set import FitConstraintSet
 
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-arguments
-# pylint: disable=too-many-branches
-# pylint: disable=import-error
 # pylint: disable=too-many-instance-attributes
 class _Fit:
     """The base class for GPfit"""
