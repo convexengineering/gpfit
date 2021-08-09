@@ -14,7 +14,7 @@ GP-compatible fitting is the process of fitting GP-compatible functions to data.
 What does GPfit do?
 ===================
 
-GPfit approximates a set of multivariate data points
+GPfit can be used to approximate a set of multivariate data points
 
 .. math::
     
@@ -22,12 +22,23 @@ GPfit approximates a set of multivariate data points
 
 with a GP-compatible function, where :math:`\mathbf{u}_i` are independent variable data, :math:`w_i` are dependent variable data, and :math:`m` is the number of data points.
 
-More specifically, GPfit takes logarithmically transformed data as an input and returns a `GPkit <http://gpkit.readthedocs.org>`_ constraint object as an output. This can then be used as part of a `GPkit <http://gpkit.readthedocs.org>`_ model to solve a geometric program. Additional functionality of GPfit includes printing the resulting function fit, calculating the RMS error, and (if :math:`d \leq 2`) plotting the fitted function over the original data. 
+.. _logtransform:
+
+More specifically, GPfit takes logarithmically transformed data
+
+.. math::
+
+   \mathbf{x} = \log(\mathbf{u})\\
+   y = \log(w)
+
+as an input and returns a Fit object as an output. This can be used to generate a `GPkit <http://gpkit.readthedocs.org>`_ constraint object which can be used as part of a `GPkit <http://gpkit.readthedocs.org>`_ model to solve a geometric program. This fit can also be printed, saved, and (if :math:`d \leq 2`) plotted alongside the original data.
 
 GPfit is intended for use with data that can be well approximated by a log-convex function. A function is *log-convex* if it is convex after both the independent and dependent variables are transformed into logarithmic space.
 
-GPfit can fit three different types of GP-compatible functions to data: Implicit Softmax Affine (ISMA) functions, Softmax Affine (SMA) functions, and Max Affine (MA) functions.
+GPfit can fit three classes of GP-compatible functions to data: Implicit Softmax Affine (ISMA) functions, Softmax Affine (SMA) functions, and Max Affine (MA) functions.
 
+Function Classes
+================
 
 Implicit softmax affine (ISMA) functions
 ++++++++++++++++++++++++++++++++++++++++
@@ -100,6 +111,7 @@ If a user specifies K = 1, GPfit will automatically return an equality constrain
 .. math::
 
     w =  e^{b} \prod_{i=1}^d u_i^{a_{i}}
+
 Where can I learn more?
 =======================
 

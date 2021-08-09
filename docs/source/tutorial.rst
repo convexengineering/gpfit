@@ -1,7 +1,7 @@
 Tutorial
 ********
 
-Given log-transformed data `x` and `y`, we can create a fit with `K` terms with
+Given :ref:`log-transformed <logtransform>` data `x` and `y`, we can create a fit with `K` terms with
 a single command:
 
 .. code::

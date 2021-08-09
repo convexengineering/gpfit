@@ -27,6 +27,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
+    'sphinx.ext.autosectionlabel',
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
