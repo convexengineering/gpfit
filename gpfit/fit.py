@@ -4,28 +4,30 @@ from .classes import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
 # pylint: disable=too-many-arguments
 def fit(xdata, ydata, K, fit_type="isma", alpha0=10, verbosity=0):
-    """A convenience function for returning a Fit object. Default behaviour
-    returns the highest quality of fit (implicit softmax affine) but other
-    options are max affine and softmax affine.
+    """A convenience function for returning a Fit object.
+
+    Default behaviour returns the highest quality of fit (implicit softmax
+    affine) but other options are max affine and softmax affine.
 
     Arguments
     ---------
-        xdata:      Independent variable data
-                        2D numpy array [nDim, nPoints]
-                        [[<--------- x1 ------------->]
-                         [<--------- x2 ------------->]]
+    xdata: 2D numpy array [nDim, nPoints]
+        Independent variable data
 
-        ydata:      Dependent variable data
-                        1D numpy array [nPoints,]
-                        [<---------- y ------------->]
+    ydata: 1D numpy array [nPoints,]
+        Dependent variable data
 
-        K:          Number of terms
+    K: int
+        Number of terms
 
-        fit_type:   Type of fit ("isma", "sma", "ma")
+    fit_type: str ("isma", "sma", "ma")
+        Type of fit
 
-        alpha0:     Initial guess for smoothing parameter alpha
+    alpha0
+        Initial guess for smoothing parameter alpha
 
-        verbosity:  Verbosity
+    verbosity: int
+        Verbosity
 
     Returns
     -------

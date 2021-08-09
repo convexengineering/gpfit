@@ -7,6 +7,9 @@
 
 # -- Project information -----------------------------------------------------
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../../../gpfit'))
 import gpfit
 __version__ = gpfit.__version__
 version = 'v' + '.'.join(__version__.split('.')[:4])

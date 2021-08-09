@@ -8,23 +8,22 @@ from gpkit.small_scripts import initsolwarning, appendsolwarning
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-arguments
 class FitConstraintSet(ConstraintSet):
-    """
-    Constraint set for fitted functions
-
-    Arguments
-    ---------
-    fit : Fit object
-        Fit being used to generate the constraint set
-    ivar : gpkit Variable, Monomial, or NomialArray
-        independent variable
-    dvars : list of gpkit Variables, Monomials, or NomialArrays
-        dependent variables
-    err_margin : string, either "max" or "rms"
-        flag to set margin factor using RMS or max error
-
-    """
-
+    """Constraint set for fitted functions"""
     def __init__(self, fit, ivar=None, dvars=None, name="fit", err_margin=None):
+        """Creates a FitConstraintSet
+
+        Arguments
+        ---------
+        fit : Fit object
+            Fit being used to generate the constraint set
+        ivar : gpkit Variable, Monomial, or NomialArray
+            independent variable
+        dvars : list of gpkit Variables, Monomials, or NomialArrays
+            dependent variables
+        err_margin : string, either "max" or "rms"
+            flag to set margin factor using RMS or max error
+
+        """
 
         parameters = fit.parameters
 

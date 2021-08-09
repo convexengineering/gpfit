@@ -16,26 +16,25 @@ from .constraint_set import FitConstraintSet
 class _Fit:
     """The base class for GPfit"""
     def __init__(self, xdata, ydata, K, alpha0=10, verbosity=0):
-        """
-        Initialize Fit object
+        """Initialize _Fit object
 
         Arguments
         ---------
-            xdata:      Independent variable data
-                            2D numpy array [nDim, nPoints]
-                            [[<--------- x1 ------------->]
-                             [<--------- x2 ------------->]]
+        xdata: 2D numpy array [nDim, nPoints]
+            Independent variable data
 
-            ydata:      Dependent variable data
-                            1D numpy array [nPoints,]
-                            [<---------- y ------------->]
+        ydata: 1D numpy array [nPoints,]
+            Dependent variable data
 
-            K:          Number of terms
+        K: int
+            Number of terms
 
-            alpha0:     Initial guess for smoothing parameter alpha
+        alpha0:
+            Initial guess for smoothing parameter alpha
 
-        Returns
-        -------
+        verbosity: int (0 or 1)
+            Verbosity
+
         """
 
         if ydata.ndim > 1:
@@ -209,23 +208,21 @@ class MaxAffine(_Fit):
         Evaluates max affine function at values of x, given a set of
         max affine fit parameters.
 
-        Arguments
-        ---------
-            x: 2D array [nPoints x nDim]
-                Independent variable data
+        Args
+        ----
+        x: 2D array [nPoints x nDim]
+            Independent variable data
 
-            ba: 2D array
-                max affine fit parameters
-                [[b1, a11, ... a1k]
-                 [ ....,          ]
-                 [bk, ak1, ... akk]]
+        ba: 2D array
+            Max affine fit parameters
+            [[b1, a11, ... a1k], [...], [bk, ak1, ... akk]]
 
         Returns
         -------
-            y: 1D array [nPoints]
-                Max affine output
-            dydba: 2D array [nPoints x (nDim + 1)*K]
-                dydba
+        y: 1D array [nPoints]
+            Max affine output
+        dydba: 2D array [nPoints x (nDim + 1)*K]
+            dydba
         """
         ba = params
         npt, dimx = x.shape
@@ -284,20 +281,20 @@ class SoftmaxAffine(_Fit):
 
         Arguments:
         ----------
-                x:      Independent variable data
-                            2D numpy array [nPoints x nDimensions]
+        x: 2D numpy array [nPoints x nDimensions]
+            Independent variable data
 
-                params: Fit parameters
-                            1D numpy array [(nDim + 2)*K,]
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd, alpha]
+        params: 1D numpy array [(nDim + 2)*K,]
+            Fit parameters
+            [b1, a11, .. a1d, b2, a21, .. a2d, ... bK, aK1, aK2, .. aKd, alpha]
 
         Returns:
         --------
-                y:      SMA approximation to log transformed data
-                            1D numpy array [nPoints]
+        y: 1D numpy array [nPoints]
+            SMA approximation to log transformed data
 
-                dydp:   Jacobian matrix
+        dydp
+            Jacobian matrix
         """
 
         npt, dimx = x.shape
@@ -360,25 +357,26 @@ class ImplicitSoftmaxAffine(_Fit):
     @staticmethod
     def evaluate(x, params):
         """
-        Evaluates implicit softmax affine function at values of x, given a set of
-        ISMA fit parameters.
+        Evaluates implicit softmax affine function at values of x, given a set
+        of ISMA fit parameters.
 
         Arguments:
         ----------
-                x:      Independent variable data
-                            2D numpy array [nPoints x nDimensions]
+        x: 2D numpy array [nPoints x nDimensions]
+            Independent variable data
 
-                params: Fit parameters
-                            1D numpy array [(nDim + 2)*K,]
-                            [b1, a11, .. a1d, b2, a21, .. a2d, ...
-                             bK, aK1, aK2, .. aKd, alpha1, alpha2, ... alphaK]
+        params: 1D numpy array [(nDim + 2)*K,]
+            Fit parameters
+            [b1, a11, .. a1d, b2, a21, .. a2d, ..., bK, aK1, aK2, .. aKd,
+            alpha1, alpha2, ... alphaK]
 
         Returns:
         --------
-                y:      ISMA approximation to log transformed data
-                            1D numpy array [nPoints]
+        y: 1D numpy array [nPoints]
+            ISMA approximation to log transformed data
 
-                dydp:   Jacobian matrix
+        dydp
+            Jacobian matrix
 
         """
 
