@@ -34,8 +34,8 @@ class FitConstraintSet(ConstraintSet):
 
         self.dvars = dvars
         self.ivar = ivar
-        self.rms_err = fit.error["rms_rel"]
-        self.max_err = fit.error["max_rel"]
+        self.rms_err = fit.errors["rms_rel"]
+        self.max_err = fit.errors["max_rel"]
 
         monos = [
             parameters["c%d" % k]*NomialArray(array(dvars).T**array(

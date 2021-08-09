@@ -21,9 +21,9 @@ Once a fit is generated, we can plot it:
 
 .. code::
 
-   f, ax = f.plot() # for 1D fits
-   f, ax = f.plot_slices() # for 2D fits
-   f, ax = f.plot_surface() # for 2D fits
+   fig, ax = f.plot() # for 1D fits
+   fig, ax = f.plot_slices() # for 2D fits
+   fig, ax = f.plot_surface() # for 2D fits
 
 and save it:
 
@@ -54,6 +54,13 @@ Fit convex portion of :math:`w = \frac{u^2 + 3}{(u+1)^2}` on :math:`1 \leq u \le
 Output:
 
 .. literalinclude:: examples/ex1_output.txt
+
+.. note::
+   The maximum and root-mean-square errors printed above are calculated between
+   the fit and the original (i.e. not log-transformed) data. It is important to
+   note, however, that the fitting algorithm minimizes RMS error between the
+   fit and the data in logspace.  For more information, see section 6 of the
+   paper.
 
 Example 2
 ---------
