@@ -68,8 +68,8 @@ class _Fit:
             "rms_log": np.sqrt(np.mean(np.square(yerror))),
             "rms_abs": np.sqrt(np.mean(np.square(werror))),
             "rms_rel": np.sqrt(np.mean(np.square(werror/wdata))),
-            "max_abs": np.sqrt(max(np.square(werror))),
-            "max_rel": np.sqrt(max(np.square(werror/wdata))),
+            "max_abs": max(abs(werror)),
+            "max_rel": max(abs(werror/wdata)),
         }
         self.error = self.errors["rms_rel"]
 
