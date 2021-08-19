@@ -33,5 +33,6 @@ setup(
     install_requires=["numpy", "scipy", "gpkit", "matplotlib"],
     version="0.2.0",
     packages=["gpfit", "gpfit.tests", "gpfit.xfoil"],
+    include_package_data=True,
     license=LICENSE,
 )
