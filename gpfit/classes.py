@@ -156,13 +156,14 @@ class _Fit:
 
     def save(self, filename="fit.pkl"):
         """Save Fit object to pickle"""
-        pickle.dump(self, open(filename, "wb"))
+        with open(filename, "wb") as f:
+            pickle.dump(self, f)
 
     def savetxt(self, filename="fit.txt"):
         """Save string of fit to text file using python math convention (**)"""
         fitstr = self.__repr__().replace("^", "**")
-        with open(filename, "w") as f:
-            f.write(fitstr)
+        with open(filename, "w", encoding="utf-8") as textfile:
+            textfile.write(fitstr)
 
     def constraint_set(self, **kwargs):
         """Returns constraint set"""

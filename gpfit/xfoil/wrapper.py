@@ -4,7 +4,7 @@ import numpy as np
 
 
 # pylint: disable=invalid-name, bare-except, too-many-locals
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, consider-using-with
 
 
 def xfoil_comparison(airfoil, Cl, Re, Cd):
