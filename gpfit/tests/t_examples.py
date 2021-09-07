@@ -30,21 +30,21 @@ class TestExamples(unittest.TestCase):
 
     def test_ex1(self, example):
         """test_ex1"""
-        self.assertTrue(example.fma.errors["rms_rel"] < 1e-2)
-        self.assertTrue(example.fma.errors["rms_log"] < 1e-2)
-        self.assertTrue(example.fsma.errors["rms_rel"] < 1e-4)
-        self.assertTrue(example.fsma.errors["rms_log"] < 1e-4)
-        self.assertTrue(example.fisma.errors["rms_rel"] < 1e-5)
-        self.assertTrue(example.fisma.errors["rms_log"] < 1e-5)
+        self.assertLess(example.fma.errors["rms_rel"], 1e-2)
+        self.assertLess(example.fma.errors["rms_log"], 1e-2)
+        self.assertLess(example.fsma.errors["rms_rel"], 1e-4)
+        self.assertLess(example.fsma.errors["rms_log"], 1e-4)
+        self.assertLess(example.fisma.errors["rms_rel"], 1e-5)
+        self.assertLess(example.fisma.errors["rms_log"], 1e-5)
 
     def test_ex2(self, example):
         """test_ex2"""
-        self.assertTrue(example.fma.errors["rms_rel"] < 1e-2)
-        self.assertTrue(example.fma.errors["rms_log"] < 1e-2)
-        self.assertTrue(example.fsma.errors["rms_rel"] < 1e-3)
-        self.assertTrue(example.fsma.errors["rms_log"] < 1e-3)
-        self.assertTrue(example.fisma.errors["rms_rel"] < 1e-3)
-        self.assertTrue(example.fisma.errors["rms_log"] < 1e-3)
+        self.assertLess(example.fma.errors["rms_rel"], 1e-2)
+        self.assertLess(example.fma.errors["rms_log"], 1e-2)
+        self.assertLess(example.fsma.errors["rms_rel"], 1e-3)
+        self.assertLess(example.fsma.errors["rms_log"], 1e-3)
+        self.assertLess(example.fisma.errors["rms_rel"], 1e-3)
+        self.assertLess(example.fisma.errors["rms_log"], 1e-3)
 
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
