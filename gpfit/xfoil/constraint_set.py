@@ -50,16 +50,9 @@ class XfoilFit(FitConstraintSet):
         err, cdx = xfoil_comparison(self.airfoil, cl, re, cd)
         ind = np.where(err > 0.05)[0]
         for i in ind:
+            modelstr = ", ".join(self.ivar.descr["models"])
             msg = (
-                "Drag error for %s is %.2f. Re=%.1f; CL=%.4f;"
-                " Xfoil cd=%.6f, GP sol cd=%.6f"
-                % (
-                    ", ".join(self.ivar.descr["models"]),
-                    err[i],
-                    re[i],
-                    cl[i],
-                    cd[i],
-                    cdx[i],
-                )
+                f"Drag error for {modelstr} is {err[i]:.2f}. Re={re[i]:.1f};"
+                f" CL={cl[i]:.4f}; Xfoil cd={cd[i]:.6f}, GP sol cd={cdx[i]:.6f}"
             )
-            print("Warning: %s" % msg)
+            print(f"Warning: {msg}")

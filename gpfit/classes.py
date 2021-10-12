@@ -52,8 +52,8 @@ class _Fit:
             self.bounds["ub0"] = np.exp(max(xdata.reshape(xdata.size)))
         else:
             for i in range(d):
-                self.bounds["lb%d" % i] = np.exp(min(xdata.T[i]))
-                self.bounds["ub%d" % i] = np.exp(max(xdata.T[i]))
+                self.bounds[f"lb{i}"] = np.exp(min(xdata.T[i]))
+                self.bounds[f"ub{i}"] = np.exp(max(xdata.T[i]))
 
         ba = get_initial_parameters(xdata, ydata.reshape(self.ydata.size, 1),
                                     K).flatten("F")
@@ -150,7 +150,7 @@ class _Fit:
             u1, u2slice = np.exp(x1), np.exp(x2slice)
             ww = np.exp(yy)
             ax.plot(u1, ww, c=cm.viridis(norm(u2slice)),
-                    label="{0:.3g}".format(u2slice))
+                    label=f"{u2slice:.3g}")
             ax.legend(title="u2")
         return fig, ax
 
@@ -201,9 +201,9 @@ class MaxAffine(_Fit):
 
         self.parameters["a1"] = alpha
         for k in range(K):
-            self.parameters["c%d" % k] = np.exp(B[k])
+            self.parameters[f"c{k}"] = np.exp(B[k])
             for i in range(d):
-                self.parameters["e%d%d" % (k, i)] = A[d*k + i]
+                self.parameters[f"e{k}{i}"] = A[d*k + i]
         return A, B, alpha, params
 
     @staticmethod
@@ -250,9 +250,9 @@ class MaxAffine(_Fit):
         A, B = self.A, self.B
         string_list = [None]*K
         for k in range(K):
-            print_string = "w = {0:.6g}".format(np.exp(B[k]))
+            print_string = f"w = {np.exp(B[k]):.6g}"
             for i in range(d):
-                print_string += "*(u_{0:d})^{1:.6g}".format(i + 1, A[d*k + i])
+                print_string += f"*(u_{i + 1})^{A[d*k + i]:.6g}"
             string_list[k] = print_string
         return "\n".join(string_list)
 
@@ -272,9 +272,9 @@ class SoftmaxAffine(_Fit):
 
         self.parameters["a1"] = alpha
         for k in range(K):
-            self.parameters["c%d" % k] = np.exp(alpha*B[k])
+            self.parameters[f"c{k}"] = np.exp(alpha*B[k])
             for i in range(d):
-                self.parameters["e%d%d" % (k, i)] = alpha*A[d*k + i]
+                self.parameters[f"e{k}{i}"] = alpha*A[d*k + i]
         return A, B, alpha, params
 
     @staticmethod
@@ -327,13 +327,13 @@ class SoftmaxAffine(_Fit):
         K, d = self.K, self.d
         A, B, alpha = self.A, self.B, self.alpha
         string_list = [None]*K
-        print_string = "w^{0:.6g} = ".format(alpha)
+        print_string = f"w^{alpha:.6g} = "
         for k in range(K):
             if k > 0:
                 print_string = "    + "
-            print_string += "{0:.6g}".format(np.exp(alpha*B[k]))
+            print_string += f"{np.exp(alpha*B[k]):.6g}"
             for i in range(d):
-                print_string += "*(u_{0:d})^{1:.6g}".format(i + 1, alpha*A[d*k + i])
+                print_string += f"*(u_{i + 1:d})^{alpha*A[d*k + i]:.6g}"
             string_list[k] = print_string
         return "\n".join(string_list)
 
@@ -352,10 +352,10 @@ class ImplicitSoftmaxAffine(_Fit):
         alpha = 1/params[list(range(-K, 0))]
 
         for k in range(K):
-            self.parameters["c%d" % k] = np.exp(alpha[k]*B[k])
-            self.parameters["a%d" % k] = alpha[k]
+            self.parameters[f"c{k}"] = np.exp(alpha[k]*B[k])
+            self.parameters[f"a{k}"] = alpha[k]
             for i in range(d):
-                self.parameters["e%d%d" % (k, i)] = alpha[k]*A[d*k + i]
+                self.parameters[f"e{k}{i}"] = alpha[k]*A[d*k + i]
         return A, B, alpha, params
 
     @staticmethod
@@ -411,10 +411,8 @@ class ImplicitSoftmaxAffine(_Fit):
         for k in range(K):
             if k > 0:
                 print_string = "  + "
-            print_string += "({0:.6g}/w^{1:.6g})".format(np.exp(alpha[k]*B[k]), alpha[k])
+            print_string += f"({np.exp(alpha[k]*B[k]):.6g}/w^{alpha[k]:.6g})"
             for i in range(d):
-                print_string += "*(u_{0:d})^{1:.6g}".format(
-                    i + 1, alpha[k]*A[d*k + i]
-                )
+                print_string += f"*(u_{i + 1:d})^{alpha[k]*A[d*k + i]:.6g}"
             string_list[k] = print_string
         return "\n".join(string_list)

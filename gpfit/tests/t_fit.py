@@ -3,11 +3,8 @@ import unittest
 import pickle
 import sys
 from io import StringIO
-import numpy as np
 from numpy import logspace, log10, log, vstack
 from gpfit.fit import fit, MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
-
-SEED = 33404
 
 
 class TestFit(unittest.TestCase):

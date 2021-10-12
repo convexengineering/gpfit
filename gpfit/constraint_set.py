@@ -38,8 +38,8 @@ class FitConstraintSet(ConstraintSet):
         self.max_err = fit.errors["max_rel"]
 
         monos = [
-            parameters["c%d" % k]*NomialArray(array(dvars).T**array(
-                [parameters["e%d%d" % (k, i)] for i in range(fit.d)]
+            parameters[f"c{k}"]*NomialArray(array(dvars).T**array(
+                [parameters[f"e{k}{i}"] for i in range(fit.d)]
                 )).prod(NomialArray(dvars).ndim - 1) for k in range(fit.K)
         ]
 
@@ -52,7 +52,7 @@ class FitConstraintSet(ConstraintSet):
 
         if fit.type == "ImplictSoftmaxAffine":
             # constraint of the form 1 >= c1*u1^exp1*u2^exp2*w^(-alpha) + ....
-            alpha = array([parameters["a%d" % k] for k in range(fit.K)])
+            alpha = array([parameters[f"a{k}"] for k in range(fit.K)])
             lhs, rhs = 1, NomialArray(monos/(ivar/self.mfac)**alpha).sum(0)
         elif fit.type == "SoftmaxAffine":
             # constraint of the form w^alpha >= c1*u1^exp1 + c2*u2^exp2 +....
@@ -82,7 +82,7 @@ class FitConstraintSet(ConstraintSet):
 
         self.bounds = {}
         for i, dvar in enumerate(self.dvars):
-            self.bounds[dvar] = [fit.bounds["lb%d" % i], fit.bounds["ub%d" % i]]
+            self.bounds[dvar] = [fit.bounds[f"lb{i}"], fit.bounds[f"ub{i}"]]
 
         ConstraintSet.__init__(self, [self.constraint])
 
@@ -113,9 +113,9 @@ class FitConstraintSet(ConstraintSet):
 
             if direct:
                 msg = (
-                    "Variable %.100s could cause inaccurate result"
-                    " because it is %s" % (dvar, state)
-                    + " %s bound. Solution is %.4f but"
-                    " bound is %.4f" % (direct, amax([num]), bnd)
+                    f"Variable {dvar} could cause inaccurate result"
+                    f" because it is {state}"
+                    f" {direct} bound. Solution is {amax([num]):.4f} but"
+                    f" bound is {bnd:.4f}"
                 )
                 appendsolwarning(msg, self, result, "Fit Out-of-Bounds")
