@@ -13,7 +13,6 @@ SEED = 33404
 class TestFit(unittest.TestCase):
     """Test fit class"""
 
-    np.random.seed(SEED)
     u = logspace(0, log10(3), 101)
     w = (u**2 + 3)/(u + 1)**2
     x = log(u)
@@ -21,7 +20,6 @@ class TestFit(unittest.TestCase):
     K = 3
 
     def test_max_affine(self):
-        np.random.seed(SEED)
         f = MaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.errors["rms_rel"] < 1e-2)
         self.assertEqual(f.__repr__(), (
@@ -31,7 +29,6 @@ class TestFit(unittest.TestCase):
         ))
 
     def test_softmax_affine(self):
-        np.random.seed(SEED)
         f = SoftmaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.errors["rms_rel"] < 1e-4)
         self.assertEqual(f.__repr__(), (
@@ -41,7 +38,6 @@ class TestFit(unittest.TestCase):
         ))
 
     def test_implicit_softmax_affine(self):
-        np.random.seed(SEED)
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         self.assertTrue(f.errors["rms_rel"] < 1e-5)
         self.assertEqual(f.__repr__(), (
@@ -51,7 +47,6 @@ class TestFit(unittest.TestCase):
         ))
 
     def test_fit_ma(self):
-        np.random.seed(SEED)
         f = fit(self.x, self.y, self.K, fit_type="ma")
         self.assertTrue(f.errors["rms_rel"] < 1e-2)
         self.assertEqual(f.__repr__(), (
@@ -61,7 +56,6 @@ class TestFit(unittest.TestCase):
         ))
 
     def test_fit_sma(self):
-        np.random.seed(SEED)
         f = fit(self.x, self.y, self.K, fit_type="sma")
         self.assertTrue(f.errors["rms_rel"] < 1e-4)
         self.assertEqual(f.__repr__(), (
@@ -71,7 +65,6 @@ class TestFit(unittest.TestCase):
         ))
 
     def test_fit_isma(self):
-        np.random.seed(SEED)
         f = fit(self.x, self.y, self.K)
         self.assertTrue(f.errors["rms_rel"] < 1e-5)
         self.assertEqual(f.__repr__(), (
@@ -85,7 +78,6 @@ class TestFit(unittest.TestCase):
             MaxAffine(self.x, vstack((self.y, self.y)), self.K)
 
     def test_save_and_load(self):
-        np.random.seed(SEED)
         f1 = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         f1.save("artifacts/fit.pkl")
         strings1 = f1.__repr__()
@@ -96,7 +88,6 @@ class TestFit(unittest.TestCase):
         self.assertEqual(strings1, strings2)
 
     def test_savetxt(self):
-        np.random.seed(SEED)
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         f.savetxt("artifacts/fit.txt")
         with open("artifacts/fit.txt", "r", encoding="utf-8") as textfile:
@@ -110,7 +101,6 @@ class TestFit(unittest.TestCase):
     def test_verbosity_1(self):
         captured_output = StringIO()
         sys.stdout = captured_output
-        np.random.seed(SEED)
         ImplicitSoftmaxAffine(self.x, self.y, self.K, verbosity=1)
         sys.stdout = sys.__stdout__
         expected_output = (
@@ -130,9 +120,7 @@ class TestFit(unittest.TestCase):
         self.assertEqual(expected_output, captured_output.getvalue())
 
     def test_error(self):
-        np.random.seed(SEED)
         f1 = ImplicitSoftmaxAffine(self.x, self.y, self.K)
-        np.random.seed(SEED)
         f2 = ImplicitSoftmaxAffine(self.x, 2*self.y, self.K)
         self.assertAlmostEqual(f1.errors["rms_rel"], 8.12727e-07, places=11)
         self.assertAlmostEqual(f1.errors["rms_abs"], 7.43308e-07, places=11)
