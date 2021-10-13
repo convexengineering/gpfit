@@ -2,8 +2,6 @@
 import numpy as np
 from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
-np.random.seed(33404)
-
 u = np.logspace(0, np.log10(3), 101)
 w = (u**2 + 3)/(u + 1)**2
 x = np.log(u)

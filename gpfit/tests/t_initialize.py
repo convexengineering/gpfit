@@ -1,11 +1,8 @@
 "unit tests for get_initial_parameters function"
 import unittest
-import numpy as np
 from numpy import arange, newaxis, vstack, log, exp
 from numpy.random import random_sample
 from gpfit.maths.initialize import get_initial_parameters
-
-SEED = 33404
 
 
 class TestMaxAffineInitK2(unittest.TestCase):
@@ -34,7 +31,6 @@ class TestMaxAffineInitK4(unittest.TestCase):
     of the expected shape and size
     """
 
-    np.random.seed(SEED)
     Vdd = random_sample(1000) + 1
     Vth = 0.2*random_sample(1000) + 0.2
     P = Vdd**2 + 30*Vdd*exp(-(Vth - 0.06*Vdd)/0.039)

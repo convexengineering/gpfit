@@ -2,10 +2,9 @@
 import numpy as np
 from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
-np.random.seed(33404)
-
-Vdd = np.random.random_sample(1000) + 1
-Vth = 0.2*np.random.random_sample(1000) + 0.2
+rng = np.random.RandomState(33404)
+Vdd = rng.random_sample(1000) + 1
+Vth = 0.2*rng.random_sample(1000) + 0.2
 P = Vdd**2 + 30*Vdd*np.exp(-(Vth - 0.06*Vdd)/0.039)
 
 u = np.vstack((Vdd, Vth))

@@ -3,13 +3,10 @@ import unittest
 import numpy as np
 from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
-SEED = 33404
-
 
 class TestPlot(unittest.TestCase):
     "Unit tests for plot methods"
 
-    np.random.seed(SEED)
     N = 51
     u = np.logspace(0, np.log10(3), N)
     w = (u**2 + 3)/(u + 1)**2
@@ -36,9 +33,9 @@ class TestPlot(unittest.TestCase):
 class TestPlotSurface(unittest.TestCase):
     "Unit tests for plot_surface methods"
 
-    np.random.seed(SEED)
-    Vdd = np.random.random_sample(100) + 1
-    Vth = 0.2*np.random.random_sample(100) + 0.2
+    rng = np.random.RandomState(33404)
+    Vdd = rng.random_sample(100) + 1
+    Vth = 0.2*rng.random_sample(100) + 0.2
     P = Vdd**2 + 30*Vdd*np.exp(-(Vth - 0.06*Vdd)/0.039)
     u = np.vstack((Vdd, Vth))
     x = np.log(u)
@@ -64,7 +61,6 @@ class TestPlotSurface(unittest.TestCase):
 class TestPlotSlices(unittest.TestCase):
     "Unit tests for plot_slices method"
 
-    np.random.seed(SEED)
     Vdd = np.linspace(1, 2, 10)
     Vth = np.linspace(0.2, 0.4, 5)
     Vdd, Vth = np.meshgrid(Vdd, Vth)
