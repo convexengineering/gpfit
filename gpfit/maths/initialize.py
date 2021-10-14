@@ -36,7 +36,6 @@ def get_initial_parameters(x, y, K):
 
     rng = np.random.RandomState(33404)
     randinds = rng.permutation(npt)[0:K]  # Choose K unique indices
-    print(randinds)
 
     # partition based on distances
     sqdists = zeros((npt, K))
