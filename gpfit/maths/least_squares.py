@@ -61,10 +61,10 @@ def levenberg_marquardt(
         raise ValueError("params should be a vector")
 
     # Define display formatting if required
-    formatstr1 = "%5.0f        %9.6g        %9.3g\n"
-    formatstr = (
-        "%5.0f        %9.6g        %9.3g        %12.4g        %12.4g        %8.4g\n"
-    )
+    #formatstr1 = "%5.0f        %9.6g        %9.3g\n"
+    #formatstr = (
+    #    "%5.0f        %9.6g        %9.3g        %12.4g        %12.4g        %8.4g\n"
+    #)
 
     # Get residual values and jacobian at initial point; extract size info
     params = initparams
