@@ -13,7 +13,7 @@ def levenberg_marquardt(
     verbose=False,
     lambdainit=0.02,
     maxiter=5000,
-    maxtime=20.0,
+    maxtime=np.inf,
     tolgrad=np.sqrt(float_info.epsilon),
     tolrms=1e-7,
 ):
