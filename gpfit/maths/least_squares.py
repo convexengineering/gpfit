@@ -10,7 +10,7 @@ from scipy.sparse import spdiags, issparse
 def levenberg_marquardt(
     residfun,
     initparams,
-    verbose=False,
+    verbose=True,
     lambdainit=0.02,
     maxiter=5000,
     maxtime=5.0,
@@ -91,14 +91,15 @@ def levenberg_marquardt(
     rmstraj = [rms]
 
     # Display info for 1st iter
-    if verbose:
-        print("\n                    First-Order                        " "Norm of \n")
-        print(
-            "Iter        Residual        optimality            Lambda"
-            "            step        Jwarp \n"
-        )
-        print(formatstr1 % (itr, rms, maxgrad))
+    #if verbose:
+    #    print("\n                    First-Order                        " "Norm of \n")
+    #    print(
+    #        "Iter        Residual        optimality            Lambda"
+    #        "            step        Jwarp \n"
+    #    )
+    #    print(formatstr1 % (itr, rms, maxgrad))
 
+    print(tolgrad)
     # Main Loop
     while True:
         if itr == maxiter:
@@ -155,9 +156,9 @@ def levenberg_marquardt(
             maxgrad = norm(np.dot(r.T, J), np.inf)
             # dsp here so that all grad info is for updated point,
             # but lambda not yet updated
-            if verbose:
-                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ)))
+            #if verbose:
+            #    print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
+            #                       max(diagJJ)/min(diagJJ)))
 
             if maxgrad < tolgrad:
                 if verbose:
@@ -170,9 +171,9 @@ def levenberg_marquardt(
             prev_trial_accepted = True
             params_updated = True
         else:
-            if verbose:
-                print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
-                                   max(diagJJ)/min(diagJJ)))
+            #if verbose:
+            #    print(formatstr % (itr, trialrms, maxgrad, lamb, norm(step),
+            #                       max(diagJJ)/min(diagJJ)))
             lamb = lamb*10
             prev_trial_accepted = False
             params_updated = False
