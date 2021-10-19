@@ -2,9 +2,7 @@
 import unittest
 import numpy as np
 from numpy import array, arange
-from gpfit.logsumexp import lse_implicit, lse_scaled
-
-SEED = 33404
+from gpfit.maths.logsumexp import lse_implicit, lse_scaled
 
 
 class TestLSEimplicit1D(unittest.TestCase):
@@ -35,8 +33,6 @@ class TestLSEimplicit1D(unittest.TestCase):
 
 class TestLSEimplicit2D(unittest.TestCase):
     "tests with 2D input"
-
-    np.random.seed(SEED)
 
     K = 4
     x = np.random.rand(1000, K)

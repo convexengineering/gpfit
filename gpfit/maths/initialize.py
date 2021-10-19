@@ -1,28 +1,29 @@
 "Implements get_initial_parameters"
+import numpy as np
 from numpy import ones, hstack, zeros, tile, argmin
 from numpy.linalg import lstsq, matrix_rank
-from numpy.random import permutation as randperm
 
 
 # pylint: disable=too-many-locals
-def get_initial_parameters(x, y, K):
-    """
-    Initializes max-affine fit to data (y, x)
-    ensures that initialization has at least K+1 points per partition (i.e.
+def get_initial_parameters(x, y, K, seed=None):
+    """Initializes max-affine fit to data (y, x)
+
+    Ensures that initialization has at least K+1 points per partition (i.e.
     per affine function)
 
     Arguments:
     ----------
-        x:      Independent variable data
-                    2D column vector [nPoints x nDims]
-
-        y:      Dependent variable data
-                    2D column vector [nPoints x 1]
+    x: 2D column vector [nPoints x nDims]
+        Independent variable data
+    y: 2D column vector [nPoints x 1]
+        Dependent variable data
+    K: int
+        Number of terms in fit
 
     Returns:
     --------
-        ba:     Initial b and a parameters
-                    2D array [(dimx+1) x k]
+    ba: 2D array [(dimx+1) x k]
+        Initial b and a parameters
 
     """
 
@@ -32,7 +33,9 @@ def get_initial_parameters(x, y, K):
 
     X = hstack((ones((npt, 1)), x))
     b = zeros((dimx + 1, K))
-    randinds = randperm(npt)[0:K]  # Choose K unique indices
+
+    rng = np.random.RandomState(seed)
+    randinds = rng.permutation(npt)[0:K]  # Choose K unique indices
 
     # partition based on distances
     sqdists = zeros((npt, K))

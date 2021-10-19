@@ -1,0 +1,4 @@
+include docs/source/*.rst
+include docs/source/examples/*.txt
+include docs/source/examples/*.py
+include gpfit/tests/artifacts/*.txt

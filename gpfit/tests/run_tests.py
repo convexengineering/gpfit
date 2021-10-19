@@ -12,8 +12,8 @@ TESTS += t_logsumexp.TESTS
 from gpfit.tests import t_initialize
 TESTS += t_initialize.TESTS
 
-from gpfit.tests import t_classes
-TESTS += t_classes.TESTS
+from gpfit.tests import t_evaluate
+TESTS += t_evaluate.TESTS
 
 from gpfit.tests import t_print_fit
 TESTS += t_print_fit.TESTS

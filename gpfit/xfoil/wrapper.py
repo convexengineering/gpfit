@@ -4,9 +4,7 @@ import numpy as np
 
 
 # pylint: disable=invalid-name, bare-except, too-many-locals
-# pylint: disable=too-many-arguments
-
-
+# pylint: disable=too-many-arguments, consider-using-with
 def xfoil_comparison(airfoil, Cl, Re, Cd):
     """
     Comparison of XFOIL Cd to input Cd for given Cl and Re.
@@ -42,16 +40,16 @@ def xfoil_comparison(airfoil, Cl, Re, Cd):
 
     err, cdxs = [], []
     for cl, re, cd in zip(Cl, Re, Cd):
-        failmsg = "Xfoil call failed at CL=%.4f and Re=%.1f" % (cl, re)
+        failmsg = f"Xfoil call failed at CL={cl:.4f} and Re={re:.1f}"
         try:
             x = single_call(topline, cl, re, 0.0)
             if "VISCAL:  Convergence failed" in x:
-                print("Convergence Warning: %s" % failmsg)
+                print(f"Convergence Warning: {failmsg}")
                 cdx = cd
             else:
                 cdx = x[0]
         except subprocess.CalledProcessError:
-            print("Unable to start Xfoil: %s" % failmsg)
+            print(f"Unable to start Xfoil: {failmsg}")
             cdx = cd
 
         err.append(1 - cd/cdx)
@@ -94,13 +92,13 @@ def single_call(topline, cl, Re, M, max_iter=100, pathname="/usr/local/bin/xfoil
     proc.stdin.write(
         topline
         + "oper \n"
-        + "iter %d\n" % (max_iter)
+        + f"iter {max_iter}\n"
         + "visc \n"
-        + "%.2e \n" % (Re)
+        + f"{Re:.2e} \n"
         + "M \n"
-        + "%.2f \n" % (M)
+        + f"{M:.2f} \n"
         + "a 2.0 \n"
-        + "cl %.4f \n" % (cl)
+        + f"cl {cl:.4f} \n"
         + "\n"
         + "quit \n"
     )

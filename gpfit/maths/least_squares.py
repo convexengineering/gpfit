@@ -13,7 +13,7 @@ def levenberg_marquardt(
     verbose=False,
     lambdainit=0.02,
     maxiter=5000,
-    maxtime=5.0,
+    maxtime=np.inf,
     tolgrad=np.sqrt(float_info.epsilon),
     tolrms=1e-7,
 ):
@@ -74,9 +74,8 @@ def levenberg_marquardt(
     r.shape = (npt, 1)  # Make r into column vector
 
     if J.shape != (npt, nparam):
-        raise ValueError(
-            "Jacobian size %s inconsistent with (%s, %s)" % (J.shape, npt, nparam)
-        )
+        errstr = f"Jacobian size {J.shape} inconsistent with ({npt}, {nparam})"
+        raise ValueError(errstr)
 
     # "Accept" initial point
     rms = norm(r)/np.sqrt(npt)  # 2-norm
@@ -108,7 +107,7 @@ def levenberg_marquardt(
             break
         elif time() - t > maxtime:
             if verbose:
-                print("Reached maxtime (%s seconds)" % maxtime)
+                print(f"Reached maxtime ({maxtime} seconds)")
             break
         elif itr >= 2 and abs(rmstraj[itr] - rmstraj[itr - 2]) < rmstraj[itr]*tolrms:
             # Should really only allow this exit case

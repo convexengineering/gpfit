@@ -28,17 +28,23 @@ class TestExamples(unittest.TestCase):
               self.assertAlmostEqual(example.sol["cost"], 3.121)
     """
 
-    def test_hoburgabbeel_ex6_1(self, example):
-        """test_hoburgabbeel_ex6_1"""
-        self.assertTrue(example.errorMA < 1e-2)
-        self.assertTrue(example.errorSMA < 1e-4)
-        self.assertTrue(example.errorISMA < 1e-5)
+    def test_ex1(self, example):
+        """test_ex1"""
+        self.assertLess(example.fma.errors["rms_rel"], 1e-2)
+        self.assertLess(example.fma.errors["rms_log"], 1e-2)
+        self.assertLess(example.fsma.errors["rms_rel"], 1e-4)
+        self.assertLess(example.fsma.errors["rms_log"], 1e-4)
+        self.assertLess(example.fisma.errors["rms_rel"], 1e-5)
+        self.assertLess(example.fisma.errors["rms_log"], 1e-5)
 
-    def test_hoburgabbeel_ex6_3(self, example):
-        """test_hoburgabbeel_ex6_3"""
-        self.assertTrue(example.errorMA < 1e-2)
-        self.assertTrue(example.errorSMA < 1e-3)
-        self.assertTrue(example.errorISMA < 1e-3)
+    def test_ex2(self, example):
+        """test_ex2"""
+        self.assertLess(example.fma.errors["rms_rel"], 1e-2)
+        self.assertLess(example.fma.errors["rms_log"], 1e-2)
+        self.assertLess(example.fsma.errors["rms_rel"], 1e-3)
+        self.assertLess(example.fsma.errors["rms_log"], 1e-3)
+        self.assertLess(example.fisma.errors["rms_rel"], 1e-3)
+        self.assertLess(example.fisma.errors["rms_log"], 1e-3)
 
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))

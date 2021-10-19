@@ -13,22 +13,22 @@ def lse_implicit(x, alpha):
 
     Arguments:
     ----------
-            x:      independent variable data
-                        2D numpy array [nPoints x nDim]
+    x: 2D numpy array [nPoints x nDim]
+        independent variable data
 
-            alpha:  local softness parameter
-                        1D array [K] (K=number of terms)
+    alpha: 1D array [K] (K=number of terms)
+        local softness parameter
 
     Returns:
     --------
-            y:      ISMA approximation to log transformed data
-                        1D numpy array [nPoints]
+    y: 1D numpy array [nPoints]
+        ISMA approximation to log transformed data
 
-            dydx:   Deriv of y wrt each x
-                        2D numpy array[nPoints x K]
+    dydx: 2D numpy array[nPoints x K]
+        Deriv of y wrt each x
 
-            dydalpha:
-                        2D array [nPoints x nDim]
+    dydalpha: 2D array [nPoints x nDim]
+
     """
 
     tol = 10*spacing(1)
@@ -83,22 +83,22 @@ def lse_scaled(x, alpha):
 
     Arguments:
     ----------
-            x:      independent variable data
-                        2D numpy array [nPoints x nDim]
+    x: 2D numpy array [nPoints x nDim]
+        independent variable data
 
-            alpha:  local softness parameter
-                        1D array [K] (K=number of terms)
+    alpha: 1D array [K] (K=number of terms)
+        local softness parameter
 
     Returns:
     --------
-            y:      ISMA approximation to log transformed data
-                        1D numpy array [nPoints]
+    y: 1D numpy array [nPoints]
+        ISMA approximation to log transformed data
 
-            dydx:   Deriv of y wrt each x
-                        2D numpy array[nPoints x nDim]
+    dydx: 2D numpy array[nPoints x nDim]
+        Deriv of y wrt each x
 
-            dydalpha:
-                    [n-element 1D array], n is number of data points
+    dydalpha: [n-element 1D array], n is number of data points
+
     """
 
     _, n = x.shape

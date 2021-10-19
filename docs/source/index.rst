@@ -1,10 +1,14 @@
-.. figure::  GPfit_logo.png
-   :width: 250 px
-
+=====
+GPfit
+=====
 
 GPfit is a Python package for fitting GP-compatible constraints to data.
-It requires installation of `GPkit <http://gpkit.readthedocs.org/en/latest/>`_.
-This `paper <http://web.mit.edu/~whoburg/www/papers/gp_fitting.pdf>`_ describes the approach.
+It is based on the approach described in `Data fitting with
+geometric-programming-compatible softmax functions
+<https://dspace.mit.edu/bitstream/handle/1721.1/105753/11081_2016_9332_ReferencePDF.pdf?sequence=2&isAllowed=y>`_
+by W. Hoburg, P. Kirschen, and P. Abbeel.
+GPfit requires installation of `GPkit
+<http://gpkit.readthedocs.org/en/latest/>`_.
 
 Table of Contents
 ==================
@@ -12,6 +16,8 @@ Table of Contents
        :maxdepth: 2
 
        gpfit101
-       examples
+       installation
+       tutorial
+       reference
        citinggpfit
-       glossary.rst
+       acknowledgements
