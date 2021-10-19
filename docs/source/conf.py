@@ -11,7 +11,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath('../../../gpfit'))
 sys.path.insert(0, os.path.abspath('../../gpfit'))
-print(syspath)
+print(sys.path)
 import gpfit
 __version__ = gpfit.__version__
 version = 'v' + '.'.join(__version__.split('.')[:4])
