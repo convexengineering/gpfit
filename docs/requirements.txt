@@ -1,3 +1,4 @@
+setuptools<58
 numpy==1.21.2
 matplotlib
 scipy
