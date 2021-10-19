@@ -5,7 +5,7 @@ from numpy.linalg import lstsq, matrix_rank
 
 
 # pylint: disable=too-many-locals
-def get_initial_parameters(x, y, K):
+def get_initial_parameters(x, y, K, seed=None):
     """Initializes max-affine fit to data (y, x)
 
     Ensures that initialization has at least K+1 points per partition (i.e.
@@ -34,7 +34,7 @@ def get_initial_parameters(x, y, K):
     X = hstack((ones((npt, 1)), x))
     b = zeros((dimx + 1, K))
 
-    rng = np.random.RandomState(33404)
+    rng = np.random.RandomState(seed)
     randinds = rng.permutation(npt)[0:K]  # Choose K unique indices
 
     # partition based on distances

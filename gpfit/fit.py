@@ -3,7 +3,7 @@ from .classes import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
 
 # pylint: disable=too-many-arguments
-def fit(xdata, ydata, K, fit_type="isma", alpha0=10, verbosity=0):
+def fit(xdata, ydata, K, fit_type="isma", alpha0=10, verbosity=0, seed=None):
     """A convenience function for returning a Fit object.
 
     Default behaviour returns the highest quality of fit (implicit softmax
@@ -29,6 +29,9 @@ def fit(xdata, ydata, K, fit_type="isma", alpha0=10, verbosity=0):
     verbosity: int
         Verbosity
 
+    seed: None or int
+        Seed for random number generator in initialization function
+
     Returns
     -------
         Fit object
@@ -40,4 +43,5 @@ def fit(xdata, ydata, K, fit_type="isma", alpha0=10, verbosity=0):
         "sma": SoftmaxAffine,
         "isma": ImplicitSoftmaxAffine,
     }
-    return fits[fit_type](xdata, ydata, K, alpha0=alpha0, verbosity=verbosity)
+    return fits[fit_type](xdata, ydata, K, alpha0=alpha0, verbosity=verbosity,
+                          seed=seed)

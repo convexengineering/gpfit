@@ -15,7 +15,7 @@ from .constraint_set import FitConstraintSet
 # pylint: disable=too-many-instance-attributes
 class _Fit:
     """The base class for GPfit"""
-    def __init__(self, xdata, ydata, K, alpha0=10, verbosity=0):
+    def __init__(self, xdata, ydata, K, alpha0=10, verbosity=0, seed=None):
         """Initialize _Fit object
 
         Arguments
@@ -34,6 +34,9 @@ class _Fit:
 
         verbosity: int (0 or 1)
             Verbosity
+
+        seed: None or int
+            Seed for random number generator in initialization function
 
         """
 
@@ -56,7 +59,7 @@ class _Fit:
                 self.bounds[f"ub{i}"] = np.exp(max(xdata.T[i]))
 
         ba = get_initial_parameters(xdata, ydata.reshape(self.ydata.size, 1),
-                                    K).flatten("F")
+                                    K, seed).flatten("F")
         self.A, self.B, self.alpha, self.params = self.get_parameters(ba, K, d)
 
         yhat = self.evaluate(xdata, self.params)[0]

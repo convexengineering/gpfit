@@ -4,6 +4,8 @@ import numpy as np
 from gpkit import Variable, Model
 from gpfit.fit import SoftmaxAffine
 
+SEED = 33404
+
 
 class TestFitConstraintSet(unittest.TestCase):
     "Unit tests for FitConstraintSet"
@@ -13,7 +15,7 @@ class TestFitConstraintSet(unittest.TestCase):
     x = np.log(u)
     y = np.log(w)
     K = 3
-    f = SoftmaxAffine(x, y, K)
+    f = SoftmaxAffine(x, y, K, seed=SEED)
     uvar = Variable("u")
     wvar = Variable("w")
     fcs = f.constraint_set(ivar=wvar, dvars=[uvar])
