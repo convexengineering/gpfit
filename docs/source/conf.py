@@ -9,12 +9,8 @@
 
 import sys
 import os
-sys.path.insert(0, os.path.abspath('../../../gpfit'))
-sys.path.insert(0, os.path.abspath('../../gpfit'))
 sys.path.insert(0, os.path.abspath('../..'))
-print(sys.path)
-import gpfit
-__version__ = gpfit.__version__
+from gpfit.__init__ import __version__
 version = 'v' + '.'.join(__version__.split('.')[:4])
 project = 'GPfit'
 copyright = '2021, Convex Engineering Group'
