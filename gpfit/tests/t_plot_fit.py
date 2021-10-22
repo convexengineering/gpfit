@@ -1,10 +1,10 @@
 "unit tests for plot fit methods"
-import unittest
+import pytest
 import numpy as np
 from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
 
-class TestPlot(unittest.TestCase):
+class TestPlot:
     "Unit tests for plot methods"
 
     N = 51
@@ -14,23 +14,26 @@ class TestPlot(unittest.TestCase):
     y = np.log(w)
     K = 2
 
+    @pytest.mark.mpl_image_compare(filename='ma_1d.png')
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot()
-        fig.savefig("artifacts/ma_test.png")
+        return fig
 
+    @pytest.mark.mpl_image_compare(filename='sma_1d.png')
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot()
-        fig.savefig("artifacts/sma_test.png")
+        return fig
 
+    @pytest.mark.mpl_image_compare(filename='isma_1d.png')
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot()
-        fig.savefig("artifacts/isma_test.png")
+        return fig
 
 
-class TestPlotSurface(unittest.TestCase):
+class TestPlotSurface:
     "Unit tests for plot_surface methods"
 
     rng = np.random.RandomState(33404)
@@ -42,23 +45,26 @@ class TestPlotSurface(unittest.TestCase):
     y = np.log(P)
     K = 3
 
+    @pytest.mark.mpl_image_compare(filename='ma_2d_surface.png')
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_surface(azim=135)
-        fig.savefig("artifacts/ma_test_surface.png")
+        return fig
 
+    @pytest.mark.mpl_image_compare(filename='sma_2d_surface.png')
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_surface(azim=135)
-        fig.savefig("artifacts/sma_test_surface.png")
+        return fig
 
+    @pytest.mark.mpl_image_compare(filename='isma_2d_surface.png')
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_surface(azim=135)
-        fig.savefig("artifacts/isma_test_surface.png")
+        return fig
 
 
-class TestPlotSlices(unittest.TestCase):
+class TestPlotSlices:
     "Unit tests for plot_slices method"
 
     Vdd = np.linspace(1, 2, 10)
@@ -71,33 +77,26 @@ class TestPlotSlices(unittest.TestCase):
     y = np.log(P)
     K = 3
 
+    @pytest.mark.mpl_image_compare(filename='ma_2d_slices.png')
     def test_max_affine(self):
         f = MaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_slices()
-        fig.savefig("artifacts/ma_test_slices.png")
+        return fig
 
+    @pytest.mark.mpl_image_compare(filename='sma_2d_slices.png')
     def test_softmax_affine(self):
         f = SoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_slices()
-        fig.savefig("artifacts/sma_test_slices.png")
+        return fig
 
+    @pytest.mark.mpl_image_compare(filename='isma_2d_slices.png')
     def test_implicit_softmax_affine(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
         fig, _ = f.plot_slices()
-        fig.savefig("artifacts/isma_test_slices.png")
-
+        return fig
 
 TESTS = [
     TestPlot,
     TestPlotSurface,
     TestPlotSlices,
 ]
-
-if __name__ == '__main__':
-    SUITE = unittest.TestSuite()
-    LOADER = unittest.TestLoader()
-
-    for t in TESTS:
-        SUITE.addTests(LOADER.loadTestsFromTestCase(t))
-
-    unittest.TextTestRunner(verbosity=2).run(SUITE)
