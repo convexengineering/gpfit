@@ -3,6 +3,8 @@ import pytest
 import numpy as np
 from gpfit.fit import MaxAffine, SoftmaxAffine, ImplicitSoftmaxAffine
 
+SEED = 33404
+
 
 class TestPlot:
     "Unit tests for plot methods"
@@ -16,19 +18,19 @@ class TestPlot:
 
     @pytest.mark.mpl_image_compare(filename='ma_1d.png')
     def test_max_affine(self):
-        f = MaxAffine(self.x, self.y, self.K)
+        f = MaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot()
         return fig
 
     @pytest.mark.mpl_image_compare(filename='sma_1d.png')
     def test_softmax_affine(self):
-        f = SoftmaxAffine(self.x, self.y, self.K)
+        f = SoftmaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot()
         return fig
 
     @pytest.mark.mpl_image_compare(filename='isma_1d.png')
     def test_implicit_softmax_affine(self):
-        f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        f = ImplicitSoftmaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot()
         return fig
 
@@ -47,19 +49,19 @@ class TestPlotSurface:
 
     @pytest.mark.mpl_image_compare(filename='ma_2d_surface.png')
     def test_max_affine(self):
-        f = MaxAffine(self.x, self.y, self.K)
+        f = MaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot_surface(azim=135)
         return fig
 
     @pytest.mark.mpl_image_compare(filename='sma_2d_surface.png')
     def test_softmax_affine(self):
-        f = SoftmaxAffine(self.x, self.y, self.K)
+        f = SoftmaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot_surface(azim=135)
         return fig
 
     @pytest.mark.mpl_image_compare(filename='isma_2d_surface.png')
     def test_implicit_softmax_affine(self):
-        f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        f = ImplicitSoftmaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot_surface(azim=135)
         return fig
 
@@ -79,19 +81,19 @@ class TestPlotSlices:
 
     @pytest.mark.mpl_image_compare(filename='ma_2d_slices.png')
     def test_max_affine(self):
-        f = MaxAffine(self.x, self.y, self.K)
+        f = MaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot_slices()
         return fig
 
     @pytest.mark.mpl_image_compare(filename='sma_2d_slices.png')
     def test_softmax_affine(self):
-        f = SoftmaxAffine(self.x, self.y, self.K)
+        f = SoftmaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot_slices()
         return fig
 
     @pytest.mark.mpl_image_compare(filename='isma_2d_slices.png')
     def test_implicit_softmax_affine(self):
-        f = ImplicitSoftmaxAffine(self.x, self.y, self.K)
+        f = ImplicitSoftmaxAffine(self.x, self.y, self.K, seed=SEED)
         fig, _ = f.plot_slices()
         return fig
 
