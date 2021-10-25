@@ -39,7 +39,8 @@ setup(
         "pytest-mpl==0.13",
     ],
     version="0.2.0",
-    packages=["gpfit", "gpfit.maths", "gpfit.tests", "gpfit.xfoil"],
+    packages=["gpfit", "gpfit.maths", "gpfit.tests", "gpfit.tests.baseline",
+              "gpfit.xfoil"],
     include_package_data=True,
     license=LICENSE,
 )
