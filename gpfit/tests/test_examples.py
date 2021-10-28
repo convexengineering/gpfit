@@ -1,7 +1,7 @@
 "Unit testing of tests in docs/source/examples"
+import os
 import unittest
 import pytest
-import os
 from gpkit.tests.helpers import generate_example_tests
 from gpkit import settings
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
