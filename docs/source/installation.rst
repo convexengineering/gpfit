@@ -26,7 +26,7 @@ To test your installation of GPfit, use:
 
 .. code::
 
-   python -c "import gpfit.tests; gpfit.tests.run()"
+   pytest --pyargs gpfit
 
 If you encounter any bugs please email ``gpkit@mit.edu``
 or `raise a GitHub issue

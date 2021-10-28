@@ -78,9 +78,9 @@ class TestFit(unittest.TestCase):
 
     def test_save_and_load(self):
         f1 = ImplicitSoftmaxAffine(self.x, self.y, self.K, seed=SEED)
-        f1.save("artifacts/fit.pkl")
+        f1.save("fit.pkl")
         strings1 = f1.__repr__()
-        with open("artifacts/fit.pkl", "rb") as picklefile:
+        with open("fit.pkl", "rb") as picklefile:
             f2 = pickle.load(picklefile)
         self.assertTrue(f2.errors["rms_rel"] < 1e-5)
         strings2 = f2.__repr__()
@@ -88,8 +88,8 @@ class TestFit(unittest.TestCase):
 
     def test_savetxt(self):
         f = ImplicitSoftmaxAffine(self.x, self.y, self.K, seed=SEED)
-        f.savetxt("artifacts/fit.txt")
-        with open("artifacts/fit.txt", "r", encoding="utf-8") as textfile:
+        f.savetxt("fit.txt")
+        with open("fit.txt", "r", encoding="utf-8") as textfile:
             fitstring = textfile.read()
         self.assertEqual(fitstring, (
             "1 = (0.947385/w**0.0920329)*(u_1)**0.0176859\n"

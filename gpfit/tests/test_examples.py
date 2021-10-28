@@ -1,10 +1,15 @@
 "Unit testing of tests in docs/source/examples"
-import unittest
 import os
+import unittest
+import pytest
 from gpkit.tests.helpers import generate_example_tests
 from gpkit import settings
+FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+EXAMPLE_DIR = os.path.abspath(FILE_DIR + "../../../docs/source/examples")
+EXS_IN_PATH = os.path.isdir(EXAMPLE_DIR)
 
 
+@pytest.mark.skipif(not EXS_IN_PATH, reason="example directory not in path")
 class TestExamples(unittest.TestCase):
     """
     To test a new example, add a function called `test_$EXAMPLENAME`, where
@@ -47,8 +52,6 @@ class TestExamples(unittest.TestCase):
         self.assertLess(example.fisma.errors["rms_log"], 1e-3)
 
 
-FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-EXAMPLE_DIR = os.path.abspath(FILE_DIR + "../../../docs/source/examples")
 # use gpkit.tests.helpers.generate_example_tests default: only default solver
 TESTS = generate_example_tests(
     EXAMPLE_DIR, [TestExamples], settings["installed_solvers"]
